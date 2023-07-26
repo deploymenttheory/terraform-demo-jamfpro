@@ -16,7 +16,7 @@ jobs:
       az_container_name: tfstate                                  ## AZ backend - AZURE storage container hosting state files (Required)
       tf_cloud_private_registry: true                             ## State whether terraform is using modules from the terraform cloud private registry. Default is false
       tf_key: jamfpro-cloud-categories                            ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required) 
-      tf_vars_file: jamf-cloud-categories.tfvars                  ## Terraform TFVARS (Required)
+      tf_vars_file: jamfpro-cloud-categories.tfvars               ## Terraform TFVARS (Required)
       enable_TFSEC: false                                         ## (Optional)  Enable TFSEC IaC scans (Private repo requires GitHub enterprise)
     secrets:
       arm_client_id: ${{ secrets.ARM_CLIENT_ID }}                 ## ARM Client ID - SP-CPSS-GLBL-ALL-C-02
