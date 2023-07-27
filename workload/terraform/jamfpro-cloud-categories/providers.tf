@@ -1,7 +1,7 @@
 provider "jamf" {
-  username = "DevOps-API"
-  password = "En1gmaMach!n3"
+  username = var.username
+  password = var.password
 
   # "This is the full url of jamf, xxxx.jamfcloud.com"
-  url = "lbgstaging.jamfcloud.com"
+  url = var.url
 }

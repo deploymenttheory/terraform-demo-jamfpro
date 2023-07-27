@@ -1,3 +1,3 @@
-data "jamf_department" "example" {
-  name = "hoge"
+data "jamf_category" "example" {
+  name = "example"
 }
