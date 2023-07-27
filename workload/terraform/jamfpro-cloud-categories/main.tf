@@ -10,7 +10,7 @@
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_category" "Security" {
+resource "jamf_category" "category_security" {
   name     = "Security"
   priority = 3
 }
@@ -27,7 +27,7 @@ resource "jamf_category" "Security" {
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_building" "example1" {
+resource "jamf_building" "building_example" {
   name = "example1"
 
   street_address1 = "1-1-1"
@@ -40,7 +40,7 @@ resource "jamf_building" "example1" {
 
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
 
-resource "jamf_computer_extension_attribute" "Account Type" {
+resource "jamf_computer_extension_attribute" "ext_att_account_type" {
   name = "Account Type"
   script {
     script_contents = file("${path.module}/extension-attributes/Account Type.sh")
