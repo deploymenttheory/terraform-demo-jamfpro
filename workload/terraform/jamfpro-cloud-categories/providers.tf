@@ -1,7 +1,7 @@
 provider "jamf" {
   username = "jamf-autopkg-api"
-  password = "Edmonton-@2023"
+  password = "En1gmaMach!n3"
 
   # "This is the full url of jamf, xxxx.jamfcloud.com"
-  url = "strawberry.jamfcloud.com"
+  url = "lbgstaging.jamfcloud.com"
 }
