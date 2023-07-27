@@ -40,9 +40,9 @@ resource "jamf_building" "example1" {
 
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
 
-resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
-  name = "test-extension-attribute-script"
+resource "jamf_computer_extension_attribute" "Account Type" {
+  name = "Account Type"
   script {
-    script_contents = file("${path.module}/extension-attributes/script-1.sh")
+    script_contents = file("${path.module}/extension-attributes/Account Type.sh")
   }
 }
