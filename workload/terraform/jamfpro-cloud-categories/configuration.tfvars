@@ -1,6 +1,6 @@
 #---------------------------------------#
 # Variable static values                #
 #---------------------------------------#
-username  = "DevOps-API"
-password  = "En1gmaMach!n3"
-url       = "lbgstaging"
+username = "DevOps-API"
+password = "En1gmaMach!n3"
+url      = "lbgstaging"
