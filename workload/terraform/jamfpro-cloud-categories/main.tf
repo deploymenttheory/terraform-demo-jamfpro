@@ -43,6 +43,6 @@ resource "jamf_building" "building_example" {
 resource "jamf_computer_extension_attribute" "ext_att_account_type" {
   name = "Account Type"
   script {
-    script_contents = file("${path.module}/extension-attributes/Account Type.sh")
+    script_contents = file("${path.root}/terraform/extension-attributes/Account Type.sh")
   }
 }
