@@ -1,5 +1,6 @@
-resource "jamf_category" "terraform-example-update" {
-  name     = "terraform-example-update"
+#---------------- JAMF Pro Categories ----------------#
+resource "jamf_category" "Security" {
+  name     = "Security"
   priority = 3
 }
 
