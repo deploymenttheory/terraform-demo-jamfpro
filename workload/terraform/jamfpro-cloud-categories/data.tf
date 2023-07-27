@@ -1,3 +1,3 @@
-data "jamf_category" "example" {
-  name = "example"
+data "jamf_category" "example-update" {
+  name = "example-update"
 }
