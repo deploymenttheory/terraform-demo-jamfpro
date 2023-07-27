@@ -49,6 +49,7 @@ resource "jamf_building" "example3" {
   street_address1 = "1-1-1"
   street_address2 = "example Building"
   city            = "Shibuya-ku"
+  state_province  = "Tokyo"
   zip_postal_code = "111-1111"
   country         = "Japan"
 }
@@ -61,4 +62,5 @@ resource "jamf_building" "example4" {
   city            = "Shibuya-ku"
   state_province  = "Tokyo"
   zip_postal_code = "111-1111"
+  country         = "Japan"
 }
