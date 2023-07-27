@@ -3,4 +3,4 @@
 #---------------------------------------#
 username = "DevOps-API"
 password = "En1gmaMach!n3"
-url      = "lbgstaging"
+url      = "lbgstaging.jamfcloud.com"

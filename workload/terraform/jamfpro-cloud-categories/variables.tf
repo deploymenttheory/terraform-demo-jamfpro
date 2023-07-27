@@ -9,6 +9,6 @@ variable "password" {
 }
 
 variable "url" {
-  description = "This is the xxxx part of xxxx.jamfcloud.com for terraform automation"
+  description = "This is the JAMF Pro instance for terraform automation. Value should be in the format xxxx.jamfcloud.com"
   type        = string
 }
