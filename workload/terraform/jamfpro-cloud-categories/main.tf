@@ -19,7 +19,7 @@ resource "jamf_category" "terraform-example" {
 #------------------------------ JAMF Pro Buildings ------------------------------------------------#
 #--------------------------------------------------------------------------------------------------#
 resource "jamf_building" "example" {
-  name     = "example"
+  name = "example"
 
   street_address1 = "1-1-1"
   street_address2 = "example Building"
