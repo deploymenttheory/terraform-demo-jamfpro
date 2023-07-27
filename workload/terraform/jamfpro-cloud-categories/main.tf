@@ -15,11 +15,6 @@ resource "jamf_category" "Security" {
   priority = 3
 }
 
-resource "jamf_category" "terraform-example" {
-  name     = "terraform-example"
-  priority = 4
-}
-
 #------------------------------ JAMF Pro Buildings -------------------------------------------------#
 # Behaviour:                                                                                        #
 # - If resource doesn't exist it will be created.                                                   #
@@ -32,30 +27,8 @@ resource "jamf_category" "terraform-example" {
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_building" "example2" {
-  name = "example2"
-
-  street_address1 = "1-1-1"
-  street_address2 = "example Building"
-  city            = "Shibuya-ku"
-  state_province  = "Tokyo"
-  zip_postal_code = "111-1111"
-  country         = "Japan"
-}
-
-resource "jamf_building" "example3" {
-  name = "example3"
-
-  street_address1 = "1-1-1"
-  street_address2 = "example Building"
-  city            = "Shibuya-ku"
-  state_province  = "Tokyo"
-  zip_postal_code = "111-1111"
-  country         = "Japan"
-}
-
-resource "jamf_building" "example4" {
-  name = "example4"
+resource "jamf_building" "example1" {
+  name = "example1"
 
   street_address1 = "1-1-1"
   street_address2 = "example Building"
