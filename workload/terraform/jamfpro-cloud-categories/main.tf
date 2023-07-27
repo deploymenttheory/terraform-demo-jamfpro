@@ -14,3 +14,17 @@ resource "jamf_category" "terraform-example" {
   name     = "terraform-example"
   priority = 4
 }
+
+
+#------------------------------ JAMF Pro Buildings ------------------------------------------------#
+#--------------------------------------------------------------------------------------------------#
+resource "jamf_building" "example" {
+  name     = "example"
+
+  street_address1 = "1-1-1"
+  street_address2 = "example Building"
+  city            = "Shibuya-ku"
+  state_province  = "Tokyo"
+  zip_postal_code = "111-1111"
+  country         = "Japan"
+}
