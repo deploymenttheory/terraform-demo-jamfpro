@@ -37,3 +37,12 @@ resource "jamf_building" "example1" {
   zip_postal_code = "111-1111"
   country         = "Japan"
 }
+
+#------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
+
+resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
+  name = "test-extension-attribute-script"
+  script {
+    script_contents = file("${path.module}/extension-attributes/script-1.sh")
+  }
+}
