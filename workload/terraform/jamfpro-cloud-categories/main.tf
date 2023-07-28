@@ -39,10 +39,3 @@ resource "jamf_building" "building_example" {
 }
 
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
-
-resource "jamf_computer_extension_attribute" "ext_att_account_type" {
-  name = "Account Type"
-  script {
-    script_contents = file("${path.module}/terraform/extension-attributes/Account Type.sh")
-  }
-}
