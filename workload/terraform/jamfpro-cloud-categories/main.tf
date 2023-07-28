@@ -10,8 +10,8 @@
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_category" "category_security" {
-  name     = "Security"
+resource "jamf_category" "category_terraform_test" {
+  name     = "terraform_test"
   priority = 3
 }
 
