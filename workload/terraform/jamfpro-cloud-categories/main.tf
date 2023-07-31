@@ -10,8 +10,8 @@
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_category" "category_security" {
-  name     = "Security"
+resource "jamf_category" "category_terraform_test" {
+  name     = "terraform_test"
   priority = 3
 }
 
@@ -39,10 +39,3 @@ resource "jamf_building" "building_example" {
 }
 
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
-
-resource "jamf_computer_extension_attribute" "ext_att_account_type" {
-  name = "Account Type"
-  script {
-    script_contents = file("${path.module}/terraform/extension-attributes/Account Type.sh")
-  }
-}
