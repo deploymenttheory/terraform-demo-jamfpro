@@ -3,7 +3,7 @@ terraform {
   backend "azurerm" {}
   required_providers {
     jamf = {
-      source  = "deploymenttheory/jamf"
+      source  = "deploymenttheory/terraform-provider-jamf"
       version = "0.0.1"
     }
   }
