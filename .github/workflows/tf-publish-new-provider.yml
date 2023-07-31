@@ -26,5 +26,5 @@ jobs:
 
     - name: Run Script
       run: |
-        python add_pgp_key_to_tf.py --token ${{ secrets.TOKEN }} --private_registry_name YOUR_PRIVATE_REGISTRY_NAME --namespace YOUR_NAMESPACE --pgp_key_path YOUR_PGP_KEY_PATH
+        python add_pgp_key_to_tf.py --token ${{ secrets.AUTHTOKEN }} --private_registry_name YOUR_PRIVATE_REGISTRY_NAME --namespace YOUR_NAMESPACE --pgp_key_path YOUR_PGP_KEY_PATH
     
