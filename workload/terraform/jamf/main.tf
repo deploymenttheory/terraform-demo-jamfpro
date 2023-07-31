@@ -2,7 +2,7 @@
 ##  Create Categories for JAMF PRO                                                              ##
 ##----------------------------------------------------------------------------------------------##
 
-resource "building" "building_example" {
+resource "jamf" "building_example" {
   name = "example1"
 
   street_address1 = "1-1-1"
