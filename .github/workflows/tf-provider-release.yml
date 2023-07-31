@@ -1,0 +1,30 @@
+name: Run Python Script
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run Script
+      run: |
+        python add_pgp_key_to_tf.py --token ${{ secrets.TOKEN }} --private_registry_name YOUR_PRIVATE_REGISTRY_NAME --namespace YOUR_NAMESPACE --pgp_key_path YOUR_PGP_KEY_PATH
+    
