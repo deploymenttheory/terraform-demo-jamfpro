@@ -4,7 +4,7 @@ terraform {
   # Private Registry tf provider
   required_providers {
     jamf = {
-      source  = "deploymenttheory/jamf"
+      source  = "deploymenttheory/jamf/internal/provider"
       version = "0.0.1"
     }
   }
