@@ -3,7 +3,7 @@
 ##----------------------------------------------------------------------------------------------##
 
 module "jamf" {
-  source  = "app.terraform.io/deploymenttheory/jamf/provider"
+  source  = "app.terraform.io/deploymenttheory/jamf"
   version = "0.0.1"
 }
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
