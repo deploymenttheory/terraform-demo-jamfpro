@@ -1,4 +1,4 @@
-name: "001_deploy_jamf"
+name: "002_deploy_jamf"
 on:
   workflow_dispatch:
 ##---------------------------------------------##
