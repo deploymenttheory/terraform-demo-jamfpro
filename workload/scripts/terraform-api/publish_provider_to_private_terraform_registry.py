@@ -64,6 +64,7 @@ def handle_response(response):
         response.raise_for_status()
     except requests.exceptions.HTTPError as err:
         print(f"HTTP request failed: {err}")
+        print(response.text)  # print the response body
         exit(1)
 
 # Use the GitHub API to get the release by tag
