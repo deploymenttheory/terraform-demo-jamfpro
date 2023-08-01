@@ -173,6 +173,19 @@ try:
 
     print("Provider version created.")
 
+    # Upload SHA256SUMS and SHA256SUMS.sig
+    for asset in assets:
+        if asset["name"].endswith("_SHA256SUMS"):
+            sha256sums = download_asset(asset["browser_download_url"])
+            response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
+            handle_response(response)
+            print("SHA256SUMS uploaded.")
+        elif asset["name"].endswith("_SHA256SUMS.sig"):
+            sha256sums_sig = download_asset(asset["browser_download_url"])
+            response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
+            handle_response(response)
+            print("SHA256SUMS.sig uploaded.")
+
 except requests.exceptions.HTTPError as http_err:
     print(f'HTTP error occurred: {http_err}')
     print(f'Response content: {response.content}')
@@ -185,20 +198,6 @@ except json.JSONDecodeError as json_err:
 
 except Exception as e:
     print(f'An error occurred: {e}')
-
-
-# Upload SHA256SUMS and SHA256SUMS.sig
-for asset in assets:
-    if asset["name"].endswith("_SHA256SUMS"):
-        sha256sums = download_asset(asset["browser_download_url"])
-        response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
-        handle_response(response)
-        print("SHA256SUMS uploaded.")
-    elif asset["name"].endswith("_SHA256SUMS.sig"):
-        sha256sums_sig = download_asset(asset["browser_download_url"])
-        response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
-        handle_response(response)
-        print("SHA256SUMS.sig uploaded.")
 
 
 # Parse SHA256SUMS
