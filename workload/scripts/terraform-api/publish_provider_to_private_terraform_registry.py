@@ -14,7 +14,7 @@ provider_name = "jamf"
 version = "v10.48.0"
 
 # GitHub repository details and paths to the files
-github_repo = "deploymenttheory/terraform-provider-jamf"
+github_repo = "deploymenttheory/terraform-provider-jamfpro"
 
 # GPG signing key (ASCII-armored representation of a public GPG key)
 public_gpg_key = """
