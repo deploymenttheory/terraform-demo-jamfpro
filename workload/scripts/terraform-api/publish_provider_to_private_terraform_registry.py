@@ -115,8 +115,23 @@ if response.status_code == 200:
         provider_id = provider_data[0]["id"]
         print("Provider already exists. Updating the existing provider.")
     else:
-        print("Multiple providers with the same name found. Please resolve the issue.")
-        exit(1)
+        # If there are multiple providers with the same name, we proceed to update the first one found.
+        provider_id = provider_data[0]["id"]
+        print("Updating the first provider found with the same name.")
+
+    # Update the existing provider
+    url = f"https://app.terraform.io/api/v2/registry-providers/{provider_id}"
+    data = {
+        "data": {
+            "type": "registry-providers",
+            "attributes": {
+                "registry-name": "private"
+            }
+        }
+    }
+    response = requests.patch(url, headers=terraform_headers, data=json.dumps(data))
+    handle_response(response)
+    print("Provider updated.")
 else:
     # Provider doesn't exist, create it
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
