@@ -12,7 +12,7 @@ github_token = "github_pat_11AO7MZ3A09ILCxdDqIwaB_RHlVeF4tqlKYaJuFhRK0yUQqC4CcZw
 # Organization and provider details
 organization = "deploymenttheory"
 provider_name = "jamfpro"
-version = "v10.48.0"
+version = "10.48.0"
 
 # GitHub repository details and paths to the files
 github_repo = "deploymenttheory/terraform-provider-jamfpro"
@@ -150,7 +150,7 @@ def create_provider_version(key_id):
             "type": "registry-provider-versions",
             "attributes": {
                 "version": version,
-                "protocols": ["4.0"]
+                "protocols": ["5.0"]
             }
         }
     }
