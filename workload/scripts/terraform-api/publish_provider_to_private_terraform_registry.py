@@ -4,7 +4,7 @@ import re
 import sys
 
 # Terraform Cloud API token
-terraform_token = "9EujQ50Ybc3GSQ.atlasv1.S3zPYcoTUTeW3ZLs75oaAQykghDTZbqebLGhUTMb2fgN9xaT9tkg0mk1nAM3IDEbFs8"
+terraform_token = "3MuM9yPtymjI8g.atlasv1.dO9bsLOJhFaRM3Org1lX1ZJmyjbkxMeHzjCLAkwJSQlJm7PpqAtdzOgDQPlbL6Faze0"
 
 # GitHub API tokengpg --armor --export 3AA5C34371567BD2
 github_token = "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"
@@ -105,48 +105,9 @@ data = {
         }
     }
 }
-
-# Check if the provider already exists
-response = requests.get(url, headers=terraform_headers, params={"filter[name]": provider_name})
+response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
 handle_response(response)
-
-provider_data = response.json()["data"]
-if len(provider_data) == 1:
-    # Provider already exists, retrieve its ID
-    provider_id = provider_data[0]["id"]
-    print("Provider already exists. Updating the existing provider.")
-
-    # Update the existing provider
-    url = f"https://app.terraform.io/api/v2/registry-providers/{provider_id}"
-    data = {
-        "data": {
-            "type": "registry-providers",
-            "attributes": {
-                "registry-name": "private"
-            }
-        }
-    }
-    response = requests.patch(url, headers=terraform_headers, data=json.dumps(data))
-    handle_response(response)
-    print("Provider updated.")
-else:
-    # Provider doesn't exist, create it
-    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers"
-    data = {
-        "data": {
-            "type": "registry-providers",
-            "attributes": {
-                "name": provider_name,
-                "namespace": organization,
-                "registry-name": "private"
-            }
-        }
-    }
-    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-    handle_response(response)
-    provider_id = response.json()["data"]["id"]
-    print("Provider created.")
-
+print("Provider created.")
 
 # Add a GPG key
 url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys"
@@ -160,6 +121,7 @@ data = {
     }
 }
 response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+
 
 # If the GPG key already exists, retrieve the existing one
 if response.status_code == 400 and "GPG key already exists for namespace" in response.text:
@@ -182,7 +144,7 @@ print("GPG key added.")
 
 
 
-# Use the retrieved or created provider_id to create the provider version
+# Create a provider version
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
 data = {
     "data": {
@@ -194,28 +156,6 @@ data = {
         }
     }
 }
-
-# Check if the version already exists for the provider
-response = requests.get(url, headers=terraform_headers, params={"filter[version]": version})
-if response.status_code == 200:
-    # Version already exists, update it
-    version_data = response.json()["data"]
-    if len(version_data) == 1:
-        version_id = version_data[0]["id"]
-    else:
-        print("Multiple versions with the same name found. Please resolve the issue.")
-        exit(1)
-
-    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version_id}"
-    response = requests.patch(url, headers=terraform_headers, data=json.dumps(data))
-    handle_response(response)
-    print("Provider version updated.")
-else:
-    # Version doesn't exist, create it
-    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-    handle_response(response)
-    version_id = response.json()["data"]["id"]
-    print("Provider version created.")
 
 try:
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
