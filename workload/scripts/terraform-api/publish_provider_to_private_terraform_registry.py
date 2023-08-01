@@ -59,13 +59,17 @@ github_headers = {
 }
 
 # Error handling function
-def handle_response(response):
+def handle_response(response, skip_gpg_error=False):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as err:
-        print(f"HTTP request failed: {err}")
-        print(response.text)  # print the response body
-        exit(1)
+        if skip_gpg_error and "GPG key already exists for namespace" in response.text:
+            print("Skipping GPG key creation: GPG key already exists for namespace.")
+        else:
+            print(f"HTTP request failed: {err}")
+            print(response.text)  # print the response body
+            exit(1)
+
 
 # Use the GitHub API to get the release by tag
 url = f"https://api.github.com/repos/{github_repo}/releases/tags/{version}"
@@ -107,7 +111,7 @@ data = {
     }
 }
 response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-handle_response(response)
+handle_response(response, skip_gpg_error=True)
 key_id = response.json()["data"]["id"]
 print("GPG key added.")
 
@@ -142,12 +146,19 @@ for asset in assets:
         handle_response(response)
         print("SHA256SUMS.sig uploaded.")
 
+# Parse SHA256SUMS
+shasums = {}
+for line in sha256sums.decode("utf-8").split("\n"):
+    parts = line.split("  ")
+    if len(parts) == 2:
+        shasums[parts[1]] = parts[0]
+
 # Upload all provider binaries
 for asset in assets:
     if asset["name"].endswith(".zip"):
         os_name, arch_name = re.findall(r"_(\w+)_", asset["name"])
         filename = asset["name"]
-        shasum = asset["checksum"]  # You might need to modify how you retrieve the shasum
+        shasum = shasums[filename]  # Retrieve the shasum from the parsed SHA256SUMS file
         provider_binary = download_asset(asset["browser_download_url"])
         url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/platforms"
         data = {
@@ -167,3 +178,4 @@ for asset in assets:
         response = requests.put(provider_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=provider_binary)
         handle_response(response)
         print(f"Provider binary for {os_name} {arch_name} uploaded.")
+
