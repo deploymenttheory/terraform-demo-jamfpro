@@ -142,7 +142,8 @@ print("GPG key added.")
 
 
 # Create a provider version
-url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
+#url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
+url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{namespace}/{provider_name}/versions"
 data = {
     "data": {
         "type": "registry-provider-versions",
