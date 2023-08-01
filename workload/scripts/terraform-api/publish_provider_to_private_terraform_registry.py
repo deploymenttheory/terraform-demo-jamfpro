@@ -148,7 +148,7 @@ data = {
 }
 
 try:
-    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+    response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
     response.raise_for_status()  # raises HTTPError if the request returns an HTTP status code that is 400 or above
 
     json_data = response.json()
