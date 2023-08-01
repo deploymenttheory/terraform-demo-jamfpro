@@ -85,8 +85,11 @@ def download_asset(asset_url):
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
     content = response.content
-    decoded_content = content.decode("utf-8")  # Decode the content
+    decoded_content = None
+    if "text" in response.headers.get("Content-Type", ""):
+        decoded_content = content.decode("utf-8")  # Decode the content if it's text
     return content, decoded_content
+
 
 
 # Create a provider
