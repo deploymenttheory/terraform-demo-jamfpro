@@ -94,8 +94,12 @@ def create_provider():
         }
     }
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-    handle_response(response)
-    print("Provider created.")
+    if "Name has already been taken" in response.text:
+        print("Provider with this name already exists in the namespace. Skipping provider creation.")
+    else:
+        handle_response(response)
+        print("Provider created.")
+
 
 # Add a GPG key
 def add_gpg_key():
