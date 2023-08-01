@@ -111,8 +111,13 @@ data = {
     }
 }
 response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+print("Response: ", response.json())  # print the response
 handle_response(response, skip_gpg_error=True)
-key_id = response.json()["data"]["id"]
+try:  # try to get the 'id' key
+    key_id = response.json()["data"]["id"]
+except KeyError:
+    print("Unexpected response structure. 'data' key not found.")
+    exit(1)
 print("GPG key added.")
 
 # Create a provider version
