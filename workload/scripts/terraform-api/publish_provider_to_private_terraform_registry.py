@@ -242,21 +242,23 @@ if not sha256sums_decoded:
     print("Failed to download or decode SHA256SUMS file.")
     sys.exit(1)
 
-# Parse SHA256SUMS to get the file names
-file_names = []
+# Parse SHA256SUMS to get the file names and shasums
+shasums_dict = {}
 for line in sha256sums_decoded.split("\n"):
     parts = line.split("  ")
     if len(parts) == 2:
-        filename = parts[1]
-        file_names.append(filename)
+        filename, shasum = parts[1], parts[0]
+        shasums_dict[filename] = shasum
 
 # Download and upload each provider binary
 for asset in assets:
     if asset["name"].endswith(".zip"):
         os_name, arch_name = re.findall(r"_(\w+)_", asset["name"])
         filename = asset["name"]
-        if filename not in file_names:
-            print(f"File {filename} not found in SHA256SUMS. Skipping download and upload.")
+        shasum = shasums_dict.get(filename)
+
+        if not shasum:
+            print(f"File {filename} not found in SHA256SUMS or has an invalid entry. Skipping download and upload.")
             continue
 
         provider_binary, _ = download_asset(asset["browser_download_url"])
@@ -267,7 +269,7 @@ for asset in assets:
                 "attributes": {
                     "os": os_name,
                     "arch": arch_name,
-                    "shasum": shasums_dict.get(filename),  # Retrieve the shasum from the parsed SHA256SUMS
+                    "shasum": shasum,
                     "filename": filename
                 }
             }
