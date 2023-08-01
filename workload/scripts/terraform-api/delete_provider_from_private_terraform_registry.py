@@ -6,7 +6,7 @@ terraform_token = "3MuM9yPtymjI8g.atlasv1.dO9bsLOJhFaRM3Org1lX1ZJmyjbkxMeHzjCLAk
 
 # Organization and provider details
 organization = "deploymenttheory"
-provider_name = "jamf"
+provider_name = "jamfpro"
 
 terraform_headers = {
     "Authorization": "Bearer " + terraform_token,
