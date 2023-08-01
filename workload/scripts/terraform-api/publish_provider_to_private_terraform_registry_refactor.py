@@ -75,7 +75,7 @@ def handle_response(response, skip_gpg_error=False):
 
 # Use the GitHub API to get the release by tag
 def get_release_by_tag():
-    url = f"https://api.github.com/repos/{github_repo}/releases/tags/{version}"
+    url = f"https://api.github.com/repos/{github_repo}/releases/tags/v{version}"
     response = requests.get(url, headers=github_headers)
     handle_response(response)
     return response.json()["assets"]
