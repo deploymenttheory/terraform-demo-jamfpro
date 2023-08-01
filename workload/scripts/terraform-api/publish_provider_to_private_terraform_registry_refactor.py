@@ -12,6 +12,8 @@ github_token = "github_pat_11AO7MZ3A09ILCxdDqIwaB_RHlVeF4tqlKYaJuFhRK0yUQqC4CcZw
 # Organization and provider details
 organization = "deploymenttheory"
 provider_name = "jamfpro"
+
+# release version. used for github release tag lookup and up terraform provider upload.
 version = "10.48.0"
 
 # GitHub repository details and paths to the files
