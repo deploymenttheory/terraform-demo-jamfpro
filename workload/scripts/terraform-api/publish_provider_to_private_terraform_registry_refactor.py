@@ -100,6 +100,7 @@ def create_provider():
         handle_response(response)
         print("Provider created.")
 
+# Get gpg key id if one already exists.
 def get_gpg_keys():
     url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys?filter%5Bnamespace%5D={organization}"
     response = requests.get(url, headers=terraform_headers)
@@ -246,12 +247,17 @@ def upload_platform_binary(platform_binary_upload_url, assets):
 def main():
     assets = get_release_by_tag()
     create_provider()
-    key_id = add_gpg_key()
+
+    key_id = get_gpg_keys()  # First, try to get the existing GPG key ID
+    if key_id is None:  # If no key ID is found, then create a new GPG key
+        key_id = add_gpg_key()
+
     sha256sums_upload_url, sha256sums_sig_upload_url = create_provider_version(key_id)
     upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url)
     shasums_dict = download_and_parse_sha256sums(assets)
     platform_binary_upload_url = create_provider_platform(shasums_dict, assets)
     upload_platform_binary(platform_binary_upload_url, assets)
+
 
 if __name__ == "__main__":
     main()
