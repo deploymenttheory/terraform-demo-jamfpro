@@ -187,6 +187,7 @@ except Exception as e:
 
 
 # Upload SHA256SUMS and SHA256SUMS.sig
+# Upload SHA256SUMS and SHA256SUMS.sig
 sha256sums_upload_url = None
 sha256sums_sig_upload_url = None
 
@@ -197,6 +198,8 @@ for asset in assets:
         response = requests.post(url, headers=terraform_headers, data=sha256sums)
         handle_response(response)
         sha256sums_upload_url = response.json()["data"]["attributes"]["upload-url"]
+        print("SHA256SUMS content:")
+        print(sha256sums.decode("utf-8"))  # Print the content of SHA256SUMS
         print("SHA256SUMS uploaded.")
     elif asset["name"].endswith("_SHA256SUMS.sig"):
         sha256sums_sig = download_asset(asset["browser_download_url"])
@@ -205,6 +208,7 @@ for asset in assets:
         handle_response(response)
         sha256sums_sig_upload_url = response.json()["data"]["attributes"]["upload-url"]
         print("SHA256SUMS.sig uploaded.")
+
 
 # Parse SHA256SUMS
 shasums = {}
