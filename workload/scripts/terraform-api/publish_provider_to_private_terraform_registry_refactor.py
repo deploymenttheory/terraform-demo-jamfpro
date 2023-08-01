@@ -150,7 +150,7 @@ def create_provider_version(key_id):
             "type": "registry-provider-versions",
             "attributes": {
                 "version": version,
-                "protocols": ["6.0"]
+                "protocols": ["4.0"]
             }
         }
     }
