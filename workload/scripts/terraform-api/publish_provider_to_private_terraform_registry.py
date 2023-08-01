@@ -66,7 +66,9 @@ def handle_response(response, skip_gpg_error=False):
         if skip_gpg_error and "GPG key already exists for namespace" in response.text:
             print("Skipping GPG key creation: GPG key already exists for namespace.")
         else:
-            print(f"HTTP request failed: {err}")
+            print(f"HTTP error occurred: {err}")
+            print(f"Response headers: {response.headers}")
+            print(f"Response content: {response.content}")
             print(response.text)  # print the response body
             exit(1)
 
