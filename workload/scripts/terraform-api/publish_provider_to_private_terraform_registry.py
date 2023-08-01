@@ -211,7 +211,10 @@ try:
     print("SHA256SUMS.sig uploaded.")
 
 except requests.exceptions.HTTPError as http_err:
-    print(f'HTTP error occurred: {http_err}')
+    if response.status_code == 422:
+        print("Failed to create provider version. Malformed request body (missing attributes, wrong types, etc.).")
+    else:
+        print(f'HTTP error occurred: {http_err}')
     print(f'Response content: {response.content}')
 
 except requests.exceptions.RequestException as req_err:
