@@ -234,34 +234,29 @@ if not sha256sums_url or not sha256sums_sig_url:
     sys.exit(1)
 
 
-# Download SHA256SUMS and SHA256SUMS.sig from GitHub
+# Download SHA256SUMS from GitHub
 sha256sums, sha256sums_decoded = download_asset(sha256sums_url)
-sha256sums_sig, sha256sums_sig_decoded = download_asset(sha256sums_sig_url)
 
 # Check if SHA256SUMS decoding was successful
-if not sha256sums_decoded or not sha256sums_sig_decoded:
-    print("Failed to download or decode SHA256SUMS or SHA256SUMS.sig file.")
+if not sha256sums_decoded:
+    print("Failed to download or decode SHA256SUMS file.")
     sys.exit(1)
 
-# Decode the contents of SHA256SUMS before parsing
-shasums_decoded = sha256sums_decoded
-
-# Parse SHA256SUMS
-shasums_dict = {}
-for line in shasums_decoded.split("\n"):
+# Parse SHA256SUMS to get the file names
+file_names = []
+for line in sha256sums_decoded.split("\n"):
     parts = line.split("  ")
     if len(parts) == 2:
-        filename, shasum = parts[1], parts[0]
-        shasums_dict[filename] = shasum
+        filename = parts[1]
+        file_names.append(filename)
 
-# Upload all provider binaries
+# Download and upload each provider binary
 for asset in assets:
     if asset["name"].endswith(".zip"):
         os_name, arch_name = re.findall(r"_(\w+)_", asset["name"])
         filename = asset["name"]
-        shasum = shasums_dict.get(filename)  # Retrieve the shasum from the parsed SHA256SUMS file
-        if not shasum:
-            print(f"SHA256SUMS entry not found for {filename}. Skipping upload.")
+        if filename not in file_names:
+            print(f"File {filename} not found in SHA256SUMS. Skipping download and upload.")
             continue
 
         provider_binary, _ = download_asset(asset["browser_download_url"])
@@ -272,7 +267,7 @@ for asset in assets:
                 "attributes": {
                     "os": os_name,
                     "arch": arch_name,
-                    "shasum": shasum,
+                    "shasum": shasums_dict.get(filename),  # Retrieve the shasum from the parsed SHA256SUMS
                     "filename": filename
                 }
             }
