@@ -115,7 +115,7 @@ response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
 # If the GPG key already exists, retrieve the existing one
 if response.status_code == 400 and "GPG key already exists for namespace" in response.text:
     print("GPG key already exists for namespace. Retrieving the existing key.")
-    response = requests.get(url, headers=terraform_headers)
+    response = requests.get(url, headers=terraform_headers, params={"filter[namespace]": organization})
     handle_response(response)
     keys = response.json()["data"]
     for key in keys:
@@ -129,6 +129,7 @@ else:
     handle_response(response)
     key_id = response.json()["data"]["id"]
 print("GPG key added.")
+
 
 
 # Create a provider version
