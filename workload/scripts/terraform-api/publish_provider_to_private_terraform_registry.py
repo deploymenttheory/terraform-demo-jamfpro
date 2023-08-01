@@ -262,6 +262,7 @@ for asset in assets:
             continue
 
         provider_binary, _ = download_asset(asset["browser_download_url"])
+
         url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/platforms"
         data = {
             "data": {
@@ -274,9 +275,34 @@ for asset in assets:
                 }
             }
         }
-        response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-        handle_response(response)
-        provider_binary_upload_url = response.json()["data"]["links"]["provider-binary-upload"]
-        response = requests.put(provider_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=provider_binary)
-        handle_response(response)
-        print(f"Provider binary for {os_name} {arch_name} uploaded.")
+
+        try:
+            # Create the platform
+            response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+            response_json = response.json()
+
+            if response.status_code == 201:
+                provider_binary_upload_url = response_json["data"]["links"]["provider-binary-upload"]
+                response = requests.put(provider_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=provider_binary)
+
+                if response.status_code == 200:
+                    print(f"Provider binary for {os_name} {arch_name} uploaded.")
+                else:
+                    print(f"Failed to upload provider binary for {os_name} {arch_name}. Status code: {response.status_code}")
+                    print(f"Response content: {response.content}")
+                    # Additional error handling, if needed
+
+            else:
+                print(f"Failed to create platform for {os_name} {arch_name}. Status code: {response.status_code}")
+                print(f"Response content: {response.content}")
+                # Additional error handling, if needed
+
+        except requests.exceptions.RequestException as req_err:
+            print(f'Request error occurred while creating platform: {req_err}')
+
+        except json.JSONDecodeError as json_err:
+            print(f'JSON decode error occurred while creating platform: {json_err}')
+
+        except Exception as e:
+            print(f'An error occurred while creating platform: {e}')
+
