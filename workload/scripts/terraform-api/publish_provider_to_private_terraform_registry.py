@@ -92,6 +92,7 @@ def download_asset(asset_url):
 
 
 
+
 # Create a provider
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers"
 data = {
@@ -184,16 +185,17 @@ try:
     sha256sums_sig = None
     for asset in assets:
         if asset["name"].endswith("_SHA256SUMS"):
-            sha256sums = download_asset(asset["browser_download_url"])
+            sha256sums, sha256sums_decoded = download_asset(asset["browser_download_url"])
         elif asset["name"].endswith("_SHA256SUMS.sig"):
-            sha256sums_sig = download_asset(asset["browser_download_url"])
+            sha256sums_sig, _ = download_asset(asset["browser_download_url"])
 
-    if not sha256sums:
-        print("SHA256SUMS file not found.")
+    if not sha256sums or not sha256sums_sig:
+        print("SHA256SUMS and/or SHA256SUMS.sig file not found.")
         sys.exit(1)
 
-    if not sha256sums_sig:
-        print("SHA256SUMS.sig file not found.")
+    # Check if SHA256SUMS decoding was successful
+    if not sha256sums_decoded:
+        print("Failed to download or decode SHA256SUMS file.")
         sys.exit(1)
 
     # Upload SHA256SUMS and SHA256SUMS.sig
