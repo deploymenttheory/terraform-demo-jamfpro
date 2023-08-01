@@ -138,7 +138,9 @@ if response.status_code == 400 and "GPG key already exists for namespace" in res
 else:
     handle_response(response)
     key_id = response.json()["data"]["id"]
+
 print("GPG key added.")
+
 
 
 # Create a provider version
