@@ -112,13 +112,17 @@ def add_gpg_key():
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
     handle_response(response, skip_gpg_error=True)
     response_json = response.json()
-    if 'data' in response_json:
+    if 'errors' in response_json:
+        print("GPG key already exists, skipping...")
+        return None
+    elif 'data' in response_json:
         key_id = response_json["data"]["id"]
         print("GPG key added.")
         return key_id
     else:
         print("Unexpected response when adding GPG key: ", response_json)
         exit(1)
+
 
 
 # Create a Provider Version
