@@ -108,16 +108,13 @@ data = {
 
 # Check if the provider already exists
 response = requests.get(url, headers=terraform_headers, params={"filter[name]": provider_name})
-if response.status_code == 200:
+handle_response(response)
+
+provider_data = response.json()["data"]
+if len(provider_data) == 1:
     # Provider already exists, retrieve its ID
-    provider_data = response.json()["data"]
-    if len(provider_data) == 1:
-        provider_id = provider_data[0]["id"]
-        print("Provider already exists. Updating the existing provider.")
-    else:
-        # If there are multiple providers with the same name, we proceed to update the first one found.
-        provider_id = provider_data[0]["id"]
-        print("Updating the first provider found with the same name.")
+    provider_id = provider_data[0]["id"]
+    print("Provider already exists. Updating the existing provider.")
 
     # Update the existing provider
     url = f"https://app.terraform.io/api/v2/registry-providers/{provider_id}"
@@ -134,10 +131,22 @@ if response.status_code == 200:
     print("Provider updated.")
 else:
     # Provider doesn't exist, create it
+    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers"
+    data = {
+        "data": {
+            "type": "registry-providers",
+            "attributes": {
+                "name": provider_name,
+                "namespace": organization,
+                "registry-name": "private"
+            }
+        }
+    }
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
     handle_response(response)
     provider_id = response.json()["data"]["id"]
     print("Provider created.")
+
 
 # Add a GPG key
 url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys"
