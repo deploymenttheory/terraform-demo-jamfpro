@@ -100,6 +100,18 @@ def create_provider():
         handle_response(response)
         print("Provider created.")
 
+def get_gpg_keys():
+    url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys?filter%5Bnamespace%5D={organization}"
+    response = requests.get(url, headers=terraform_headers)
+    handle_response(response)
+
+    gpg_keys = response.json()["data"]
+    for gpg_key in gpg_keys:
+        if gpg_key["attributes"]["namespace"] == organization:
+            return gpg_key["attributes"]["key-id"]
+
+    return None
+
 
 # Add a GPG key
 def add_gpg_key():
