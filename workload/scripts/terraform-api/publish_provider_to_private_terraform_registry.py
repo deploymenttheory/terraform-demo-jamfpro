@@ -11,7 +11,7 @@ github_token = "github_pat_11AO7MZ3A09ILCxdDqIwaB_RHlVeF4tqlKYaJuFhRK0yUQqC4CcZw
 # Organization and provider details
 organization = "deploymenttheory"
 provider_name = "jamf"
-version = "10.48.0"
+version = "v10.48.0"
 
 # GitHub repository details and paths to the files
 github_repo = "deploymenttheory/terraform-provider-jamf"
