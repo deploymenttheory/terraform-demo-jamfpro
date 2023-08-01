@@ -238,6 +238,11 @@ if not sha256sums_url or not sha256sums_sig_url:
 sha256sums, sha256sums_decoded = download_asset(sha256sums_url)
 sha256sums_sig, sha256sums_sig_decoded = download_asset(sha256sums_sig_url)
 
+# Check if SHA256SUMS decoding was successful
+if not sha256sums_decoded or not sha256sums_sig_decoded:
+    print("Failed to download or decode SHA256SUMS or SHA256SUMS.sig file.")
+    sys.exit(1)
+
 # Decode the contents of SHA256SUMS before parsing
 shasums_decoded = sha256sums_decoded
 
@@ -248,7 +253,6 @@ for line in shasums_decoded.split("\n"):
     if len(parts) == 2:
         filename, shasum = parts[1], parts[0]
         shasums_dict[filename] = shasum
-
 
 # Upload all provider binaries
 for asset in assets:
@@ -279,4 +283,3 @@ for asset in assets:
         response = requests.put(provider_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=provider_binary)
         handle_response(response)
         print(f"Provider binary for {os_name} {arch_name} uploaded.")
-
