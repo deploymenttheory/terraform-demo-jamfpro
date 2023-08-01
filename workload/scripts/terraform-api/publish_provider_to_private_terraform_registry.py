@@ -111,14 +111,25 @@ data = {
     }
 }
 response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-print("Response: ", response.json())  # print the response
-handle_response(response, skip_gpg_error=True)
-try:  # try to get the 'id' key
+
+# If the GPG key already exists, retrieve the existing one
+if response.status_code == 400 and "GPG key already exists for namespace" in response.text:
+    print("GPG key already exists for namespace. Retrieving the existing key.")
+    response = requests.get(url, headers=terraform_headers)
+    handle_response(response)
+    keys = response.json()["data"]
+    for key in keys:
+        if key["attributes"]["namespace"] == organization and key["attributes"]["ascii-armor"] == public_gpg_key:
+            key_id = key["id"]
+            break
+    else:
+        print("No matching GPG key found.")
+        exit(1)
+else:
+    handle_response(response)
     key_id = response.json()["data"]["id"]
-except KeyError:
-    print("Unexpected response structure. 'data' key not found.")
-    exit(1)
 print("GPG key added.")
+
 
 # Create a provider version
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
