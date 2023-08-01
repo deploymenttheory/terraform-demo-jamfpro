@@ -160,13 +160,13 @@ try:
         print("The 'data' field in the response does not contain expected 'links' field.")
         sys.exit(1)
 
-    shasums_upload_url = json_data["data"]["links"].get("shasums-upload")
-    if not shasums_upload_url:
+    sha256sums_upload_url = json_data["data"]["links"].get("shasums-upload")
+    if not sha256sums_upload_url:
         print("The 'links' field in the response does not contain 'shasums-upload' URL.")
         sys.exit(1)
 
-    shasums_sig_upload_url = json_data["data"]["links"].get("shasums-sig-upload")
-    if not shasums_sig_upload_url:
+    sha256sums_sig_upload_url = json_data["data"]["links"].get("shasums-sig-upload")
+    if not sha256sums_sig_upload_url:
         print("The 'links' field in the response does not contain 'shasums-sig-upload' URL.")
         sys.exit(1)
 
@@ -187,26 +187,16 @@ except Exception as e:
 
 
 # Upload SHA256SUMS and SHA256SUMS.sig
-# Upload SHA256SUMS and SHA256SUMS.sig
-sha256sums_upload_url = None
-sha256sums_sig_upload_url = None
-
 for asset in assets:
     if asset["name"].endswith("_SHA256SUMS"):
         sha256sums = download_asset(asset["browser_download_url"])
-        url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/upload-sha256sums"
-        response = requests.post(url, headers=terraform_headers, data=sha256sums)
+        response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
         handle_response(response)
-        sha256sums_upload_url = response.json()["data"]["attributes"]["upload-url"]
-        print("SHA256SUMS content:")
-        print(sha256sums.decode("utf-8"))  # Print the content of SHA256SUMS
         print("SHA256SUMS uploaded.")
     elif asset["name"].endswith("_SHA256SUMS.sig"):
         sha256sums_sig = download_asset(asset["browser_download_url"])
-        url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/upload-sha256sums-signature"
-        response = requests.post(url, headers=terraform_headers, data=sha256sums_sig)
+        response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
         handle_response(response)
-        sha256sums_sig_upload_url = response.json()["data"]["attributes"]["upload-url"]
         print("SHA256SUMS.sig uploaded.")
 
 
