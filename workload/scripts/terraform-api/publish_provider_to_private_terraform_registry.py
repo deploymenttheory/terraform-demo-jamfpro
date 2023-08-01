@@ -103,7 +103,7 @@ handle_response(response)
 print("Provider created.")
 
 # Add a GPG key
-url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys"
+url = f"https://app.terraform.io/api/registry/private/{organization}/v2/gpg-keys"
 data = {
     "data": {
         "type": "gpg-keys",
