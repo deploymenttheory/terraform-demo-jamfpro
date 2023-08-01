@@ -1,2 +1,0 @@
-HTTP request failed: 400 Client Error: Bad Request for url: https://app.terraform.io/api/registry/private/v2/gpg-keys
-{"errors":["could not create GPG key: GPG key already exists for namespace"]}
