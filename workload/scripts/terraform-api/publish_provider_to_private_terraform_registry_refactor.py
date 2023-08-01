@@ -165,6 +165,7 @@ def create_provider_version(key_id):
 
 # Download an asset from GitHub
 def download_asset(asset_url):
+    print(f"Downloading asset from URL: {asset_url}")
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
     content = response.content
@@ -172,6 +173,7 @@ def download_asset(asset_url):
     if "text" in response.headers.get("Content-Type", ""):
         decoded_content = content.decode("utf-8")  # Decode the content if it's text
     return content, decoded_content
+
 
 # Download and parse SHA256SUMS to get the file names and shasums
 def download_and_parse_sha256sums(assets):
@@ -188,6 +190,9 @@ def download_and_parse_sha256sums(assets):
 
 # Upload SHA256SUMS and SHA256SUMS.sig
 def upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url):
+    print(f"SHA256SUMS upload URL: {sha256sums_upload_url}")
+    print(f"SHA256SUMS.sig upload URL: {sha256sums_sig_upload_url}")
+
     sha256sums, _ = download_asset(sha256sums_upload_url)
     sha256sums_sig, _ = download_asset(sha256sums_sig_upload_url)
     response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
@@ -196,6 +201,7 @@ def upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url):
     response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
     handle_response(response)
     print("SHA256SUMS.sig uploaded.")
+
 
 # Create a Provider Platform
 def create_provider_platform(shasums_dict, assets):
