@@ -105,9 +105,24 @@ data = {
         }
     }
 }
-response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-handle_response(response)
-print("Provider created.")
+
+# Check if the provider already exists
+response = requests.get(url, headers=terraform_headers, params={"filter[name]": provider_name})
+if response.status_code == 200:
+    # Provider already exists, retrieve its ID
+    provider_data = response.json()["data"]
+    if len(provider_data) == 1:
+        provider_id = provider_data[0]["id"]
+        print("Provider already exists. Updating the existing provider.")
+    else:
+        print("Multiple providers with the same name found. Please resolve the issue.")
+        exit(1)
+else:
+    # Provider doesn't exist, create it
+    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+    handle_response(response)
+    provider_id = response.json()["data"]["id"]
+    print("Provider created.")
 
 # Add a GPG key
 url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys"
@@ -143,7 +158,7 @@ print("GPG key added.")
 
 
 
-# Create a provider version
+# Use the retrieved or created provider_id to create the provider version
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
 data = {
     "data": {
@@ -155,6 +170,28 @@ data = {
         }
     }
 }
+
+# Check if the version already exists for the provider
+response = requests.get(url, headers=terraform_headers, params={"filter[version]": version})
+if response.status_code == 200:
+    # Version already exists, update it
+    version_data = response.json()["data"]
+    if len(version_data) == 1:
+        version_id = version_data[0]["id"]
+    else:
+        print("Multiple versions with the same name found. Please resolve the issue.")
+        exit(1)
+
+    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version_id}"
+    response = requests.patch(url, headers=terraform_headers, data=json.dumps(data))
+    handle_response(response)
+    print("Provider version updated.")
+else:
+    # Version doesn't exist, create it
+    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+    handle_response(response)
+    version_id = response.json()["data"]["id"]
+    print("Provider version created.")
 
 try:
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
