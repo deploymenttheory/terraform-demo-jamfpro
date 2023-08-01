@@ -137,11 +137,12 @@ def create_provider_version(key_id):
             "type": "registry-provider-versions",
             "attributes": {
                 "version": version,
-                "key-id": key_id,
                 "protocols": ["5.0"]
             }
         }
     }
+    if key_id is not None:
+        data["data"]["attributes"]["key-id"] = key_id
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
     handle_response(response)
     print("Provider version created.")
