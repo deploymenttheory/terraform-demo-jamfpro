@@ -84,7 +84,10 @@ assets = response.json()["assets"]
 def download_asset(asset_url):
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
-    return response.content
+    content = response.content
+    decoded_content = content.decode("utf-8")  # Decode the content
+    return content, decoded_content
+
 
 # Create a provider
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers"
@@ -212,13 +215,34 @@ except json.JSONDecodeError as json_err:
 except Exception as e:
     print(f'An error occurred: {e}')
 
+# Use the GitHub API to get the SHA256SUMS and SHA256SUMS.sig URLs
+sha256sums_url = None
+sha256sums_sig_url = None
+for asset in assets:
+    if asset["name"].endswith("_SHA256SUMS"):
+        sha256sums_url = asset["browser_download_url"]
+    elif asset["name"].endswith("_SHA256SUMS.sig"):
+        sha256sums_sig_url = asset["browser_download_url"]
+
+if not sha256sums_url or not sha256sums_sig_url:
+    print("SHA256SUMS and/or SHA256SUMS.sig file URLs not found.")
+    sys.exit(1)
+
+
+# Download SHA256SUMS and SHA256SUMS.sig from GitHub
+sha256sums, sha256sums_decoded = download_asset(sha256sums_url)
+sha256sums_sig, sha256sums_sig_decoded = download_asset(sha256sums_sig_url)
+
+# Decode the contents of SHA256SUMS before parsing
+shasums_decoded = sha256sums_decoded
 
 # Parse SHA256SUMS
-shasums = {}
-for line in shasums.decode("utf-8").split("\n"):
+shasums_dict = {}
+for line in shasums_decoded.split("\n"):
     parts = line.split("  ")
     if len(parts) == 2:
-        shasums[parts[1]] = parts[0]
+        filename, shasum = parts[1], parts[0]
+        shasums_dict[filename] = shasum
 
 
 # Upload all provider binaries
@@ -226,8 +250,12 @@ for asset in assets:
     if asset["name"].endswith(".zip"):
         os_name, arch_name = re.findall(r"_(\w+)_", asset["name"])
         filename = asset["name"]
-        shasum = shasums[filename]  # Retrieve the shasum from the parsed SHA256SUMS file
-        provider_binary = download_asset(asset["browser_download_url"])
+        shasum = shasums_dict.get(filename)  # Retrieve the shasum from the parsed SHA256SUMS file
+        if not shasum:
+            print(f"SHA256SUMS entry not found for {filename}. Skipping upload.")
+            continue
+
+        provider_binary, _ = download_asset(asset["browser_download_url"])
         url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/platforms"
         data = {
             "data": {
