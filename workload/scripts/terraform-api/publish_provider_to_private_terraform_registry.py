@@ -131,7 +131,6 @@ else:
 print("GPG key added.")
 
 
-
 # Create a provider version
 url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
 data = {
@@ -144,11 +143,45 @@ data = {
         }
     }
 }
-response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
-handle_response(response)
-shasums_upload_url = response.json()["data"]["links"]["shasums-upload"]
-shasums_sig_upload_url = response.json()["data"]["links"]["shasums-sig-upload"]
-print("Provider version created.")
+try:
+    response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
+    response.raise_for_status()  # raises HTTPError if the request returns an HTTP status code that is 400 or above
+
+    json_data = response.json()
+
+    if 'data' not in json_data:
+        print("The response does not contain expected 'data' field.")
+        sys.exit(1)
+
+    if 'links' not in json_data['data']:
+        print("The 'data' field in the response does not contain expected 'links' field.")
+        sys.exit(1)
+
+    shasums_upload_url = json_data["data"]["links"].get("shasums-upload")
+    if not shasums_upload_url:
+        print("The 'links' field in the response does not contain 'shasums-upload' URL.")
+        sys.exit(1)
+
+    shasums_sig_upload_url = json_data["data"]["links"].get("shasums-sig-upload")
+    if not shasums_sig_upload_url:
+        print("The 'links' field in the response does not contain 'shasums-sig-upload' URL.")
+        sys.exit(1)
+
+    print("Provider version created.")
+
+except requests.exceptions.HTTPError as http_err:
+    print(f'HTTP error occurred: {http_err}')
+    print(f'Response content: {response.content}')
+
+except requests.exceptions.RequestException as req_err:
+    print(f'Request error occurred: {req_err}')
+
+except json.JSONDecodeError as json_err:
+    print(f'JSON decode error occurred: {json_err}')
+
+except Exception as e:
+    print(f'An error occurred: {e}')
+
 
 # Upload SHA256SUMS and SHA256SUMS.sig
 for asset in assets:
