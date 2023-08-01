@@ -4,7 +4,7 @@ import re
 import sys
 
 # Terraform Cloud API token
-terraform_token = "3MuM9yPtymjI8g.atlasv1.dO9bsLOJhFaRM3Org1lX1ZJmyjbkxMeHzjCLAkwJSQlJm7PpqAtdzOgDQPlbL6Faze0"
+terraform_token = "9EujQ50Ybc3GSQ.atlasv1.S3zPYcoTUTeW3ZLs75oaAQykghDTZbqebLGhUTMb2fgN9xaT9tkg0mk1nAM3IDEbFs8"
 
 # GitHub API tokengpg --armor --export 3AA5C34371567BD2
 github_token = "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"
