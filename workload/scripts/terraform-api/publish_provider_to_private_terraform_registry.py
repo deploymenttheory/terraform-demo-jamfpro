@@ -6,7 +6,7 @@ import re
 terraform_token = "3MuM9yPtymjI8g.atlasv1.dO9bsLOJhFaRM3Org1lX1ZJmyjbkxMeHzjCLAkwJSQlJm7PpqAtdzOgDQPlbL6Faze0"
 
 # GitHub API token
-github_token = "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"
+github_token = "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"
 
 # Organization and provider details
 organization = "deploymenttheory"
