@@ -149,7 +149,7 @@ data = {
 
 try:
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
-    response.raise_for_status()  # raises HTTPError if the request returns an HTTP status code that is 400 or above
+    response.raise_for_status()
 
     json_data = response.json()
 
@@ -173,18 +173,31 @@ try:
 
     print("Provider version created.")
 
-    # Upload SHA256SUMS and SHA256SUMS.sig
+    # Download SHA256SUMS and SHA256SUMS.sig from GitHub
+    sha256sums = None
+    sha256sums_sig = None
     for asset in assets:
         if asset["name"].endswith("_SHA256SUMS"):
             sha256sums = download_asset(asset["browser_download_url"])
-            response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
-            handle_response(response)
-            print("SHA256SUMS uploaded.")
         elif asset["name"].endswith("_SHA256SUMS.sig"):
             sha256sums_sig = download_asset(asset["browser_download_url"])
-            response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
-            handle_response(response)
-            print("SHA256SUMS.sig uploaded.")
+
+    if not sha256sums:
+        print("SHA256SUMS file not found.")
+        sys.exit(1)
+
+    if not sha256sums_sig:
+        print("SHA256SUMS.sig file not found.")
+        sys.exit(1)
+
+    # Upload SHA256SUMS and SHA256SUMS.sig
+    response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
+    handle_response(response)
+    print("SHA256SUMS uploaded.")
+
+    response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
+    handle_response(response)
+    print("SHA256SUMS.sig uploaded.")
 
 except requests.exceptions.HTTPError as http_err:
     print(f'HTTP error occurred: {http_err}')
@@ -202,7 +215,7 @@ except Exception as e:
 
 # Parse SHA256SUMS
 shasums = {}
-for line in shasums.decode("utf-8").split("\n"):  # <-- Fixed variable name here
+for line in shasums.decode("utf-8").split("\n"):
     parts = line.split("  ")
     if len(parts) == 2:
         shasums[parts[1]] = parts[0]
