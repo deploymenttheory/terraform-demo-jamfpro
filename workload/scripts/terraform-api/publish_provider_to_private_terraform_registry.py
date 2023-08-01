@@ -201,11 +201,11 @@ except Exception as e:
 
 
 # Parse SHA256SUMS
-shasums_dict = {}
-for line in sha256sums.decode("utf-8").split("\n"):  # <-- Fixed variable name here
+shasums = {}
+for line in shasums.decode("utf-8").split("\n"):  # <-- Fixed variable name here
     parts = line.split("  ")
     if len(parts) == 2:
-        shasums_dict[parts[1]] = parts[0]
+        shasums[parts[1]] = parts[0]
 
 
 # Upload all provider binaries
