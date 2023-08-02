@@ -175,10 +175,15 @@ def download_asset(asset_url):
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
     content = response.content
-    decoded_content = None
-    if "text" in response.headers.get("Content-Type", ""):
-        decoded_content = content.decode("utf-8")  # Decode the content if it's text
+    try:
+        decoded_content = content.decode("utf-8")  # Try to decode the content
+    except Exception as e:
+        print(f"Error decoding asset: {str(e)}")
+        decoded_content = None
+    if decoded_content is None:
+        print(f"Unable to decode asset from URL: {asset_url}")
     return content, decoded_content
+
 
 
 # Download SHA256SUMS and SHA256SUMS.sig. parse SHA256SUMS to get the file names and shasums
@@ -190,6 +195,9 @@ def download_sha256sums_and_sig(assets):
     for asset in assets:
         if asset["name"] == f"{github_repo}_{version}_SHA256SUMS":
             sha256sums, sha256sums_decoded = download_asset(asset["browser_download_url"])
+            if isinstance(sha256sums_decoded, str) and "Error" in sha256sums_decoded:
+                print(sha256sums_decoded)
+                exit(1)
             sha256sums_dict = dict(re.findall(r"(\w+)\s+(.+)", sha256sums_decoded))
         elif asset["name"] == f"{github_repo}_{version}_SHA256SUMS.sig":
             sha256sums_sig, _ = download_asset(asset["browser_download_url"])
@@ -197,7 +205,7 @@ def download_sha256sums_and_sig(assets):
     if sha256sums is None or sha256sums_dict is None:
         print("SHA256SUMS file not found in the release assets.")
         exit(1)
-        
+
     if sha256sums_sig is None:
         print("SHA256SUMS.sig file not found in the release assets.")
         exit(1)
