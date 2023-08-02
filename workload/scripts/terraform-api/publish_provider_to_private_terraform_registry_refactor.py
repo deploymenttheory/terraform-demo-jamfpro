@@ -234,24 +234,44 @@ def download_sha256sums_and_sig(assets):
     return sha256sums, sha256sums_sig, sha256sums_dict
 
 
-# Download zip assets from GitHub
-def download_zip_assets(assets):
+# Download zip and json assets from GitHub
+def download_zip_and_json_assets(assets):
     for asset in assets:
-        if asset["name"].endswith(".zip"):
+        if asset["name"].endswith(".zip") or asset["name"].endswith(".json"):
             download_asset(asset["browser_download_url"])
 
 
 # Upload SHA256SUMS and SHA256SUMS.sig
 def upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url):
-    print(f"SHA256SUMS upload URL: {sha256sums_upload_url}")
-    print(f"SHA256SUMS.sig upload URL: {sha256sums_sig_upload_url}")
-
     response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
     handle_response(response)
+    print(f"SHA256SUMS upload URL: {sha256sums_upload_url}")
     ColorPrint.print_green(f"SHA256SUMS from github release {version} uploaded to Terraform Cloud.")
     response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
     handle_response(response)
+    print(f"SHA256SUMS.sig upload URL: {sha256sums_sig_upload_url}")
     ColorPrint.print_green(f"SHA256SUMS.sig from github release {version} uploaded to Terraform Cloud.")
+
+
+# Upload JSON assets
+def upload_json_assets(assets, platform_upload_urls):
+    for asset in assets:
+        if asset["name"].endswith(".json"):
+            json_file = downloaded_files.get(asset["name"])
+            if json_file is None:
+                ColorPrint.print_red(f"No downloaded file found for {asset['name']}, skipping...")
+                continue
+
+            platform_binary_upload_url = platform_upload_urls.get(asset["name"])
+            if not platform_binary_upload_url:
+                ColorPrint.print_red(f"No upload URL found for {asset['name']}, skipping...")
+                continue
+
+            print(f"Uploading {asset['name']} to URL: {platform_binary_upload_url}")
+
+            response = requests.put(platform_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=json_file)
+            handle_response(response)
+            ColorPrint.print_green(f"JSON file {asset['name']} uploaded.")
 
 
 # Create a Provider Platform
@@ -281,9 +301,8 @@ def create_provider_platform(sha256sums_dict, assets):
             # Calculate the SHA-256 hash of the downloaded file
             downloaded_file = downloaded_files.get(filename)
             if downloaded_file is None:
-                print(f"No downloaded file found for {filename}, skipping platform creation.")
+                ColorPrint.print_red(f"No downloaded file found for {filename}, skipping platform creation.")
                 continue
-
 
             calculated_sha256_hash = hashlib.sha256(downloaded_file).hexdigest()
             print(f"Calculated SHA-256 hash for {filename}: {calculated_sha256_hash}")
@@ -295,12 +314,12 @@ def create_provider_platform(sha256sums_dict, assets):
 
             # If the expected SHA-256 hash is not found in the SHA256SUMS file, print a warning message and continue with the next asset
             if not expected_sha256_hash:
-                print(f"File {filename} not found in SHA256SUMS. Skipping platform creation.")
+                ColorPrint.print_red(f"File {filename} not found in SHA256SUMS. Skipping platform creation.")
                 continue
 
             # If the calculated hash does not match the expected hash, print a warning message and continue with the next asset
             if calculated_sha256_hash != expected_sha256_hash:
-                print(f"SHA-256 hash mismatch for {filename}. Expected: {expected_sha256_hash}, Calculated: {calculated_sha256_hash}. Skipping platform creation.")
+                ColorPrint.print_red(f"SHA-256 hash mismatch for {filename}. Expected: {expected_sha256_hash}, Calculated: {calculated_sha256_hash}. Skipping platform creation.")
                 continue
 
             # Define the request URL and data
@@ -322,7 +341,6 @@ def create_provider_platform(sha256sums_dict, assets):
             ColorPrint.print_green(f"Platform {os_name} & {arch_name} for {filename} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
-
 
 
 # Upload Platform Binary
@@ -398,20 +416,24 @@ def main():
     assets = get_release_by_tag()
     create_provider()
 
-    key_id = get_gpg_keys()  # First, try to get the existing GPG key ID
-    if key_id is None:  # If no key ID is found, then create a new GPG key
+    key_id = get_gpg_keys()
+    if key_id is None:
         key_id = add_gpg_key()
 
     sha256sums_upload_url, sha256sums_sig_upload_url = create_provider_version(key_id)
     
     sha256sums, sha256sums_sig, sha256sums_dict = download_sha256sums_and_sig(assets)
-    download_zip_assets(assets)  # Download zip files
+    
+    download_zip_and_json_assets(assets)  # Modified function to download zip and json files
 
     upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url)
     
     platform_upload_urls = create_provider_platform(sha256sums_dict, assets)
     
     upload_platform_binary(assets, platform_upload_urls)
+    
+    upload_json_assets(assets, platform_upload_urls)  # New function to upload json files
+
 
 if __name__ == "__main__":
     main()
