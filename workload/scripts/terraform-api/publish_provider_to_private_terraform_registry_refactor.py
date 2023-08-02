@@ -1,7 +1,20 @@
+'''
+Get the release from GitHub using the specified tag.
+Create a provider in Terraform's registry.
+Get the GPG key ID if one exists, or add a new GPG key if it doesn't.
+Create a provider version in Terraform's registry.
+Download the SHA256SUMS and SHA256SUMS.sig files from the GitHub release and parse the SHA256SUMS to get the SHA-256 hashes of the other files in the release.
+Download the .zip files (the platform binaries) from the GitHub release.
+Upload the SHA256SUMS and SHA256SUMS.sig files to Terraform's registry.
+Create a platform for each .zip file in the GitHub release, skipping any files where the filename format is unexpected or where the SHA-256 hash of the downloaded file does not match the hash in the SHA256SUMS file.
+Upload the .zip files (the platform binaries) to Terraform's registry.
+If there are any errors during the HTTP requests, the script will print an error message and exit. If a file cannot be downloaded or the SHA-256 hash of a downloaded file does not match the expected hash, the script will print a warning message and skip that file.
+'''
+
 import requests
 import json
 import re
-import sys
+import hashlib
 
 # Terraform Cloud API token
 terraform_token = "9EujQ50Ybc3GSQ.atlasv1.S3zPYcoTUTeW3ZLs75oaAQykghDTZbqebLGhUTMb2fgN9xaT9tkg0mk1nAM3IDEbFs8"
@@ -258,11 +271,26 @@ def create_provider_platform(shasums_dict, assets):
             arch_name = arch_match.group(1)
 
             filename = asset["name"]
-            shasum = shasums_dict.get(filename)
 
-            # If shasum is not found, print a warning message and continue with the next asset
-            if not shasum:
-                print(f"File {filename} not found in SHA256SUMS or has an invalid entry. Skipping platform creation.")
+            # Calculate the SHA-256 hash of the downloaded file
+            downloaded_file = downloaded_files.get(filename)
+            if downloaded_file is None:
+                print(f"No downloaded file found for {filename}, skipping platform creation.")
+                continue
+
+            calculated_sha256_hash = hashlib.sha256(downloaded_file).hexdigest()
+
+            # Get the expected SHA-256 hash from the SHA256SUMS file
+            expected_sha256_hash = shasums_dict.get(filename)
+
+            # If the expected SHA-256 hash is not found in the SHA256SUMS file, print a warning message and continue with the next asset
+            if not expected_sha256_hash:
+                print(f"File {filename} not found in SHA256SUMS. Skipping platform creation.")
+                continue
+
+            # If the calculated hash does not match the expected hash, print a warning message and continue with the next asset
+            if calculated_sha256_hash != expected_sha256_hash:
+                print(f"SHA-256 hash mismatch for {filename}. Expected: {expected_sha256_hash}, Calculated: {calculated_sha256_hash}. Skipping platform creation.")
                 continue
 
             # Define the request URL and data
@@ -273,7 +301,7 @@ def create_provider_platform(shasums_dict, assets):
                     "attributes": {
                         "os": os_name,
                         "arch": arch_name,
-                        "shasum": shasum,
+                        "shasum": expected_sha256_hash,
                         "filename": filename
                     }
                 }
@@ -284,6 +312,7 @@ def create_provider_platform(shasums_dict, assets):
             print(f"Platform for {os_name} {arch_name} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
+
 
 
 
