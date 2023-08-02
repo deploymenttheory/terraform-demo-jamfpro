@@ -9,14 +9,20 @@ terraform_token = "9EujQ50Ybc3GSQ.atlasv1.S3zPYcoTUTeW3ZLs75oaAQykghDTZbqebLGhUT
 # GitHub API tokengpg --armor --export 3AA5C34371567BD2
 github_token = "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"
 
-# Organization and provider details
-organization = "deploymenttheory"
+# Organization details for github and for terraform
+tf_organization = "deploymenttheory"
+
+# terraform provider name
 provider_name = "jamfpro"
+
+# GitHub repository details and paths to the files
+github_repo = "terraform-provider-jamfpro"
+github_organization = "deploymenttheory"
 
 # release version. used for github release tag lookup and up terraform provider upload.
 version = "10.48.0"
 
-# GitHub repository details and paths to the files
+
 github_repo = "deploymenttheory/terraform-provider-jamfpro"
 
 # GPG signing key (ASCII-armored representation of a public GPG key)
@@ -77,20 +83,20 @@ def handle_response(response, skip_gpg_error=False):
 
 # Use the GitHub API to get the release by tag
 def get_release_by_tag():
-    url = f"https://api.github.com/repos/{github_repo}/releases/tags/v{version}"
+    url = f"https://api.github.com/repos/{github_organization}/{github_repo}/releases/tags/v{version}"
     response = requests.get(url, headers=github_headers)
     handle_response(response)
     return response.json()["assets"]
 
 # Create a Provider
 def create_provider():
-    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers"
+    url = f"https://app.terraform.io/api/v2/organizations/{tf_organization}/registry-providers"
     data = {
         "data": {
             "type": "registry-providers",
             "attributes": {
                 "name": provider_name,
-                "namespace": organization,
+                "namespace": tf_organization,
                 "registry-name": "private"
             }
         }
@@ -104,13 +110,13 @@ def create_provider():
 
 # Get gpg key id if one already exists.
 def get_gpg_keys():
-    url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys?filter%5Bnamespace%5D={organization}"
+    url = f"https://app.terraform.io/api/registry/private/v2/gpg-keys?filter%5Bnamespace%5D={tf_organization}"
     response = requests.get(url, headers=terraform_headers)
     handle_response(response)
 
     gpg_keys = response.json()["data"]
     for gpg_key in gpg_keys:
-        if gpg_key["attributes"]["namespace"] == organization:
+        if gpg_key["attributes"]["namespace"] == tf_organization:
             return gpg_key["attributes"]["key-id"]
 
     return None
@@ -123,7 +129,7 @@ def add_gpg_key():
         "data": {
             "type": "gpg-keys",
             "attributes": {
-                "namespace": organization,
+                "namespace": tf_organization,
                 "ascii-armor": public_gpg_key,
             }
         }
@@ -146,7 +152,7 @@ def add_gpg_key():
 
 # Create a Provider Version
 def create_provider_version(key_id):
-    url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions"
+    url = f"https://app.terraform.io/api/v2/organizations/{tf_organization}/registry-providers/private/{tf_organization}/{provider_name}/versions"
     data = {
         "data": {
             "type": "registry-provider-versions",
@@ -175,26 +181,35 @@ def download_asset(asset_url):
     return content, decoded_content
 
 
-# Download and parse SHA256SUMS to get the file names and shasums
-def download_and_parse_sha256sums(assets):
+# Download SHA256SUMS and SHA256SUMS.sig. parse SHA256SUMS to get the file names and shasums
+def download_sha256sums_and_sig(assets):
+    sha256sums = None
+    sha256sums_sig = None
+    sha256sums_dict = None
+
     for asset in assets:
-        if asset["name"] == "SHA256SUMS":
+        if asset["name"] == f"terraform-provider-jamfpro_{version}_SHA256SUMS":
             sha256sums, sha256sums_decoded = download_asset(asset["browser_download_url"])
-            break
-    else:
+            sha256sums_dict = dict(re.findall(r"(\w+)\s+(\w+_\w+_\w+\.zip)", sha256sums_decoded))
+        elif asset["name"] == f"terraform-provider-jamfpro_{version}_SHA256SUMS.sig":
+            sha256sums_sig, _ = download_asset(asset["browser_download_url"])
+
+    if sha256sums is None or sha256sums_dict is None:
         print("SHA256SUMS file not found in the release assets.")
         exit(1)
+        
+    if sha256sums_sig is None:
+        print("SHA256SUMS.sig file not found in the release assets.")
+        exit(1)
 
-    shasums_dict = dict(re.findall(r"(\w+)\s+(\w+_\w+_\w+\.zip)", sha256sums_decoded))
-    return sha256sums, sha256sums_decoded, shasums_dict
+    return sha256sums, sha256sums_sig, sha256sums_dict
+
 
 # Upload SHA256SUMS and SHA256SUMS.sig
-def upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url):
+def upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url):
     print(f"SHA256SUMS upload URL: {sha256sums_upload_url}")
     print(f"SHA256SUMS.sig upload URL: {sha256sums_sig_upload_url}")
 
-    sha256sums, _ = download_asset(sha256sums_upload_url)
-    sha256sums_sig, _ = download_asset(sha256sums_sig_upload_url)
     response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
     handle_response(response)
     print("SHA256SUMS uploaded.")
@@ -205,6 +220,7 @@ def upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url):
 
 # Create a Provider Platform
 def create_provider_platform(shasums_dict, assets):
+    platform_upload_urls = {}
     # Iterate over each asset (binary file)
     for asset in assets:
         # We are interested in the .zip files
@@ -220,7 +236,7 @@ def create_provider_platform(shasums_dict, assets):
                 continue
 
             # Define the request URL and data
-            url = f"https://app.terraform.io/api/v2/organizations/{organization}/registry-providers/private/{organization}/{provider_name}/versions/{version}/platforms"
+            url = f"https://app.terraform.io/api/v2/organizations/{tf_organization}/registry-providers/private/{tf_organization}/{provider_name}/versions/{version}/platforms"
             data = {
                 "data": {
                     "type": "registry-provider-platforms",
@@ -236,21 +252,26 @@ def create_provider_platform(shasums_dict, assets):
             response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
             handle_response(response)
             print(f"Platform for {os_name} {arch_name} created.")
-            return response.json()["data"]["links"]["provider-binary-upload"]
+            platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
+    return platform_upload_urls
 
 # Upload Platform Binary
-def upload_platform_binary(platform_binary_upload_url, assets):
+def upload_platform_binary(assets, platform_upload_urls):
     # Iterate over each asset (binary file)
     for asset in assets:
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Download the binary file from GitHub
             binary_file, _ = download_asset(asset["browser_download_url"])
+            # Get the correct upload URL for this platform
+            platform_binary_upload_url = platform_upload_urls.get(asset["name"])
+            if not platform_binary_upload_url:
+                print(f"No upload URL found for {asset['name']}, skipping...")
+                continue
             # Upload the binary file to the platform_binary_upload_url
             response = requests.put(platform_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=binary_file)
             handle_response(response)
             print(f"Binary file {asset['name']} uploaded.")
-
 
 def main():
     assets = get_release_by_tag()
@@ -261,11 +282,16 @@ def main():
         key_id = add_gpg_key()
 
     sha256sums_upload_url, sha256sums_sig_upload_url = create_provider_version(key_id)
-    upload_sha256sums_and_sig(sha256sums_upload_url, sha256sums_sig_upload_url)
-    shasums_dict = download_and_parse_sha256sums(assets)
-    platform_binary_upload_url = create_provider_platform(shasums_dict, assets)
-    upload_platform_binary(platform_binary_upload_url, assets)
+    
+    sha256sums, sha256sums_sig, shasums_dict = download_sha256sums_and_sig(assets)
+
+    upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url)
+    
+    platform_upload_urls = create_provider_platform(shasums_dict, assets)
+    
+    upload_platform_binary(assets, platform_upload_urls)
 
 
 if __name__ == "__main__":
     main()
+
