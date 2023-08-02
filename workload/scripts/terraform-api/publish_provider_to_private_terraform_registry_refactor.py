@@ -273,12 +273,15 @@ def create_provider_platform(sha256sums_dict, assets):
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
                 print("Failed regex: " + r".*_\d+\.\d+\.\d+_(\w+)_.*\.zip$" + " or " + r".*_\d+\.\d+\.\d+_\w+_(\w+)\.zip$")
                 continue
-            print(f"OS Name for asset is : {os_name}")
+            
             os_name = os_match.group(1)
-            print(f"OS Architecture for asset is : {os_name}")
+            print(f"OS Name for asset is : {os_name}")
+            
             arch_name = arch_match.group(1)
-            print(f"Asset name is : {filename}")
+            print(f"OS Architecture for asset is : {arch_name}")
+
             filename = asset["name"]
+            print(f"Asset name is : {filename}")
 
             # Calculate the SHA-256 hash of the downloaded file
             downloaded_file = downloaded_files.get(filename)
