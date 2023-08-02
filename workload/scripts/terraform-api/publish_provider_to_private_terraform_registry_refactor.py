@@ -239,21 +239,19 @@ def create_provider_platform(shasums_dict, assets):
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Extract os_name and arch_name from the filename
-            match = re.search(r".*_([^_]+)_([^_]+)\.zip$", asset["name"])
+            match = re.search(r".*_(\w+)_(\w+)\.zip$", asset["name"])
             if match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
-                print("Failed regex: " + r".*_(\w+)_\w+\.zip$")
+                print("Failed regex: " + r".*_(\w+)_(\w+)\.zip$")
                 continue
             os_name, arch_name = match.groups()
 
             filename = asset["name"]
-            print(f"Checking filename: {filename}")  # Add this line
             shasum = shasums_dict.get(filename)
 
             # If shasum is not found, print a warning message and continue with the next asset
             if not shasum:
                 print(f"File {filename} not found in SHA256SUMS or has an invalid entry. Skipping platform creation.")
-                print(f"SHA256SUMS dict: {shasums_dict}")  # Add this line
                 continue
 
             # Define the request URL and data
