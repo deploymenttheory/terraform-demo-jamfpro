@@ -235,7 +235,12 @@ def create_provider_platform(shasums_dict, assets):
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Extract os_name and arch_name from the filename
-            os_name, arch_name = re.findall(r"_(\w+)_", asset["name"])
+            match = re.search(r"_(\w+)_\w+_(\w+)\.zip$", asset["name"])
+            if match is None:
+                print(f"Unexpected filename format for {asset['name']}, skipping...")
+                continue
+            os_name, arch_name = match.groups()
+
             filename = asset["name"]
             shasum = shasums_dict.get(filename)
 
@@ -263,6 +268,7 @@ def create_provider_platform(shasums_dict, assets):
             print(f"Platform for {os_name} {arch_name} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
+
 
 # Upload Platform Binary
 def upload_platform_binary(assets, platform_upload_urls):
