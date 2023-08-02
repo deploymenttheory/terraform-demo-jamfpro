@@ -190,7 +190,6 @@ downloaded_files = {}
 
 # Download an asset from GitHub
 def download_asset(asset_url):
-    print("#-----------------------------------------------------------#")
     print(f"Downloading asset from URL: {asset_url}")
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
