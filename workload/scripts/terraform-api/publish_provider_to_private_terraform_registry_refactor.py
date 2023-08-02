@@ -432,7 +432,7 @@ def main():
     
     upload_platform_binary(assets, platform_upload_urls)
     
-    upload_json_assets(assets, platform_upload_urls)  # New function to upload json files
+    #upload_json_assets(assets, platform_upload_urls)  # New function to upload json files
 
 
 if __name__ == "__main__":
