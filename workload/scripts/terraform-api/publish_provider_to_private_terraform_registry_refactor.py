@@ -207,7 +207,7 @@ def download_asset(asset_url):
     return content, decoded_content
 
 
-# Download SHA256SUMS and SHA256SUMS.sig. parse SHA256SUMS to get the file names and shasums
+# Download SHA256SUMS and SHA256SUMS.sig. parse SHA256SUMS to get the file names and shasums and put them into a dictionary
 def download_sha256sums_and_sig(assets):
     sha256sums = None
     sha256sums_sig = None
@@ -231,7 +231,13 @@ def download_sha256sums_and_sig(assets):
         print("SHA256SUMS.sig file not found in the release assets.")
         exit(1)
 
+    # Print the contents of sha256sums_dict
+    print("Contents of sha256sums_dict:")
+    for k, v in sha256sums_dict.items():
+        print(f"{k}: {v}")
+
     return sha256sums, sha256sums_sig, sha256sums_dict
+
 
 # Download zip assets from GitHub
 def download_zip_assets(assets):
@@ -312,8 +318,6 @@ def create_provider_platform(sha256sums_dict, assets):
             print(f"Platform for {os_name} {arch_name} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
-
-
 
 
 # Upload Platform Binary
