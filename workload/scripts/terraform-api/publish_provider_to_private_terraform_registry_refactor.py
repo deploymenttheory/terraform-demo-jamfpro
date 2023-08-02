@@ -242,7 +242,7 @@ def create_provider_platform(shasums_dict, assets):
             match = re.search(r"_(\w+)_\w+_(\w+)_\w+\.zip$", asset["name"])
             if match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
-                print(f"Failed regex: {r'_(\w+)_\w+_(\w+)_\w+\.zip$'}")
+                print("Failed regex: " + r"_(\w+)_\w+_(\w+)_\w+\.zip$")
                 continue
             os_name, arch_name = match.groups()
 
