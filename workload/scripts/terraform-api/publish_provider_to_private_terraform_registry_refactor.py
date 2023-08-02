@@ -88,7 +88,7 @@ def get_release_by_tag():
     handle_response(response)
     assets = response.json()["assets"]
     for asset in assets:
-        print(f"Downloading Asset with name: {asset['name']}")
+        print(f"Downloading GitHub Release Asset: {asset['name']}")
     return assets
 
 
@@ -239,10 +239,10 @@ def create_provider_platform(shasums_dict, assets):
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Extract os_name and arch_name from the filename
-            match = re.search(r"_(\w+)_\w+_(\w+)_\w+\.zip$", asset["name"])
+            match = re.search(r".*_(\w+)_\w+_(\w+)_\w+\.zip$", asset["name"])
             if match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
-                print("Failed regex: " + r"_(\w+)_\w+_(\w+)_\w+\.zip$")
+                print("Failed regex: " + r".*_(\w+)_\w+_(\w+)_\w+\.zip$")
                 continue
             os_name, arch_name = match.groups()
 
