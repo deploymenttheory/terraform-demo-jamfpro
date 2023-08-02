@@ -220,6 +220,12 @@ def download_sha256sums_and_sig(assets):
 
     return sha256sums, sha256sums_sig, sha256sums_dict
 
+# Download zip assets from GitHub
+def download_zip_assets(assets):
+    for asset in assets:
+        if asset["name"].endswith(".zip"):
+            download_asset(asset["browser_download_url"])
+
 
 # Upload SHA256SUMS and SHA256SUMS.sig
 def upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url):
@@ -325,13 +331,13 @@ def main():
     sha256sums_upload_url, sha256sums_sig_upload_url = create_provider_version(key_id)
     
     sha256sums, sha256sums_sig, shasums_dict = download_sha256sums_and_sig(assets)
+    download_zip_assets(assets)  # Download zip files
 
     upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url)
     
     platform_upload_urls = create_provider_platform(shasums_dict, assets)
     
     upload_platform_binary(assets, platform_upload_urls)
-
 
 if __name__ == "__main__":
     main()
