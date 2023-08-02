@@ -166,7 +166,6 @@ def add_gpg_key():
         exit(1)
 
 
-
 # Create a Provider Version
 def create_provider_version(key_id):
     url = f"https://app.terraform.io/api/v2/organizations/{tf_organization}/registry-providers/private/{tf_organization}/{provider_name}/versions"
@@ -191,6 +190,7 @@ downloaded_files = {}
 
 # Download an asset from GitHub
 def download_asset(asset_url):
+    print("#-----------------------------------------------------------#")
     print(f"Downloading asset from URL: {asset_url}")
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
@@ -232,6 +232,7 @@ def download_sha256sums_and_sig(assets):
         exit(1)
 
     # Print the contents of sha256sums_dict
+    print("#-----------------------------------------------------------#")
     print("Contents of sha256sums_dict:")
     for k, v in sha256sums_dict.items():
         print(f"{k}: {v}")
@@ -323,6 +324,7 @@ def create_provider_platform(sha256sums_dict, assets):
 # Upload Platform Binary
 def upload_platform_binary(assets, platform_upload_urls):
     # Print overview of downloaded files
+    print("#-----------------------------------------------------------#")
     print("Files in memory:")
     for filename, content in downloaded_files.items():
         print(f"{filename}: {len(content)} bytes")
