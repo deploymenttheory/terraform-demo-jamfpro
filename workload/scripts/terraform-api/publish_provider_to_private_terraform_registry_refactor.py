@@ -199,7 +199,7 @@ def download_sha256sums_and_sig(assets):
             if isinstance(sha256sums_decoded, str) and "Error" in sha256sums_decoded:
                 print(sha256sums_decoded)
                 exit(1)
-            sha256sums_dict = dict(re.findall(r"_(\w+)_\w+_\w+\.zip$", sha256sums_decoded))
+            sha256sums_dict = dict(re.findall(r"(\S+)\s+(\S+)", sha256sums_decoded))
         elif asset["name"] == f"{github_repo}_{version}_SHA256SUMS.sig":
             sha256sums_sig, _ = download_asset(asset["browser_download_url"])
 
