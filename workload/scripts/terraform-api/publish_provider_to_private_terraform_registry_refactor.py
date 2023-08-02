@@ -86,13 +86,14 @@ def handle_response(response, skip_gpg_error=False):
         response.raise_for_status()
     except requests.exceptions.HTTPError as err:
         if skip_gpg_error and "GPG key already exists for namespace" in response.text:
-            print("Skipping GPG key creation: GPG key already exists for namespace.")
+            ColorPrint.print_yellow("Skipping GPG key creation: GPG key already exists for namespace.")
         else:
-            print(f"HTTP error occurred: {err}")
-            print(f"Response headers: {response.headers}")
-            print(f"Response content: {response.content}")
-            print(response.text)  # print the response body
+            ColorPrint.print_red(f"HTTP error occurred: {err}")
+            ColorPrint.print_red(f"Response headers: {response.headers}")
+            ColorPrint.print_red(f"Response content: {response.content}")
+            ColorPrint.print_red(response.text)  # print the response body
             exit(1)
+
 
 # Use the GitHub API to get the release by tag
 def get_release_by_tag():
@@ -120,10 +121,10 @@ def create_provider():
     }
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
     if "Name has already been taken" in response.text:
-        print(f"Provider with name {provider_name} already exists in the namespace. Skipping provider creation.")
+        ColorPrint.print_yellow(f"Provider with name {provider_name} already exists in the namespace. Skipping provider creation.")
     else:
         handle_response(response)
-        print(f"Terraform Provider {provider_name} created.")
+        ColorPrint.print_green(f"Terraform Provider {provider_name} created.")
 
 # Get gpg key id if one already exists.
 def get_gpg_keys():
@@ -155,14 +156,14 @@ def add_gpg_key():
     handle_response(response, skip_gpg_error=True)
     response_json = response.json()
     if 'errors' in response_json:
-        print("GPG key already exists, skipping...")
+        ColorPrint.print_yellow("GPG key already exists, skipping...")
         return None
     elif 'data' in response_json:
         key_id = response_json["data"]["id"]
-        print("GPG key added.")
+        ColorPrint.print_green("GPG key added.")
         return key_id
     else:
-        print("Unexpected response when adding GPG key: ", response_json)
+        ColorPrint.print_red("Unexpected response when adding GPG key: ", response_json)
         exit(1)
 
 
@@ -182,7 +183,7 @@ def create_provider_version(key_id):
         data["data"]["attributes"]["key-id"] = key_id
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
     handle_response(response)
-    print(f"Provider version {version} created.")
+    ColorPrint.print_green(f"Provider version {version} created.")
     return response.json()["data"]["links"]["shasums-upload"], response.json()["data"]["links"]["shasums-sig-upload"]
 
 # Dictionary to store downloaded files
@@ -223,11 +224,11 @@ def download_sha256sums_and_sig(assets):
             sha256sums_sig, _ = download_asset(asset["browser_download_url"])
 
     if sha256sums is None or sha256sums_dict is None:
-        print("SHA256SUMS file not found in the release assets.")
+        ColorPrint.print_red("SHA256SUMS file not found in the release assets.")
         exit(1)
 
     if sha256sums_sig is None:
-        print("SHA256SUMS.sig file not found in the release assets.")
+        ColorPrint.print_red("SHA256SUMS.sig file not found in the release assets.")
         exit(1)
 
     return sha256sums, sha256sums_sig, sha256sums_dict
@@ -247,10 +248,10 @@ def upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url,
 
     response = requests.put(sha256sums_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums)
     handle_response(response)
-    print("SHA256SUMS uploaded.")
+    ColorPrint.print_green(f"SHA256SUMS from github release {version} uploaded to Terraform Cloud.")
     response = requests.put(sha256sums_sig_upload_url, headers={"Content-Type": "application/octet-stream"}, data=sha256sums_sig)
     handle_response(response)
-    print("SHA256SUMS.sig uploaded.")
+    ColorPrint.print_green(f"SHA256SUMS.sig from github release {version} uploaded to Terraform Cloud.")
 
 
 # Create a Provider Platform
@@ -268,14 +269,14 @@ def create_provider_platform(sha256sums_dict, assets):
                 print("Failed regex: " + r".*_\d+\.\d+\.\d+_(\w+)_.*\.zip$" + " or " + r".*_\d+\.\d+\.\d+_\w+_(\w+)\.zip$")
                 continue
             
+            filename = asset["name"]
+            print(f"Asset name is : {filename}")
+
             os_name = os_match.group(1)
             print(f"OS Name for asset is : {os_name}")
             
             arch_name = arch_match.group(1)
             print(f"OS Architecture for asset is : {arch_name}")
-
-            filename = asset["name"]
-            print(f"Asset name is : {filename}")
 
             # Calculate the SHA-256 hash of the downloaded file
             downloaded_file = downloaded_files.get(filename)
@@ -318,7 +319,7 @@ def create_provider_platform(sha256sums_dict, assets):
             # Send a POST request to create the platform
             response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
             handle_response(response)
-            print(f"Platform for {os_name} {arch_name} created.")
+            ColorPrint.print_green(f"Platform {os_name} & {arch_name} for {filename} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
 
@@ -327,8 +328,7 @@ def create_provider_platform(sha256sums_dict, assets):
 # Upload Platform Binary
 def upload_platform_binary(assets, platform_upload_urls):
     # Print overview of downloaded files
-    print("#-----------------------------------------------------------#")
-    print("Files in memory:")
+    # print("Files in memory:")
     for filename, content in downloaded_files.items():
         print(f"{filename}: {len(content)} bytes")
 
@@ -354,8 +354,44 @@ def upload_platform_binary(assets, platform_upload_urls):
             # Upload the binary file to the platform_binary_upload_url
             response = requests.put(platform_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=binary_file)
             handle_response(response)
-            print(f"Binary file {asset['name']} uploaded.")
+            ColorPrint.print_green(f"Binary file {asset['name']} uploaded.")
 
+
+class ColorPrint:
+    """
+    The ColorPrint class provides static methods for printing text in different colors. It uses ANSI escape sequences to set the text color.
+    """
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    CYAN = '\033[96m'
+    END = '\033[0m'
+
+    @staticmethod
+    def print_red(text, flush=False):
+        print(f"{ColorPrint.RED}{text}{ColorPrint.END}", flush=flush)
+
+    @staticmethod
+    def print_green(text, flush=False):
+        print(f"{ColorPrint.GREEN}{text}{ColorPrint.END}", flush=flush)
+
+    @staticmethod
+    def print_yellow(text, flush=False):
+        print(f"{ColorPrint.YELLOW}{text}{ColorPrint.END}", flush=flush)
+
+    @staticmethod
+    def print_blue(text, flush=False):
+        print(f"{ColorPrint.BLUE}{text}{ColorPrint.END}", flush=flush)
+
+    @staticmethod
+    def print_magenta(text, flush=False):
+        print(f"{ColorPrint.MAGENTA}{text}{ColorPrint.END}", flush=flush)
+
+    @staticmethod
+    def print_cyan(text, flush=False):
+        print(f"{ColorPrint.CYAN}{text}{ColorPrint.END}", flush=flush)
 
 
 def main():
