@@ -267,15 +267,17 @@ def create_provider_platform(sha256sums_dict, assets):
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Extract os_name and arch_name from the filename
-            os_match = re.search(r".*_(\w+)_.*\.zip$", asset["name"])
-            arch_match = re.search(r".*_.*_(\w+)\.zip$", asset["name"])
+            os_match = re.search(r".*_\d+\.\d+\.\d+_(\w+)_.*\.zip$", asset["name"])
+            arch_match = re.search(r".*_\d+\.\d+\.\d+_\w+_(\w+)\.zip$", asset["name"])
             if os_match is None or arch_match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
-                print("Failed regex: " + r".*_(\w+)_.*\.zip$" + " or " + r".*_.*_(\w+)\.zip$")
+                print("Failed regex: " + r".*_\d+\.\d+\.\d+_(\w+)_.*\.zip$" + " or " + r".*_\d+\.\d+\.\d+_\w+_(\w+)\.zip$")
                 continue
+            print(f"OS Name for asset is : {os_name}")
             os_name = os_match.group(1)
+            print(f"OS Architecture for asset is : {os_name}")
             arch_name = arch_match.group(1)
-
+            print(f"Asset name is : {filename}")
             filename = asset["name"]
 
             # Calculate the SHA-256 hash of the downloaded file
@@ -288,6 +290,10 @@ def create_provider_platform(sha256sums_dict, assets):
 
             # Get the expected SHA-256 hash from the SHA256SUMS file
             expected_sha256_hash = sha256sums_dict.get(filename)
+
+            # Print out what's being compared
+            print(f"Expected SHA-256 hash for {filename}: {expected_sha256_hash}")
+            print(f"Calculated SHA-256 hash for {filename}: {calculated_sha256_hash}")
 
             # If the expected SHA-256 hash is not found in the SHA256SUMS file, print a warning message and continue with the next asset
             if not expected_sha256_hash:
@@ -318,6 +324,7 @@ def create_provider_platform(sha256sums_dict, assets):
             print(f"Platform for {os_name} {arch_name} created.")
             platform_upload_urls[filename] = response.json()["data"]["links"]["provider-binary-upload"]
     return platform_upload_urls
+
 
 
 # Upload Platform Binary
