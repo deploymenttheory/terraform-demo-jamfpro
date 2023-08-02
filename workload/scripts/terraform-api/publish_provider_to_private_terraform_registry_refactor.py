@@ -289,14 +289,14 @@ def create_provider_platform(sha256sums_dict, assets):
                 print(f"No downloaded file found for {filename}, skipping platform creation.")
                 continue
 
+
             calculated_sha256_hash = hashlib.sha256(downloaded_file).hexdigest()
+            print(f"Calculated SHA-256 hash for {filename}: {calculated_sha256_hash}")
 
             # Get the expected SHA-256 hash from the SHA256SUMS file
-            expected_sha256_hash = sha256sums_dict.get(filename)
-
-            # Print out what's being compared
+            reversed_dict = {v: k for k, v in sha256sums_dict.items()}
+            expected_sha256_hash = reversed_dict.get(filename)
             print(f"Expected SHA-256 hash for {filename}: {expected_sha256_hash}")
-            print(f"Calculated SHA-256 hash for {filename}: {calculated_sha256_hash}")
 
             # If the expected SHA-256 hash is not found in the SHA256SUMS file, print a warning message and continue with the next asset
             if not expected_sha256_hash:
