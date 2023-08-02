@@ -173,12 +173,17 @@ def create_provider_version(key_id):
     print("Provider version created.")
     return response.json()["data"]["links"]["shasums-upload"], response.json()["data"]["links"]["shasums-sig-upload"]
 
+# Dictionary to store downloaded files
+downloaded_files = {}
+
 # Download an asset from GitHub
 def download_asset(asset_url):
     print(f"Downloading asset from URL: {asset_url}")
     response = requests.get(asset_url, headers=github_headers)
     handle_response(response)
     content = response.content
+    # Add the content to the downloaded_files dictionary
+    downloaded_files[asset_url.split('/')[-1]] = content
     decoded_content = None
     # Parse SHA256SUMS from release for all release file names
     if asset_url.endswith("_SHA256SUMS"):
@@ -187,8 +192,6 @@ def download_asset(asset_url):
         except Exception as e:
             print(f"Error decoding asset: {str(e)}")
     return content, decoded_content
-
-
 
 
 # Download SHA256SUMS and SHA256SUMS.sig. parse SHA256SUMS to get the file names and shasums
@@ -277,25 +280,38 @@ def create_provider_platform(shasums_dict, assets):
     return platform_upload_urls
 
 
+
 # Upload Platform Binary
 def upload_platform_binary(assets, platform_upload_urls):
+    # Print overview of downloaded files
+    print("Files in memory:")
+    for filename, content in downloaded_files.items():
+        print(f"{filename}: {len(content)} bytes")
+
     # Iterate over each asset (binary file)
     for asset in assets:
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
-            # Download the binary file from GitHub
-            binary_file, _ = download_asset(asset["browser_download_url"])
+            # Get the binary file from the downloaded_files dictionary
+            binary_file = downloaded_files.get(asset["name"])
+            if binary_file is None:
+                print(f"No downloaded file found for {asset['name']}, skipping...")
+                continue
+
             # Get the correct upload URL for this platform
             platform_binary_upload_url = platform_upload_urls.get(asset["name"])
             if not platform_binary_upload_url:
                 print(f"No upload URL found for {asset['name']}, skipping...")
                 continue
+
             # Print the URL before uploading the binary file
             print(f"Uploading {asset['name']} to URL: {platform_binary_upload_url}")
+
             # Upload the binary file to the platform_binary_upload_url
             response = requests.put(platform_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=binary_file)
             handle_response(response)
             print(f"Binary file {asset['name']} uploaded.")
+
 
 
 def main():
