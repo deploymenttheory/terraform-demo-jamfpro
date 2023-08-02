@@ -23,7 +23,7 @@ github_organization = "deploymenttheory"
 version = "10.48.0"
 
 
-github_repo = "deploymenttheory/terraform-provider-jamfpro"
+#github_repo = "deploymenttheory/terraform-provider-jamfpro"
 
 # GPG signing key (ASCII-armored representation of a public GPG key)
 public_gpg_key = """
@@ -188,10 +188,10 @@ def download_sha256sums_and_sig(assets):
     sha256sums_dict = None
 
     for asset in assets:
-        if asset["name"] == f"terraform-provider-jamfpro_{version}_SHA256SUMS":
+        if asset["name"] == f"{github_repo}_{version}_SHA256SUMS":
             sha256sums, sha256sums_decoded = download_asset(asset["browser_download_url"])
             sha256sums_dict = dict(re.findall(r"(\w+)\s+(\w+_\w+_\w+\.zip)", sha256sums_decoded))
-        elif asset["name"] == f"terraform-provider-jamfpro_{version}_SHA256SUMS.sig":
+        elif asset["name"] == f"{github_repo}_{version}_SHA256SUMS.sig":
             sha256sums_sig, _ = download_asset(asset["browser_download_url"])
 
     if sha256sums is None or sha256sums_dict is None:
