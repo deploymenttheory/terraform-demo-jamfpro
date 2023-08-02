@@ -88,7 +88,7 @@ def get_release_by_tag():
     handle_response(response)
     assets = response.json()["assets"]
     for asset in assets:
-        print(f"Asset name: {asset['name']}")
+        print(f"Downloading Asset with name: {asset['name']}")
     return assets
 
 
@@ -110,7 +110,7 @@ def create_provider():
         print("Provider with this name already exists in the namespace. Skipping provider creation.")
     else:
         handle_response(response)
-        print("Provider created.")
+        print("Terraform Provider created.")
 
 # Get gpg key id if one already exists.
 def get_gpg_keys():
