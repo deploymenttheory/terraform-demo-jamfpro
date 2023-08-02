@@ -88,7 +88,7 @@ def get_release_by_tag():
     handle_response(response)
     assets = response.json()["assets"]
     for asset in assets:
-        print(f"Populating asset list with release asset: {asset['name']}")
+        print(f"GitHub Release contains asset: {asset['name']}")
     return assets
 
 
