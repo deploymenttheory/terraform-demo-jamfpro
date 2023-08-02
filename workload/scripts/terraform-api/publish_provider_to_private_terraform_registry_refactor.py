@@ -120,10 +120,10 @@ def create_provider():
     }
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data))
     if "Name has already been taken" in response.text:
-        print("Provider with this name already exists in the namespace. Skipping provider creation.")
+        print(f"Provider with name {provider_name} already exists in the namespace. Skipping provider creation.")
     else:
         handle_response(response)
-        print("Terraform Provider created.")
+        print(f"Terraform Provider {provider_name} created.")
 
 # Get gpg key id if one already exists.
 def get_gpg_keys():
@@ -182,7 +182,7 @@ def create_provider_version(key_id):
         data["data"]["attributes"]["key-id"] = key_id
     response = requests.post(url, headers=terraform_headers, data=json.dumps(data), timeout=30)
     handle_response(response)
-    print("Provider version created.")
+    print(f"Provider version {version} created.")
     return response.json()["data"]["links"]["shasums-upload"], response.json()["data"]["links"]["shasums-sig-upload"]
 
 # Dictionary to store downloaded files
@@ -229,12 +229,6 @@ def download_sha256sums_and_sig(assets):
     if sha256sums_sig is None:
         print("SHA256SUMS.sig file not found in the release assets.")
         exit(1)
-
-    # Print the contents of sha256sums_dict
-    print("#-----------------------------------------------------------#")
-    print("Contents of sha256sums_dict:")
-    for k, v in sha256sums_dict.items():
-        print(f"{k}: {v}")
 
     return sha256sums, sha256sums_sig, sha256sums_dict
 
