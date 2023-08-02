@@ -239,12 +239,14 @@ def create_provider_platform(shasums_dict, assets):
         # We are interested in the .zip files
         if asset["name"].endswith(".zip"):
             # Extract os_name and arch_name from the filename
-            match = re.search(r".*_(\w+)_(\w+)\.zip$", asset["name"])
-            if match is None:
+            os_match = re.search(r".*_(\w+)_.*\.zip$", asset["name"])
+            arch_match = re.search(r".*_.*_(\w+)\.zip$", asset["name"])
+            if os_match is None or arch_match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
-                print("Failed regex: " + r".*_(\w+)_(\w+)\.zip$")
+                print("Failed regex: " + r".*_(\w+)_.*\.zip$" + " or " + r".*_.*_(\w+)\.zip$")
                 continue
-            os_name, arch_name = match.groups()
+            os_name = os_match.group(1)
+            arch_name = arch_match.group(1)
 
             filename = asset["name"]
             shasum = shasums_dict.get(filename)
@@ -288,10 +290,13 @@ def upload_platform_binary(assets, platform_upload_urls):
             if not platform_binary_upload_url:
                 print(f"No upload URL found for {asset['name']}, skipping...")
                 continue
+            # Print the URL before uploading the binary file
+            print(f"Uploading {asset['name']} to URL: {platform_binary_upload_url}")
             # Upload the binary file to the platform_binary_upload_url
             response = requests.put(platform_binary_upload_url, headers={"Content-Type": "application/octet-stream"}, data=binary_file)
             handle_response(response)
             print(f"Binary file {asset['name']} uploaded.")
+
 
 def main():
     assets = get_release_by_tag()
