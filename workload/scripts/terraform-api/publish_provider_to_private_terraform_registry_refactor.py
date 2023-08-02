@@ -86,7 +86,11 @@ def get_release_by_tag():
     url = f"https://api.github.com/repos/{github_organization}/{github_repo}/releases/tags/v{version}"
     response = requests.get(url, headers=github_headers)
     handle_response(response)
-    return response.json()["assets"]
+    assets = response.json()["assets"]
+    for asset in assets:
+        print(f"Asset name: {asset['name']}")
+    return assets
+
 
 # Create a Provider
 def create_provider():
@@ -238,6 +242,7 @@ def create_provider_platform(shasums_dict, assets):
             match = re.search(r"_(\w+)_\w+_(\w+)_\w+\.zip$", asset["name"])
             if match is None:
                 print(f"Unexpected filename format for {asset['name']}, skipping...")
+                print(f"Failed regex: {r'_(\w+)_\w+_(\w+)_\w+\.zip$'}")
                 continue
             os_name, arch_name = match.groups()
 
