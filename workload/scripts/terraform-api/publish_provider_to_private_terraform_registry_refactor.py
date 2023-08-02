@@ -219,7 +219,7 @@ def download_sha256sums_and_sig(assets):
             if isinstance(sha256sums_decoded, str) and "Error" in sha256sums_decoded:
                 print(sha256sums_decoded)
                 exit(1)
-            sha256sums_dict = dict(re.findall(r"(\S+)\s+(\S+)", sha256sums_decoded))
+            sha256sums_dict = dict(re.findall(r"(\S+)\s+(.*)", sha256sums_decoded))
         elif asset["name"] == f"{github_repo}_{version}_SHA256SUMS.sig":
             sha256sums_sig, _ = download_asset(asset["browser_download_url"])
 
@@ -254,7 +254,7 @@ def upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url,
 
 
 # Create a Provider Platform
-def create_provider_platform(shasums_dict, assets):
+def create_provider_platform(sha256sums_dict, assets):
     platform_upload_urls = {}
     # Iterate over each asset (binary file)
     for asset in assets:
@@ -281,7 +281,7 @@ def create_provider_platform(shasums_dict, assets):
             calculated_sha256_hash = hashlib.sha256(downloaded_file).hexdigest()
 
             # Get the expected SHA-256 hash from the SHA256SUMS file
-            expected_sha256_hash = shasums_dict.get(filename)
+            expected_sha256_hash = sha256sums_dict.get(filename)
 
             # If the expected SHA-256 hash is not found in the SHA256SUMS file, print a warning message and continue with the next asset
             if not expected_sha256_hash:
@@ -359,15 +359,14 @@ def main():
 
     sha256sums_upload_url, sha256sums_sig_upload_url = create_provider_version(key_id)
     
-    sha256sums, sha256sums_sig, shasums_dict = download_sha256sums_and_sig(assets)
+    sha256sums, sha256sums_sig, sha256sums_dict = download_sha256sums_and_sig(assets)
     download_zip_assets(assets)  # Download zip files
 
     upload_sha256sums_and_sig(sha256sums, sha256sums_sig, sha256sums_upload_url, sha256sums_sig_upload_url)
     
-    platform_upload_urls = create_provider_platform(shasums_dict, assets)
+    platform_upload_urls = create_provider_platform(sha256sums_dict, assets)
     
     upload_platform_binary(assets, platform_upload_urls)
 
 if __name__ == "__main__":
     main()
-
