@@ -1,13 +1,13 @@
 #---------------- JAMF Pro Buildings ---------------------------#
 
-data "jamf_building" "example" {
+data "jamfpro_building" "example" {
   name = "example"
 }
 
 #---------------- JAMF Pro Categories --------------------------#
-data "jamf_category" "terraform-example" {
+data "jamfpro_category" "terraform-example" {
   name = "terraform-example"
 }
-data "jamf_category" "Security" {
+data "jamfpro_category" "Security" {
   name = "Security"
 }
