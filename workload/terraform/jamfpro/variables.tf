@@ -8,7 +8,7 @@ variable "password" {
   type        = string
 }
 
-variable "url" {
+variable "server_url" {
   description = "This is the JAMF Pro instance for terraform automation. Value should be in the format xxxx.jamfcloud.com"
   type        = string
 }
