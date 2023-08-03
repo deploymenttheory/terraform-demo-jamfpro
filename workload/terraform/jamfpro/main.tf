@@ -10,7 +10,7 @@
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamfpro_category" "category_terraform_test" {
+resource "category" "category_terraform_test" {
   name     = "terraform_test_private"
   priority = 3
 }
@@ -27,7 +27,7 @@ resource "jamfpro_category" "category_terraform_test" {
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamfpro_building" "building_example" {
+resource "building" "building_example" {
   name = "terraform_example1"
 
   street_address1 = "1-1-1"
