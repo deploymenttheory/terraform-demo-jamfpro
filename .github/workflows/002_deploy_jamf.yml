@@ -8,14 +8,14 @@ jobs:
   plan_jamf:
     uses: deploymenttheory/azure-cloud-platform-devops-libraries/.github/workflows/az_tf_plan.yml@main
     with:
-      path: workload/terraform/jamf                               ## Path to terraform root module (Required)
+      path: workload/terraform/jamfpro                            ## Path to terraform root module (Required)
       plan_mode: deploy                                           ## (Optional) Specify plan mode. Valid options are "deploy" or "destroy". Default="deploy"
       tf_version: latest                                          ## Terraform version e.g: 1.1.0 Default=latest (Optional)
       az_resource_group: rg-uks-tf-backend-artifacts              ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
       az_storage_acc: stukscpsstfstate01                          ## AZ backend - AZURE terraform backend storage acc (Required)
       az_container_name: tfstate                                  ## AZ backend - AZURE storage container hosting state files (Required)
       tf_cloud_private_registry: true                             ## State whether terraform is using modules from the terraform cloud private registry. Default is false
-      tf_key: jamf                                                ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required) 
+      tf_key: jamfpro                                             ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required) 
       tf_vars_file: configuration.tfvars                          ## Terraform TFVARS (Required)
       enable_TFSEC: false                                         ## (Optional)  Enable TFSEC IaC scans (Private repo requires GitHub enterprise)
     secrets:
@@ -31,13 +31,13 @@ jobs:
     needs: plan_jamf
     uses: deploymenttheory/azure-cloud-platform-devops-libraries/.github/workflows/az_tf_apply.yml@main
     with:
-      path: workload/terraform/jamf                               ## Path to terraform root module in repo (Required)
+      path: workload/terraform/jamfpro                            ## Path to terraform root module in repo (Required)
       tf_version: latest                                          ## Terraform version e.g: 1.1.0 Default=latest (Optional)
       az_resource_group: rg-uks-tf-backend-artifacts              ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
       az_storage_acc: stukscpsstfstate01                          ## AZ backend - AZURE terraform backend storage acc (Required)
       az_container_name: tfstate                                  ## AZ backend - AZURE storage container hosting state files (Required)
       tf_cloud_private_registry: true                             ## State whether terraform is using modules from the terraform cloud private registry. Default is false
-      tf_key: jamf                                                ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required)
+      tf_key: jamfpro                                                ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required)
       gh_environment: AzureCloudPlatform                          ## GH Environment. Default=null - (Optional)
     secrets:
       arm_client_id: ${{ secrets.ARM_CLIENT_ID }}                 ## ARM Client ID - SP-CPSS-GLBL-ALL-C-02
