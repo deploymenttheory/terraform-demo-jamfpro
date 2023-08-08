@@ -30,7 +30,7 @@ resource "jamf_category" "category_terraform_test" {
 resource "jamf_building" "building_terraform_test" {
   name = "bld-terraform_test-0.0.1-test"
 
-  street_address1 = "1-1-1"
+  street_address1 = "1-2-1"
   street_address2 = "example Building"
   city            = "Shibuya-ku"
   state_province  = "Tokyo"
