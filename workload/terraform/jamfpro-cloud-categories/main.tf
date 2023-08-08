@@ -11,7 +11,7 @@
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_category" "category_terraform_test" {
-  name     = "cat-terraform_test-0.0.1-prod"
+  name     = "cat-terraform_test-0.0.1-test"
   priority = 3
 }
 
@@ -27,8 +27,8 @@ resource "jamf_category" "category_terraform_test" {
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
-resource "jamf_building" "building_example" {
-  name = "example1"
+resource "jamf_building" "building_terraform_test" {
+  name = "bld-terraform_test-0.0.1-test"
 
   street_address1 = "1-1-1"
   street_address2 = "example Building"
