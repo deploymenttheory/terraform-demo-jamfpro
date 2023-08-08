@@ -15,7 +15,7 @@ resource "jamf_category" "category_terraform_test" {
   priority = 3
 }
 
-resource "jamf_category" "category_terraform_test" {
+resource "jamf_category" "category_terraform_test_2" {
   name     = "cat-terraform_test_1-0.0.1-test"
   priority = 3
 }
