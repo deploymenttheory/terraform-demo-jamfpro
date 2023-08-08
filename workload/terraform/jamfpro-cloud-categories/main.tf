@@ -11,7 +11,7 @@
 # - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_category" "category_terraform_test" {
-  name     = "terraform_test"
+  name     = "cat-terraform_test-0.0.1-prod"
   priority = 3
 }
 
