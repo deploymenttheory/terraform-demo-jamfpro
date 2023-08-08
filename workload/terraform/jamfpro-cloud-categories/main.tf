@@ -8,7 +8,7 @@
 #                                                                                                   #
 # RBAC:                                                                                             #
 # Service account requires the following permissions for CRUD operations respectively.              #
-# - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
+# - Jamf Pro Server Objects - Categories - Create / Read / Update / Delete                          #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_category" "category_terraform_test" {
   name     = "cat-terraform_test-0.0.1-prod"
@@ -25,7 +25,7 @@ resource "jamf_category" "category_terraform_test" {
 #                                                                                                   #
 # RBAC:                                                                                             #
 # Service account requires the following permissions for CRUD operations respectively.              #
-# - Jamf Pro Server Objects - Create / Read / Update / Delete                                       #
+# - Jamf Pro Server Objects - Buildings - Create / Read / Update / Delete                           #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_building" "building_terraform_test" {
   name = "bld-terraform_test-0.0.1-test"
@@ -39,7 +39,18 @@ resource "jamf_building" "building_terraform_test" {
 }
 
 #------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
-
+# Behaviour:                                                                                        #
+# - If resource doesn't exist it will be created.                                                   #
+# - If resource gets a new name it will remove the resouce and create a new one with the new name.  #
+# - If the resource attribute is changed, then will keep the resource but update it's attribute.    #
+# - If resource is removed from the code then it will be removed by Terraform.                      #
+# - If resource with the same name already exists, will throw duplicate field error and fail.       #
+#                                                                                                   #
+# RBAC:                                                                                             #
+# Service account requires the following permissions for CRUD operations respectively.              #
+# - Jamf Pro Server Objects - Scripts - Create / Read / Update / Delete                             #
+# - Jamf Pro Server Settings - Cloud distribution point - Read / Update                             #
+#---------------------------------------------------------------------------------------------------#
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   name = "scpt-test-extension-attribute-script"
   script {
