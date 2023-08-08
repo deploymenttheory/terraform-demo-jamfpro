@@ -16,6 +16,7 @@ resource "jamf_category" "category_terraform_test" {
 }
 
 #------------------------------ JAMF Pro Buildings -------------------------------------------------#
+                                                                                                #
 # Behaviour:                                                                                        #
 # - If resource doesn't exist it will be created.                                                   #
 # - If resource gets a new name it will remove the resouce and create a new one with the new name.  #
@@ -38,7 +39,9 @@ resource "jamf_building" "building_terraform_test" {
   country         = "Japan"
 }
 
-#------------------------------ JAMF Pro Computer Extension Attribute -----------------------------#
+#------------------------------ JAMF Pro Computer Extension Attribute ------------------------------#
+# Ref: https://registry.terraform.io/providers/yohan460/jamf/latest/docs/resources/computerComputerExtensionAttribute#inventory_display
+#                                                                                                   #
 # Behaviour:                                                                                        #
 # - If resource doesn't exist it will be created.                                                   #
 # - If resource gets a new name it will remove the resouce and create a new one with the new name.  #
@@ -52,8 +55,22 @@ resource "jamf_building" "building_terraform_test" {
 # - Jamf Pro Server Settings - Cloud distribution point - Read / Update                             #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
-  name = "scpt-test-extension-attribute-script"
+  name = "exat-test-extension-attribute-script"
+  description = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
+  data_type = "string"
+  inventory_display = "Extension Attributes"
   script {
+    enabled = true
     script_contents = file("${path.module}/extension-attributes/Battery Charge.sh")
+  }
+}
+
+resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
+  name = "test-extension-attribute-popup-menu"
+  description = "Jamf Pro Extension Attribute that obtains a string from a pop up menu"
+  data_type = "string"
+  inventory_display = "Extension Attributes"
+  popup_menu {
+    choices = ["choice1", "choice2"]
   }
 }
