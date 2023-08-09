@@ -111,9 +111,11 @@ resource "jamf_smartComputerGroup" "test_smart_1" {
 resource "jamf_smartComputerGroup" "jamf_smartComputerGroup_2" {
   name = "smcg-last_check_in_gt_30_days-0.1-test"
   criteria {
-    priority     = 0
-    name         = "Last Check-in"
-    search_type  = "more than x days ago"
-    search_value = "30"
+    priority      = 0
+    name          = "Last Check-in"
+    search_type   = "more than x days ago"
+    search_value  = "30"
+    opening_paren = true
+    closing_paren = true
   }
 }
