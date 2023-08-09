@@ -82,3 +82,30 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-men
     choices = ["choice1", "choice2"]
   }
 }
+
+#------------------------------ JAMF Pro Smart Computer Group --------------------------------------#
+# Ref: https://registry.terraform.io/providers/yohan460/jamf/latest/docs/resources/smartComputerGroup
+#                                                                                                   #
+# Behaviour:                                                                                        #
+# - If resource doesn't exist it will be created.                                                   #
+# - If resource gets a new name it will remove the resouce and create a new one with the new name.  #
+# - If the resource attribute is changed, then will keep the resource but update it's attribute.    #
+# - If resource is removed from the code then it will be removed by Terraform.                      #
+# - If resource with the same name already exists, will throw duplicate field error and fail.       #
+#                                                                                                   #
+# RBAC:                                                                                             #
+# Service account requires the following permissions for CRUD operations respectively.              #
+# - Jamf Pro Server Objects - Scripts - Create / Read / Update / Delete                             #
+# - Jamf Pro Server Settings - Cloud distribution point - Read / Update                             #
+# - Jamf Pro Server Settings - Extension attributes * 3 - Create / Read / Update / Delete           #
+#---------------------------------------------------------------------------------------------------#
+
+resource "jamf_smartComputerGroup" "test_smart_1" {
+  name = "smcg-has_application_Microsoft_Word-0.1-test"
+  criteria {
+    priority     = 0
+    name         = "Application Title"
+    search_type  = "is"
+    search_value = "Microsoft word"
+  }
+}
