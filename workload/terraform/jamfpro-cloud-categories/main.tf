@@ -56,7 +56,7 @@ resource "jamf_building" "building_terraform_test" {
 # - Jamf Pro Server Settings - Extension attributes * 3 - Create / Read / Update / Delete           #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
-  name              = "exat-test-extension-attribute-script"
+  name              = "exat-battery_charge-0.0.1-test"
   description       = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
   data_type         = "String"               # Can be "String", "Integer", "Date"
   inventory_display = "Extension Attributes" # Can be "General", "Hardware", "Operating System", "User and Location", "Purchasing", "Extension Attributes"
@@ -69,7 +69,9 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
 
 resource "jamf_computer_extension_attribute" "test-extension-attribute-text-field" {
   name = "test-extension-attribute-text-field"
-  text_field {}
+  text_field {
+    script_contents =
+  }
 }
 
 resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
