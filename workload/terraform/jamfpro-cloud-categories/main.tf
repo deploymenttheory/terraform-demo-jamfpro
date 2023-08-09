@@ -67,8 +67,13 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   }
 }
 
+resource "jamf_computer_extension_attribute" "test-extension-attribute-text-field" {
+  name = "exat-text_field-0.0.1-test"
+  text_field { }
+}
+
 resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
-  name              = "test-extension-attribute-popup-menu"
+  name              = "exat-popup_menu-0.0.1-test"
   description       = "Jamf Pro Extension Attribute that obtains a string from a pop up menu"
   inventory_display = "Extension Attributes"
   popup_menu {
