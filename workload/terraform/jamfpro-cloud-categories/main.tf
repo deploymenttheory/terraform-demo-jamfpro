@@ -53,16 +53,23 @@ resource "jamf_building" "building_terraform_test" {
 # Service account requires the following permissions for CRUD operations respectively.              #
 # - Jamf Pro Server Objects - Scripts - Create / Read / Update / Delete                             #
 # - Jamf Pro Server Settings - Cloud distribution point - Read / Update                             #
-# - Jamf Pro Server Settings - Extension attributes - Create / Read / Update / Delete               #
+# - Jamf Pro Server Settings - Extension attributes * 3 - Create / Read / Update / Delete           #
 #---------------------------------------------------------------------------------------------------#
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   name              = "exat-test-extension-attribute-script"
   description       = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
-  inventory_display = "Extension Attributes"
+  data_type         = "String"               # Can be "String", "Integer", "Date"
+  inventory_display = "Extension Attributes" # Can be "General", "Hardware", "Operating System", "User and Location", "Purchasing", "Extension Attributes"
   script {
-    enabled         = true
+    enabled         = false # Can be true or false. no "" needed.
+    platform        = "Mac"
     script_contents = file("${path.module}/extension-attributes/Battery Charge.sh")
   }
+}
+
+resource "jamf_computer_extension_attribute" "test-extension-attribute-text-field" {
+  name = "test-extension-attribute-text-field"
+  text_field {}
 }
 
 resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
