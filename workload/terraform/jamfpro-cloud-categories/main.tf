@@ -59,17 +59,19 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   name              = "exat-battery_charge-0.0.1-test"
   description       = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
   data_type         = "String"   # Can be "String", "Integer", "Date"
-  inventory_display = "Hardware" # Can be "General", "Hardware", "Operating System", "User and Location", "Purchasing", "Extension Attributes"
+  inventory_display = "Hardware" # Category in which to display the extension attribute in Jamf Pro - Can be "General", "Hardware", "Operating System", "User and Location", "Purchasing", "Extension Attributes"
   script {
-    enabled         = false # Can be true or false. no "" needed.
+    enabled         = true # Boolean. Can be true or false. no "" needed.
     platform        = "Mac"
     script_contents = file("${path.module}/extension-attributes/Battery Charge.sh")
   }
 }
 
 resource "jamf_computer_extension_attribute" "test-extension-attribute-text-field" {
-  name = "exat-text_field-0.0.1-test"
-  text_field { }
+  name              = "exat-text_field-0.0.1-test"
+  description       = "You can display a text field in inventory information or Recon to collect inventory data. You can enter a value in the field during enrollment with Recon or anytime using Jamf Pro."
+  inventory_display = "Extension Attributes"
+  text_field {}
 }
 
 resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
