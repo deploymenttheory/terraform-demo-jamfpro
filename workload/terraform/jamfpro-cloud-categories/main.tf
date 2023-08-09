@@ -58,7 +58,7 @@ resource "jamf_building" "building_terraform_test" {
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   name              = "exat-battery_charge-0.0.1-test"
   description       = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
-  data_type         = "String"               # Can be "String", "Integer", "Date"
+  data_type         = "String"   # Can be "String", "Integer", "Date"
   inventory_display = "Hardware" # Can be "General", "Hardware", "Operating System", "User and Location", "Purchasing", "Extension Attributes"
   script {
     enabled         = false # Can be true or false. no "" needed.
