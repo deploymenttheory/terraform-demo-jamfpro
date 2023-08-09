@@ -58,7 +58,7 @@ resource "jamf_building" "building_terraform_test" {
 resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
   name              = "exat-test-extension-attribute-script"
   description       = "Jamf Pro Extension Attribute that obtains the macOS device's battery charge"
-  data_type         = "string"
+  data_type         = string
   inventory_display = "Extension Attributes"
   script {
     enabled         = true
@@ -69,7 +69,7 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-script" {
 resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-menu" {
   name              = "test-extension-attribute-popup-menu"
   description       = "Jamf Pro Extension Attribute that obtains a string from a pop up menu"
-  data_type         = "string"
+  data_type         = string
   inventory_display = "Extension Attributes"
   popup_menu {
     choices = ["choice1", "choice2"]
