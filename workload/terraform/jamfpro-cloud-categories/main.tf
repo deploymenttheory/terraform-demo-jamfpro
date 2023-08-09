@@ -95,9 +95,7 @@ resource "jamf_computer_extension_attribute" "test-extension-attribute-popup-men
 #                                                                                                   #
 # RBAC:                                                                                             #
 # Service account requires the following permissions for CRUD operations respectively.              #
-# - Jamf Pro Server Objects - Scripts - Create / Read / Update / Delete                             #
-# - Jamf Pro Server Settings - Cloud distribution point - Read / Update                             #
-# - Jamf Pro Server Settings - Extension attributes * 3 - Create / Read / Update / Delete           #
+# - Jamf Pro Server Settings - Smart Computer Groups - Create / Read / Update / Delete              #
 #---------------------------------------------------------------------------------------------------#
 
 resource "jamf_smartComputerGroup" "test_smart_1" {
