@@ -23,3 +23,7 @@ jobs:
         uses: dflook/terraform-apply@v1.42
         with:
           path: workload/terraform/jamfpro
+        env:
+          JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
+          JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
+          JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
