@@ -9,7 +9,7 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
-    name: Create a plan for an example terraform configuration
+    name: Create a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -26,8 +26,10 @@ jobs:
           JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
 
       
-      - name: upload JSON terraform plan 
+      - name: Upload Terraform Plan JSON
         uses: actions/upload-artifact@v4.3.1
         with:
           name: terraform-plan-json
           path: ${{ steps.tf_plan.outputs.json_plan_path }}
+        if: steps.tf_plan.outputs.json_plan_path != ''
+        
