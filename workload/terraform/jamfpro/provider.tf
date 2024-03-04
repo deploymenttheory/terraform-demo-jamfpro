@@ -24,16 +24,16 @@ provider "jamfpro" {
 }
 variable "jamfpro_instance_name" {
   description = "Jamf Pro Instance name."
-  default = ""
+  default     = ""
 }
 
 variable "jamfpro_client_id" {
   description = "Jamf Pro Client ID for authentication."
-  default = ""
+  default     = ""
 }
 
 variable "jamfpro_client_secret" {
   description = "Jamf Pro Client Secret for authentication."
-  default = ""
+  default     = ""
   sensitive   = true
 }
