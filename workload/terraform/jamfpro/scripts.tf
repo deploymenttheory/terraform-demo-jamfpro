@@ -21,15 +21,15 @@ resource "jamfpro_script" "script_002" {
   parameter4      = "/" // targetVolume
 }
 
-# resource "jamfpro_script" "script_003" {
-#   name            = "[scpt]-reset-safari-v2.1.4"
-#   script_contents = file("${path.module}/../../support_files/scripts/Reset Safari.sh")
-#   os_requirements = "13"
-#   priority        = "BEFORE"
-#   info            = "Deleting Safari preference files to reset to system default."
-#   notes           = "Jamf Pro script parameters: none"
+resource "jamfpro_script" "script_003" {
+  name            = "[scpt]-reset-safari-v2.1.4"
+  script_contents = file("${path.module}/../../support_files/scripts/Reset Safari.sh")
+  os_requirements = "13"
+  priority        = "BEFORE"
+  info            = "Deleting Safari preference files to reset to system default."
+  notes           = "Jamf Pro script parameters: none"
 
-# }
+}
 
 # data "jamfpro_script" "script_001_data" {
 #   id = jamfpro_script.script_001.id
