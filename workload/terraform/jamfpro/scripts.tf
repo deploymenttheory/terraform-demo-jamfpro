@@ -11,15 +11,15 @@ resource "jamfpro_script" "script_001" {
   parameter7      = "add"           // Script Action - Must be either "add" or "remove"
 }
 
-# resource "jamfpro_script" "script_002" {
-#   name            = "[scpt]-encrypt-apfs-volume-v5.0.1"
-#   script_contents = file("${path.module}/../../support_files/scripts/Encrypt APFS Volume.zsh")
-#   os_requirements = "13"
-#   priority        = "BEFORE"
-#   info            = "Adds target user or group to specified group membership, or removes said membership."
-#   notes           = "Jamf Pro script parameters: 4"
-#   parameter4      = "/" // targetVolume
-# }
+resource "jamfpro_script" "script_002" {
+  name            = "[scpt]-encrypt-apfs-volume-v5.0.1"
+  script_contents = file("${path.module}/../../support_files/scripts/Encrypt APFS Volume.zsh")
+  os_requirements = "13"
+  priority        = "BEFORE"
+  info            = "Adds target user or group to specified group membership, or removes said membership."
+  notes           = "Jamf Pro script parameters: 4"
+  parameter4      = "/" // targetVolume
+}
 
 # resource "jamfpro_script" "script_003" {
 #   name            = "[scpt]-reset-safari-v2.1.4"
