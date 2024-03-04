@@ -1,15 +1,15 @@
-resource "jamfpro_script" "script_001" {
-  name            = "[scpt]-add-or-remove-group-membership-v4.0"
-  script_contents = file("support_files/scripts/Add or Remove Group Membership.zsh")
-  os_requirements = "13"
-  priority        = "BEFORE"
-  info            = "Adds target user or group to specified group membership, or removes said membership."
-  notes           = "Jamf Pro script parameters 4 -> 7"
-  parameter4      = "100" // targetID
-  parameter5      = "group" // Target Type - Must be either "user" or "group"
-  parameter6      = "someGroupName" // targetMembership
-  parameter7      = "add" // Script Action - Must be either "add" or "remove"
-}
+# resource "jamfpro_script" "script_001" {
+#   name            = "[scpt]-add-or-remove-group-membership-v4.0"
+#   script_contents = file("support_files/scripts/Add or Remove Group Membership.zsh")
+#   os_requirements = "13"
+#   priority        = "BEFORE"
+#   info            = "Adds target user or group to specified group membership, or removes said membership."
+#   notes           = "Jamf Pro script parameters 4 -> 7"
+#   parameter4      = "100" // targetID
+#   parameter5      = "group" // Target Type - Must be either "user" or "group"
+#   parameter6      = "someGroupName" // targetMembership
+#   parameter7      = "add" // Script Action - Must be either "add" or "remove"
+# }
 
 # data "jamfpro_script" "script_001_data" {
 #   id = jamfpro_script.script_001.id
