@@ -24,3 +24,10 @@ jobs:
           JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
           JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
           JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+
+      
+      - name: upload JSON terraform plan 
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: terraform-plan-json
+          path: ${{ steps.tf_plan.outputs.json_plan_path }}
