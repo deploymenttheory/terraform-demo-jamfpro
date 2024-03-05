@@ -12,7 +12,7 @@ permissions:
 jobs:
   apply:
     runs-on: ubuntu-latest
-    name: Apply terraform plan
+    name: Apply a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }} # Ensure this is set in your GitHub secrets
