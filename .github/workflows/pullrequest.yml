@@ -33,6 +33,6 @@ jobs:
           automated pr
           terraform
           jamfpro
-        add-paths: workload/terraform/jamfpro/**
+        add-paths: workload/**
         # assignees: |
         #   your-github-username
