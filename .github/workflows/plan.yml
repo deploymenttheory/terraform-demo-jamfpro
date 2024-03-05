@@ -15,7 +15,6 @@ jobs:
       JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
       JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
       JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
-      SHARED_DIR: ${{ github.workspace }}/shared
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.1
@@ -42,7 +41,7 @@ jobs:
     
     - name: Terraform Plan
       id: plan
-      run: terraform plan -no-color -out="${{ env.SHARED_DIR }}/plan.tfplan"
+      run: terraform plan -no-color -out="plan.tfplan"
       continue-on-error: true
       working-directory: workload/terraform/jamfpro
     
