@@ -20,13 +20,18 @@ jobs:
         uses: dflook/terraform-plan@v1.42
         with:
           path: workload/terraform/jamfpro
+          parallelism: 5
+          add_github_comment: true 
         env:
           JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
           JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
           JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+       
       
-      - name: List Terraform Directory Contents
-        run: ls -la ${{ github.workspace }}/workload/terraform/jamfpro
+      - name: List Terraform Plan Directory Contents
+        run: ls -la ${{ github.workspace }}
+            ls -la ${{ github.workspace }}/${{ env.WORKSPACE_TMP_DIR }}
+  
   
       
       - name: Upload Terraform Plan JSON
