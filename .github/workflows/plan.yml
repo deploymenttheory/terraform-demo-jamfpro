@@ -12,10 +12,6 @@ jobs:
     name: Create a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # Moved to terraform cloud.
-      # JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-      # JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
-      # JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
       TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
     steps:
     - name: Checkout
