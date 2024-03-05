@@ -67,7 +67,8 @@ jobs:
       run: |
         go build -o evaluate_plan_duplicate_resources duplicate_resources.go
         ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
-
+      working-directory: workload/pipeline/duplicate_resources
+      
     - uses: actions/github-script@v7.0.1
       if: github.event_name == 'pull_request'
       env:
