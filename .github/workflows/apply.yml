@@ -15,8 +15,8 @@ jobs:
     name: Apply a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }} # Ensure this is set in your GitHub secrets
-      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro" # Adjust this to the directory containing your Terraform configurations
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro" # Directory containing the tf configurations in the repo
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1

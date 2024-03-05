@@ -1,9 +1,9 @@
 
 // cicd jamf api roles with no priviledge as they will be applied dynamically 
-resource "jamfpro_api_role" "api_role_cicd_pipeline_1" {
-  display_name = "apir-cicdpipeline1-crud"
-  privileges   = []
-}
+# resource "jamfpro_api_role" "api_role_cicd_pipeline_1" {
+#   display_name = "apir-cicdpipeline1-crud"
+#   privileges   = []
+# }
 /*
 data "jamfpro_api_role" "api_role_apiintegrations" {
   name = "apir-apiintegrations-crud"  # Replace with the actual name of the API role
