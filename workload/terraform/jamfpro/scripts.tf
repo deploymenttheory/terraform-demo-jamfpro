@@ -10,6 +10,7 @@ resource "jamfpro_script" "script_001" {
   parameter6      = "someGroupName" // targetMembership
   parameter7      = "add"           // Script Action - Must be either "add" or "remove"
 }
+# 
 
 # resource "jamfpro_script" "script_002" {
 #   name            = "[scpt]-encrypt-apfs-volume-v5.0.1"
