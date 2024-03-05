@@ -23,7 +23,6 @@ jobs:
     - name: terraform plan
       uses: hashicorp/setup-terraform@v3
       with:
-        cli_config_credentials_hostname: 'app.terraform.io' # Default value; change if you use a different Terraform Cloud/Enterprise instance
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
         terraform_version: latest
       
@@ -31,12 +30,14 @@ jobs:
       id: fmt
       run: terraform fmt -check
       continue-on-error: true
-      
-    - name: Terraform Init
+    
+    - name: Terraform Init with Terraform Cloud Remote Backend
       id: init
+      env:
+        TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
       run: terraform init
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
+
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
