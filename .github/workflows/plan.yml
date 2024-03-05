@@ -33,15 +33,18 @@ jobs:
     - name: Terraform Init
       id: init
       run: terraform init
+      working-directory: workload/terraform/jamfpro
     
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
+      working-directory: workload/terraform/jamfpro
     
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -out="${{ env.SHARED_DIR }}/plan.tfplan"
       continue-on-error: true
+      working-directory: workload/terraform/jamfpro
     
     - uses: actions/github-script@v7.0.1
       if: github.event_name == 'pull_request'
