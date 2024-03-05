@@ -11,17 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Create a terraform plan for Jamf Pro
     env:
+      JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
+      JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
+      JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SHARED_DIR: ${{ github.workspace }}/shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
-        env:
-          JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-          JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
-          JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHARED_DIR: ${{ github.workspace }}/shared
-      
+
       - name: Setup shared directory
         run: mkdir -p ${{ env.SHARED_DIR }}
 
@@ -32,10 +30,6 @@ jobs:
           parallelism: 5
           add_github_comment: true 
         
-
-      
-  
-  
       - name: Upload Terraform Plan as Artifact
         uses: actions/upload-artifact@v4.3.1
         with:
