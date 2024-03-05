@@ -190,12 +190,13 @@ func main() {
 	foundDuplicates := false
 	for name, count := range resourceNames {
 		if count > 1 {
-			fmt.Printf("Error: Duplicate resource name found: %s, Count: %d\n", name, count)
+			fmt.Printf("Error: Duplicate Jamf Pro resource name found: %s, Count: %d\n", name, count)
 			foundDuplicates = true
+			os.Exit(1)
 		}
 	}
 
 	if !foundDuplicates {
-		fmt.Println("No duplicates found.")
+		fmt.Println("Check completed: No duplicate Jamf Pro resource names found within the specified Terraform plan.")
 	}
 }
