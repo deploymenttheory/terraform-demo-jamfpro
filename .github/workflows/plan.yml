@@ -12,9 +12,10 @@ jobs:
     name: Create a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-      JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
-      JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+      # Moved to terraform cloud.
+      # JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
+      # JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
+      # JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
       TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
     steps:
     - name: Checkout
@@ -24,17 +25,20 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        terraform_version: latest
       
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
       continue-on-error: true
-      
-    - name: Terraform Init
+    
+    - name: Terraform Init with Terraform Cloud Remote Backend
       id: init
+      env:
+        TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
       run: terraform init
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
+
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
@@ -45,15 +49,12 @@ jobs:
       run: |
         terraform plan -no-color -out=plan.tfplan
         terraform show -no-color plan.tfplan > plan.txt
-        ls -la
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Export Plan as JSON
       id: json
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
-        pwd
-        ls -la
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Set up Go
@@ -65,9 +66,29 @@ jobs:
     - name: Check for duplicate resources
       id: evaluate_plan_duplicate_resources
       run: |
-        go build -o evaluate_plan_duplicate_resources duplicate_resources.go
+        go build -o evaluate_plan_duplicate_resources main.go
         ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
       working-directory: workload/pipeline/duplicate_resources
+    
+    # - name: Run Terraform Plan Script
+    #   run: go run . -tfplan your-terraform-plan.json
+    #   # Assumes your Go script writes to approval_group.txt
+
+    # - name: Set PR Approval Group
+    #   run: |
+    #     APPROVAL_GROUP=$(cat approval_group.txt)
+    #     echo "Approval group required: $APPROVAL_GROUP"
+    #     if [ "$APPROVAL_GROUP" == "Security" ]; then
+    #       # Assuming 'security-team' is the GitHub team name for the security group
+    #       curl \
+    #         -X POST \
+    #         -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+    #         -H "Accept: application/vnd.github+json" \
+    #         https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+    #         -d '{"reviewers": [], "team_reviewers":["security-team-demo"], "maintainers_can_modify": true}'
+    #     fi
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     - uses: actions/github-script@v7.0.1
       if: github.event_name == 'pull_request'
@@ -109,10 +130,6 @@ jobs:
             body: output
           });
 
-    
-    
-    
-    
     - name: Upload Terraform Plan as Artifact
       uses: actions/upload-artifact@v4.3.1
       with:

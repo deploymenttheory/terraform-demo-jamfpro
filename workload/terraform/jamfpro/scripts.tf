@@ -1,6 +1,6 @@
 resource "jamfpro_script" "script_001" {
   name            = "[scpt]-add-or-remove-group-membership-v4.0"
-  script_contents = file("${path.module}/../../support_files/scripts/Add or Remove Group Membership.zsh")
+  script_contents = file("${path.module}/support_files/scripts/Add or Remove Group Membership.zsh")
   os_requirements = "13"
   priority        = "BEFORE"
   info            = "Adds target user or group to specified group membership, or removes said membership."
@@ -13,7 +13,7 @@ resource "jamfpro_script" "script_001" {
 
 resource "jamfpro_script" "script_002" {
   name            = "[scpt]-encrypt-apfs-volume-v5.0.1"
-  script_contents = file("${path.module}/../../support_files/scripts/Encrypt APFS Volume.zsh")
+  script_contents = file("${path.module}/support_files/scripts/Encrypt APFS Volume.zsh")
   os_requirements = "13"
   priority        = "BEFORE"
   info            = "Adds target user or group to specified group membership, or removes said membership."
@@ -23,7 +23,7 @@ resource "jamfpro_script" "script_002" {
 
 resource "jamfpro_script" "script_003" {
   name            = "[scpt]-reset-safari-v2.1.4"
-  script_contents = file("${path.module}/../../support_files/scripts/Reset Safari.sh")
+  script_contents = file("${path.module}/support_files/scripts/Reset Safari.sh")
   os_requirements = "13"
   priority        = "BEFORE"
   info            = "Deleting Safari preference files to reset to system default."

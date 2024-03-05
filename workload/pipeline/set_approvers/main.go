@@ -122,19 +122,14 @@ type VariableConfig struct {
 }
 
 func main() {
-	// Define a string flag for the Terraform plan file path
 	tfPlanPath := flag.String("tfplan", "", "Path to the Terraform plan file in JSON format")
-
-	// Parse the command-line flags
 	flag.Parse()
 
-	// Check if the tfplan flag has been set
 	if *tfPlanPath == "" {
 		fmt.Println("Usage: -tfplan <path to terraform plan json>")
 		return
 	}
 
-	// Read the Terraform plan from the file using os.ReadFile
 	planFile, err := os.ReadFile(*tfPlanPath)
 	if err != nil {
 		fmt.Printf("Error reading plan file: %v\n", err)
@@ -148,55 +143,37 @@ func main() {
 		return
 	}
 
-	// Specified the resource types to validate duplicates for
-	interestedResourceTypes := map[string]bool{
-		"jamfpro_account":                       true,
-		"jamfpro_account_group":                 true,
-		"jamfpro_advanced_computer_search":      true,
-		"jamfpro_advanced_mobile_device_search": true,
-		"jamfpro_advanced_user_search":          true,
-		"jamfpro_allowed_file_extension":        true,
+	// Define your security-related conditions here
+	securityResources := map[string]bool{
 		"jamfpro_api_integration":               true,
-		"jamfpro_api_role":                      true,
-		"jamfpro_building":                      true,
-		"jamfpro_category":                      true,
-		"jamfpro_computer_checkin":              true,
-		"jamfpro_computer_extension_attribute":  true,
-		"jamfpro_computer_group":                true,
-		"jamfpro_computer_prestage":             true,
-		"jamfpro_department":                    true,
 		"jamfpro_disk_encryption_configuration": true,
-		"jamfpro_dock_item":                     true,
-		"jamfpro_file_share_distribution_point": true,
-		"jamfpro_site":                          true,
-		"jamfpro_script":                        true,
-		"jamfpro_network_segment":               true,
-		"jamfpro_package":                       true,
-		"jamfpro_policy":                        true,
-		"jamfpro_printer":                       true,
+		// Add more resources or properties that you consider security-related
 	}
 
-	// Store resource names and their occurrences
-	resourceNames := make(map[string]int)
+	securityChangesDetected := false
 
-	// Iterate over resources in the plan
-	for _, resource := range plan.PlannedValues.RootModule.Resources {
-		if _, ok := interestedResourceTypes[resource.Type]; ok {
-			resourceNames[resource.Values.Name]++
+	for _, change := range plan.ResourceChanges {
+		// Check if the resource type is one of the security related resources
+		if _, ok := securityResources[change.Type]; ok {
+			// Check the actions for create, update, or delete
+			for _, action := range change.Change.Actions {
+				if action == "create" || action == "update" || action == "delete" {
+					securityChangesDetected = true
+					fmt.Printf("Security-related change detected: %s action on %s\n", action, change.Address)
+					break // Break out of the inner loop once a security-related change is found
+				}
+			}
+			if securityChangesDetected {
+				break // Break out of the outer loop once a security-related change is found
+			}
 		}
 	}
 
-	// Check for duplicates
-	foundDuplicates := false
-	for name, count := range resourceNames {
-		if count > 1 {
-			fmt.Printf("Error: Duplicate Jamf Pro resource name found: %s, Count: %d\n", name, count)
-			foundDuplicates = true
-			os.Exit(1)
-		}
-	}
-
-	if !foundDuplicates {
-		fmt.Println("Check completed: No duplicate Jamf Pro resource names found within the specified Terraform plan.")
+	if securityChangesDetected {
+		fmt.Println("Security-related changes detected in the terraform plan. Setting the 'Security' group for the GitHub PR approval.")
+		// Set the GitHub Actions environment variable for the approval group
+		fmt.Println("::set-output name=approval_group::Security")
+	} else {
+		fmt.Println("No security-related changes detected.")
 	}
 }
