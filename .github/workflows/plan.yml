@@ -25,6 +25,10 @@ jobs:
           JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
           JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
       
+      - name: List Terraform Directory Contents
+        run: ls -la ${{ github.workspace }}/workload/terraform/jamfpro
+  
+      
       - name: Upload Terraform Plan JSON
         uses: actions/upload-artifact@v4.3.1
         with:
