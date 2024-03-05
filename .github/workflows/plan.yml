@@ -12,34 +12,109 @@ jobs:
     name: Create a terraform plan for Jamf Pro
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
+      JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
+      JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-
-      - name: terraform plan
-        uses: dflook/terraform-plan@v1.42
-        with:
-          path: workload/terraform/jamfpro
-          parallelism: 5
-          add_github_comment: true 
-        env:
-          JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-          JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
-          JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
-       
-      
-      - name: List Terraform Plan Directory Contents
-        run: |
-          ls -la ${{ github.workspace }}
-          ls -la ${{ github.workspace }}/${{ env.WORKSPACE_TMP_DIR }}
-  
-  
-  
-      
-      - name: Upload Terraform Plan JSON
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: terraform-plan-json
-          path: ${{ steps.tf_plan.outputs.json_plan_path }}
-        if: steps.tf_plan.outputs.json_plan_path != ''
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
         
+    - name: terraform plan
+      uses: hashicorp/setup-terraform@v3
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+      
+    - name: Terraform Init
+      id: init
+      run: terraform init
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    
+    - name: Generate Terraform Plan
+      id: plan
+      run: |
+        terraform plan -no-color -out=plan.tfplan
+        terraform show -no-color plan.tfplan > plan.txt
+        ls -la
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    
+    - name: Export Plan as JSON
+      id: json
+      run: |
+        terraform show -no-color -json plan.tfplan > plan.json
+        pwd
+        ls -la
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '>=1.20'
+        check-latest: true
+
+    - name: Check for duplicate resources
+      id: evaluate_plan_duplicate_resources
+      run: |
+        go build -o evaluate_plan_duplicate_resources duplicate_resources.go
+        ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
+      working-directory: workload/pipeline/duplicate_resources
+      
+    - uses: actions/github-script@v7.0.1
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
+          const planOutput = fs.readFileSync(planPath, 'utf8');
+          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          <details><summary>Validation Output</summary>
+          
+          \`\`\`\n
+          ${{ steps.validate.outputs.stdout }}
+          \`\`\`
+          
+          </details>
+          
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`\n
+          ${planOutput}
+          \`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          });
+
+    
+    
+    
+    
+    - name: Upload Terraform Plan as Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: terraform-plan
+        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json

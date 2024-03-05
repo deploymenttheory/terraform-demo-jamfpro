@@ -31,14 +31,14 @@ resource "jamfpro_script" "script_003" {
 
 }
 
-# data "jamfpro_script" "script_001_data" {
-#   id = jamfpro_script.script_001.id
-# }
+data "jamfpro_script" "script_001_data" {
+  id = jamfpro_script.script_001.id
+}
 
-# output "jamfpro_script_001_id" {
-#   value = data.jamfpro_script.script_001_data.id
-# }
+output "jamfpro_script_001_id" {
+  value = data.jamfpro_script.script_001_data.id
+}
 
-# output "jamfpro_script_001_name" {
-#   value = data.jamfpro_script.script_001_data.name
-# }
+output "jamfpro_script_001_name" {
+  value = data.jamfpro_script.script_001_data.name
+}
