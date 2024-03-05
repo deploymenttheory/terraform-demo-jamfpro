@@ -27,7 +27,7 @@ jobs:
           This is an auto-generated PR with the updated Terraform plan results.
         branch: "auto-update/terraform-plan"
         branch-suffix: timestamp
-        base: main
+        # base: main
         delete-branch: true
         labels: |
           automated pr
