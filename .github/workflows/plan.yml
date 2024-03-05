@@ -29,8 +29,10 @@ jobs:
        
       
       - name: List Terraform Plan Directory Contents
-        run: ls -la ${{ github.workspace }}
-            ls -la ${{ github.workspace }}/${{ env.WORKSPACE_TMP_DIR }}
+        run: |
+          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/${{ env.WORKSPACE_TMP_DIR }}
+  
   
   
       
