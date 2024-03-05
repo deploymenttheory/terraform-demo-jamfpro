@@ -62,7 +62,7 @@ jobs:
         go-version: '>=1.20'
         check-latest: true
 
-    - name: Evaluate Terraform Plan with Go Script
+    - name: Check for duplicate resources
       id: evaluate_plan_duplicate_resources
       run: |
         go build -o evaluate_plan_duplicate_resources duplicate_resources.go
