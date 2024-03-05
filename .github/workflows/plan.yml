@@ -52,6 +52,7 @@ jobs:
       id: json
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
+        ls -la
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Set up Go
