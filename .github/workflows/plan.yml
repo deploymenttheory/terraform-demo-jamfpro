@@ -98,3 +98,13 @@ jobs:
       with:
         name: terraform-plan
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+    
+    - name: Evaluate Terraform Plan
+      id: evaluate_plan
+      run: |
+        # Example of evaluating the JSON plan with a custom script
+        # Replace `./evaluate_plan.sh` with your actual script path
+        # This script should take the JSON plan as input and output approval requirements
+        chmod +x ./evaluate_plan.sh
+        ./evaluate_plan.sh ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
