@@ -53,6 +53,19 @@ jobs:
         terraform show -no-color -json plan.tfplan > plan.json
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '>=1.20'
+        check-latest: true
+
+    - name: Evaluate Terraform Plan with Go Script
+      id: evaluate_plan_duplicate_resources
+      run: |
+        go build -o evaluate_plan_duplicate_resources duplicate_resources.go
+        ./evaluate_plan_duplicate_resources -tfplan ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+      working-directory: workload/pipeline/duplicate_resources
+      
     - uses: actions/github-script@v7.0.1
       if: github.event_name == 'pull_request'
       env:
@@ -93,18 +106,12 @@ jobs:
             body: output
           });
 
+    
+    
+    
+    
     - name: Upload Terraform Plan as Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
         name: terraform-plan
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
-    
-    - name: Evaluate Terraform Plan
-      id: evaluate_plan
-      run: |
-        # Example of evaluating the JSON plan with a custom script
-        # Replace `./evaluate_plan.sh` with your actual script path
-        # This script should take the JSON plan as input and output approval requirements
-        chmod +x ./evaluate_plan.sh
-        ./evaluate_plan.sh ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
