@@ -65,9 +65,29 @@ jobs:
     - name: Check for duplicate resources
       id: evaluate_plan_duplicate_resources
       run: |
-        go build -o evaluate_plan_duplicate_resources duplicate_resources.go
+        go build -o evaluate_plan_duplicate_resources main.go
         ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
       working-directory: workload/pipeline/duplicate_resources
+    
+    - name: Run Terraform Plan Script
+      run: go run . -tfplan your-terraform-plan.json
+      # Assumes your Go script writes to approval_group.txt
+
+    - name: Set PR Approval Group
+      run: |
+        APPROVAL_GROUP=$(cat approval_group.txt)
+        echo "Approval group required: $APPROVAL_GROUP"
+        if [ "$APPROVAL_GROUP" == "Security" ]; then
+          # Assuming 'security-team' is the GitHub team name for the security group
+          curl \
+            -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+            -d '{"reviewers": [], "team_reviewers":["security-team-demo"], "maintainers_can_modify": true}'
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     - uses: actions/github-script@v7.0.1
       if: github.event_name == 'pull_request'
@@ -109,10 +129,6 @@ jobs:
             body: output
           });
 
-    
-    
-    
-    
     - name: Upload Terraform Plan as Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
