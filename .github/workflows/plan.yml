@@ -49,15 +49,12 @@ jobs:
       run: |
         terraform plan -no-color -out=plan.tfplan
         terraform show -no-color plan.tfplan > plan.txt
-        ls -la
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Export Plan as JSON
       id: json
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
-        pwd
-        ls -la
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Set up Go
