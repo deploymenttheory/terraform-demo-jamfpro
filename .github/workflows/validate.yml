@@ -1,9 +1,11 @@
+name: Validate Terraform configuration
+
 on: [push]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: Validate Terraform module
+    name: Validate Terraform configuration
     steps:
       - name: Checkout
         uses: actions/checkout@v3
