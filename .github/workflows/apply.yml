@@ -1,4 +1,4 @@
-name: Apply terraform plan
+name: Apply Terraform Plan
 
 on:
   push:
@@ -15,15 +15,25 @@ jobs:
     name: Apply terraform plan
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }} # Ensure this is set in your GitHub secrets
+      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro" # Adjust this to the directory containing your Terraform configurations
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
 
-      - name: terraform apply
-        uses: dflook/terraform-apply@v1.42
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          path: workload/terraform/jamfpro
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_version: latest
+        
+      - name: Terraform Init with Terraform Cloud Remote Backend
+        id: init
         env:
-          JAMFPRO_INSTANCE_NAME: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-          JAMFPRO_CLIENT_ID: ${{ secrets.JAMFPRO_CLIENT_ID }}
-          JAMFPRO_CLIENT_SECRET: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+        run: terraform init
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+
+      - name: Apply Terraform Plan
+        run: terraform apply -auto-approve
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
