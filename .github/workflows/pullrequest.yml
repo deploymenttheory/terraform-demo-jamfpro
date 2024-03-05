@@ -1,0 +1,34 @@
+name: Create pull request
+
+on: [push]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    name: Create pull request
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
+    steps:
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6.0.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Update Terraform plan"
+        title: "Automated Terraform Plan Update"
+        body: |
+          This is an auto-generated PR with the updated Terraform plan results.
+        branch: "auto-update/terraform-plan"
+        branch-suffix: timestamp
+        base: main
+        delete-branch: true
+        labels: |
+          automated pr
+          terraform
+          jamfpro
+        # assignees: |
+        #   your-github-username
