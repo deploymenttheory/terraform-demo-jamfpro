@@ -1,5 +1,5 @@
 
-resource "jamfpro_building" "jamf_pro_building_001" {
+resource "jamfpro_building" "jamfpro_building_001" {
   name            = "Apple Park 2"
   street_address1 = "The McIntosh Tree"
   street_address2 = "One Apple Park Way"
@@ -21,7 +21,7 @@ output "jamfpro_building_001_data_name" {
   value = data.jamfpro_building.jamfpro_building_001_data.name
 }
 
-resource "jamfpro_building" "jamf_pro_building_002" {
+resource "jamfpro_building" "jamfpro_building_002" {
   name            = "Jamf Headquarters 2"
   street_address1 = "100 Washington Ave S"
   street_address2 = "Suite 1100"
