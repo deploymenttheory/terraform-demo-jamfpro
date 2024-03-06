@@ -1,6 +1,6 @@
 
 // account group - custom example
-resource "jamfpro_account_groups" "jamf_pro_account_group_001" {
+resource "jamfpro_account_group" "jamf_pro_account_group_001" {
   name          = "tf-ghatest-accountgroup-custom"
   access_level  = "Full Access" // Full Access / Site Access / Group Access
   privilege_set = "Custom"
@@ -75,16 +75,16 @@ resource "jamfpro_account_groups" "jamf_pro_account_group_001" {
 
 }
 
-data "jamfpro_account_groups" "jamf_pro_account_group_001_data" {
+data "jamfpro_account_group" "jamf_pro_account_group_001_data" {
   id = jamfpro_account_groups.jamf_pro_account_group_001.id
 }
 
-output "jamfpro_jamfpro_account_groups_001_id" {
-  value = data.jamfpro_account_groups.jamf_pro_account_group_001_data.id
+output "jamfpro_jamfpro_account_group_001_id" {
+  value = data.jamfpro_account_group.jamf_pro_account_group_001_data.id
 }
 
-output "jamfpro_jamfpro_account_groups_001_name" {
-  value = data.jamfpro_account_groups.jamf_pro_account_group_001_data.name
+output "jamfpro_jamfpro_account_group_001_name" {
+  value = data.jamfpro_account_group.jamf_pro_account_group_001_data.name
 }
 
 
