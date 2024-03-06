@@ -1,4 +1,4 @@
-resource "jamfpro_script" "script_001" {
+resource "jamfpro_script" "jamfpro_script_001" {
   name            = "tf-ghatest-add-or-remove-group-membership-v4.0"
   script_contents = file("${path.module}/support_files/scripts/Add or Remove Group Membership.zsh")
   os_requirements = "13"
@@ -11,19 +11,19 @@ resource "jamfpro_script" "script_001" {
   parameter7      = "add"           // Script Action - Must be either "add" or "remove"
 }
 
-data "jamfpro_script" "script_001_data" {
+data "jamfpro_script" "jamfpro_script_001_data" {
   id = jamfpro_script.script_001.id
 }
 
 output "jamfpro_script_001_id" {
-  value = data.jamfpro_script.script_001_data.id
+  value = data.jamfpro_script.jamfpro_script_001_data.id
 }
 
 output "jamfpro_script_001_name" {
-  value = data.jamfpro_script.script_001_data.name
+  value = data.jamfpro_script.jamfpro_script_001_data.name
 }
 
-resource "jamfpro_script" "script_002" {
+resource "jamfpro_script" "jamfpro_script_002" {
   name            = "tf-ghatest-encrypt-apfs-volume-v5.0.1"
   script_contents = file("${path.module}/support_files/scripts/Encrypt APFS Volume.zsh")
   os_requirements = "13"
@@ -33,16 +33,16 @@ resource "jamfpro_script" "script_002" {
   parameter4      = "/" // targetVolume
 }
 
-data "jamfpro_script" "script_002_data" {
-  id = jamfpro_script.script_002.id
+data "jamfpro_script" "jamfpro_script_002_data" {
+  id = jamfpro_script.jamfpro_script_002.id
 }
 
 output "jamfpro_script_002_id" {
-  value = data.jamfpro_script.script_002_data.id
+  value = data.jamfpro_script.jamfpro_script_002_data.id
 }
 
-output "jamfpro_script_002_name" {
-  value = data.jamfpro_script.script_002_data.name
+output "jamfpro_script_jamfpro_002_name" {
+  value = data.jamfpro_script.jamfpro_script_002_data.name
 }
 
 resource "jamfpro_script" "script_003" {
@@ -55,14 +55,14 @@ resource "jamfpro_script" "script_003" {
 
 }
 
-data "jamfpro_script" "script_003_data" {
-  id = jamfpro_script.script_003.id
+data "jamfpro_script" "jamfpro_script_003_data" {
+  id = jamfpro_script.jamfpro_script_003.id
 }
 
 output "jamfpro_script_003_id" {
-  value = data.jamfpro_script.script_003_data.id
+  value = data.jamfpro_script.jamfpro_script_003_data.id
 }
 
 output "jamfpro_script_003_name" {
-  value = data.jamfpro_script.script_003_data.name
+  value = data.jamfpro_script.jamfpro_script_003_data.name
 }
