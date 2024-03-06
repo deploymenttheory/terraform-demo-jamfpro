@@ -15,11 +15,11 @@ data "jamfpro_script" "jamfpro_script_001_data" {
   id = jamfpro_script.jamfpro_script_001.id
 }
 
-output "jamfpro_script_001_id" {
+output "jamfpro_script_001_data_id" {
   value = data.jamfpro_script.jamfpro_script_001_data.id
 }
 
-output "jamfpro_script_001_name" {
+output "jamfpro_script_001_data_name" {
   value = data.jamfpro_script.jamfpro_script_001_data.name
 }
 
@@ -45,7 +45,7 @@ output "jamfpro_script_002_data_name" {
   value = data.jamfpro_script.jamfpro_script_002_data.name
 }
 
-resource "jamfpro_script" "script_003" {
+resource "jamfpro_script" "jamfpro_script_003" {
   name            = "tf-ghatest-reset-safari-v2.1.4"
   script_contents = file("${path.module}/support_files/scripts/Reset Safari.sh")
   os_requirements = "13"
