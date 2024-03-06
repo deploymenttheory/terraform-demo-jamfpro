@@ -79,11 +79,11 @@ data "jamfpro_account_group" "jamf_pro_account_group_001_data" {
   id = jamfpro_account_group.jamf_pro_account_group_001.id
 }
 
-output "jamfpro_jamfpro_account_group_001_id" {
+output "jamf_pro_account_group_001_data_id" {
   value = data.jamfpro_account_group.jamf_pro_account_group_001_data.id
 }
 
-output "jamfpro_jamfpro_account_group_001_name" {
+output "jamf_pro_account_group_001_data_name" {
   value = data.jamfpro_account_group.jamf_pro_account_group_001_data.name
 }
 

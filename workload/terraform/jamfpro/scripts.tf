@@ -12,7 +12,7 @@ resource "jamfpro_script" "jamfpro_script_001" {
 }
 
 data "jamfpro_script" "jamfpro_script_001_data" {
-  id = jamfpro_script.script_001.id
+  id = jamfpro_script.jamfpro_script_001.id
 }
 
 output "jamfpro_script_001_id" {
@@ -37,11 +37,11 @@ data "jamfpro_script" "jamfpro_script_002_data" {
   id = jamfpro_script.jamfpro_script_002.id
 }
 
-output "jamfpro_script_002_id" {
+output "jamfpro_script_002_data_id" {
   value = data.jamfpro_script.jamfpro_script_002_data.id
 }
 
-output "jamfpro_script_jamfpro_002_name" {
+output "jamfpro_script_002_data_name" {
   value = data.jamfpro_script.jamfpro_script_002_data.name
 }
 
@@ -59,10 +59,10 @@ data "jamfpro_script" "jamfpro_script_003_data" {
   id = jamfpro_script.jamfpro_script_003.id
 }
 
-output "jamfpro_script_003_id" {
+output "jamfpro_script_003_data_id" {
   value = data.jamfpro_script.jamfpro_script_003_data.id
 }
 
-output "jamfpro_script_003_name" {
+output "jamfpro_script_003_data_name" {
   value = data.jamfpro_script.jamfpro_script_003_data.name
 }
