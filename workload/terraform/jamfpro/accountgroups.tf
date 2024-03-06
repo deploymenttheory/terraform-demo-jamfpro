@@ -1,13 +1,13 @@
 
 // account group - custom example
-resource "jamfpro_account_groups"  "jamf_pro_account_group_001" {
-  name         = "tf-ghatest-accountgroup-custom"
-  access_level = "Full Access" // Full Access / Site Access / Group Access
-  privilege_set = "Custom" 
+resource "jamfpro_account_groups" "jamf_pro_account_group_001" {
+  name          = "tf-ghatest-accountgroup-custom"
+  access_level  = "Full Access" // Full Access / Site Access / Group Access
+  privilege_set = "Custom"
 
   site {
-    id   = -1 
-    name = "None" 
+    id   = -1
+    name = "None"
   }
 
   jss_objects_privileges = [
@@ -35,39 +35,39 @@ resource "jamfpro_account_groups"  "jamf_pro_account_group_001" {
 
   jss_settings_privileges = [
     "Read Activation Code",
-	"Update Activation Code",
-	"Read Apache Tomcat Settings",
-	"Update Apache Tomcat Settings",
-	"Read Apple Configurator Enrollment",
-	"Update Apple Configurator Enrollment",
-	"Read Education Settings",
-	"Update Education Settings",
-	"Read Mobile Device App Maintenance Settings",
-	"Update Mobile Device App Maintenance Settings",
-	"Read Automatic Mac App Updates Settings",
-	"Update Automatic Mac App Updates Settings",
-	"Read Automatically Renew MDM Profile Settings",
-	"Update Automatically Renew MDM Profile Settings",
-	"Read Cache",
-	"Update Cache",
+    "Update Activation Code",
+    "Read Apache Tomcat Settings",
+    "Update Apache Tomcat Settings",
+    "Read Apple Configurator Enrollment",
+    "Update Apple Configurator Enrollment",
+    "Read Education Settings",
+    "Update Education Settings",
+    "Read Mobile Device App Maintenance Settings",
+    "Update Mobile Device App Maintenance Settings",
+    "Read Automatic Mac App Updates Settings",
+    "Update Automatic Mac App Updates Settings",
+    "Read Automatically Renew MDM Profile Settings",
+    "Update Automatically Renew MDM Profile Settings",
+    "Read Cache",
+    "Update Cache",
   ]
 
   jss_actions_privileges = [
-  "Allow User to Enroll",
-	//"Assign Users to Computers",
-	"Assign Users to Mobile Devices",
-	"Change Password",
-	"Dismiss Notifications",
-	"Flush MDM Commands",
-	"Flush Policy Logs",
-	"Jamf Packages Action",
-	"Remove restrictions set by Jamf Parent",
-	"CLEAR_TEACHER_PROFILE_PRIVILEGE",
-	"Renewal of the Built-in Certificate Authority",
-	"Jamf Connect Deployment Retry",
-	"Jamf Protect Deployment Retry",
-	"Send Application Attributes Command",
-	"Send Blank Pushes to Mobile Devices",
+    "Allow User to Enroll",
+    //"Assign Users to Computers",
+    "Assign Users to Mobile Devices",
+    "Change Password",
+    "Dismiss Notifications",
+    "Flush MDM Commands",
+    "Flush Policy Logs",
+    "Jamf Packages Action",
+    "Remove restrictions set by Jamf Parent",
+    "CLEAR_TEACHER_PROFILE_PRIVILEGE",
+    "Renewal of the Built-in Certificate Authority",
+    "Jamf Connect Deployment Retry",
+    "Jamf Protect Deployment Retry",
+    "Send Application Attributes Command",
+    "Send Blank Pushes to Mobile Devices",
   ]
 
   casper_admin_privileges = [
