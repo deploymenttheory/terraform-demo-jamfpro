@@ -76,7 +76,7 @@ resource "jamfpro_account_group" "jamf_pro_account_group_001" {
 }
 
 data "jamfpro_account_group" "jamf_pro_account_group_001_data" {
-  id = jamfpro_account_groups.jamf_pro_account_group_001.id
+  id = jamfpro_account_group.jamf_pro_account_group_001.id
 }
 
 output "jamfpro_jamfpro_account_group_001_id" {
