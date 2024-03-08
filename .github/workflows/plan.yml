@@ -1,6 +1,9 @@
 name: Create terraform plan
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - main
 
 permissions:
   contents: read
