@@ -11,32 +11,32 @@ permissions:
   pull-requests: write
 
 jobs:
-  plan:
+  create_pr:
     runs-on: ubuntu-latest
     name: Create pull request
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
-    
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v6.0.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "Update Terraform plan"
-        title: "Automated Terraform Plan Update"
-        body: |
-          This is an auto-generated PR with the updated Terraform plan results.
-        branch: "auto-update/terraform-plan"
-        branch-suffix: timestamp
-        # base: main
-        delete-branch: true
-        labels: |
-          automated pr
-          terraform
-          jamfpro
-        add-paths: workload/**
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update Terraform plan"
+          title: "Automated Terraform Plan Update"
+          body: |
+            This is an auto-generated PR with the updated Terraform plan results.
+          branch: "auto-update/terraform-plan"
+          branch-suffix: timestamp
+          delete-branch: true
+          labels: |
+            automated pr
+            terraform
+            jamfpro
+          add-paths: workload/**
         # assignees: |
         #   your-github-username
