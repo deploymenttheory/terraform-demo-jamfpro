@@ -77,11 +77,32 @@ jobs:
         ./evaluate_plan_approvers -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
       working-directory: workload/pipeline/set_approvers
     
+    - name: Upload Terraform Plan as Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: terraform-plan
+        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+
+    - name: Create Pull Request using GitHub CLI
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        gh pr create \
+          --base main \
+          --head "$BRANCH_NAME" \
+          --title "Automated Terraform Plan Update" \
+          --body "This is an auto-generated PR with the updated Terraform plan results." \
+          --label "automatedpr,terraform,jamfpro"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REF: ${{ github.ref }}
+    # Ref: https://cli.github.com/manual/gh_pr_create
+
     - name: Fetch Pull Request Number
       id: fetch_pr_number
       run: |
         PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        echo "Fetched PR_NUMBER: $PR_NUMBER"
     
     - name: Create PR comment with the Terraform plan
       if: steps.fetch_pr_number.outputs.PR_NUMBER != ''
@@ -121,24 +142,4 @@ jobs:
             repo: context.repo.repo,
             body: output
           });
-    
-    - name: Upload Terraform Plan as Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: terraform-plan
-        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
-
-    - name: Create Pull Request using GitHub CLI
-      run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        gh pr create \
-          --base main \
-          --head "$BRANCH_NAME" \
-          --title "Automated Terraform Plan Update" \
-          --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automatedpr,terraform,jamfpro"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REF: ${{ github.ref }}
-    # Ref: https://cli.github.com/manual/gh_pr_create
 
