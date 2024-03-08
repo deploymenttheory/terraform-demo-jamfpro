@@ -8,7 +8,7 @@ jobs:
     name: Validate Terraform configuration
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.1
 
       - name: terraform validate
         uses: dflook/terraform-validate@v1.42
