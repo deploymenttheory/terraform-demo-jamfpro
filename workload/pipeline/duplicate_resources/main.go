@@ -239,6 +239,7 @@ func main() {
 	}
 }
 
+// printColor prints a message with the specified color to the console.
 func printColor(message string, colorCode string) {
 	fmt.Println(colorCode, message, colorReset)
 }
