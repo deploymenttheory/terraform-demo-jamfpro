@@ -60,7 +60,7 @@ jobs:
         go-version: '>=1.20'
         check-latest: true
 
-    - name: Check for duplicate resources
+    - name: Check for duplicate resource names in the plan
       id: evaluate_plan_duplicate_resources
       run: |
         go build -o evaluate_plan_duplicate_resources main.go
@@ -81,7 +81,7 @@ jobs:
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
     
     - name: Create PR comment with the Terraform plan
-      if: env.PR_NUMBER
+      if: ${{ env.PR_NUMBER }}
       uses: actions/github-script@v7.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
