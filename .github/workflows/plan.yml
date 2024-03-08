@@ -134,7 +134,7 @@ jobs:
 
     - name: Create Pull Request using GitHub CLI
       run: |
-          gh pr create --base main --head ${{ github.head_ref }} --title "Automated Terraform Plan Update" --body "This is an auto-generated PR with the updated Terraform plan results."
+          gh pr create --base main --head ${{ github.head_ref }} --title "Automated_Terraform_Plan_Update" --body "This is an auto-generated PR with the updated Terraform plan results."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     # Ref: https://cli.github.com/manual/gh_pr_create
