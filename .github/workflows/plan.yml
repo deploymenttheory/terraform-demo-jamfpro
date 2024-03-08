@@ -82,6 +82,7 @@ jobs:
       run: |
         PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        echo "Fetched PR_NUMBER: $PR_NUMBER"
     
     - name: Create PR comment with the Terraform plan
       if: steps.fetch_pr_number.outputs.PR_NUMBER != ''
