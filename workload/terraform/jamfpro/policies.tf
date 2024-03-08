@@ -1,21 +1,21 @@
 resource "jamfpro_policy" "jamfpro_policy_001" {
   general {
-    name                        = "[policy]-test-001"
-    enabled                     = false
-    trigger                     = "EVENT" // "USER_INITIATED" for self self trigger , "EVENT" for an event trigger
-    trigger_checkin             = false
-    trigger_enrollment_complete = false
-    trigger_login               = false
-    trigger_logout              = false
+    name                          = "[policy]-test-001"
+    enabled                       = false
+    trigger                       = "EVENT" // "USER_INITIATED" for self self trigger , "EVENT" for an event trigger
+    trigger_checkin               = false
+    trigger_enrollment_complete   = false
+    trigger_login                 = false
+    trigger_logout                = false
     trigger_network_state_changed = false
-    trigger_startup             = false
-    frequency                   = "Once per computer"
-    retry_event                 = "none"
-    retry_attempts              = -1
-    notify_on_each_failed_retry = false
-    location_user_only          = false
-    target_drive                = "/"
-    offline                     = false
+    trigger_startup               = false
+    frequency                     = "Once per computer"
+    retry_event                   = "none"
+    retry_attempts                = -1
+    notify_on_each_failed_retry   = false
+    location_user_only            = false
+    target_drive                  = "/"
+    offline                       = false
 
     network_limitations {
       minimum_network_connection = "No Minimum"
@@ -23,10 +23,10 @@ resource "jamfpro_policy" "jamfpro_policy_001" {
     }
 
     override_default_settings {
-      target_drive         = "/"
-      distribution_point   = "default"
-      force_afp_smb        = false
-      sus                  = "default"
+      target_drive       = "/"
+      distribution_point = "default"
+      force_afp_smb      = false
+      sus                = "default"
     }
 
     site {
@@ -34,41 +34,41 @@ resource "jamfpro_policy" "jamfpro_policy_001" {
       name = "None"
     }
   }
-    scope {
-    all_computers    = false
+  scope {
+    all_computers = false
   }
-    scripts {
+  scripts {
     script {
-      id        = data.jamfpro_script.jamfpro_script_001_data.id
-      name = data.jamfpro_script.jamfpro_script_001_data.name
-      priority  = "After"
-      parameter4 = "Macintosh HD"
-      parameter5 = "APFS"
-      parameter6 = ""
-      parameter7 = ""
-      parameter8 = "100"
-      parameter9 = ""
+      id          = data.jamfpro_script.jamfpro_script_001_data.id
+      name        = data.jamfpro_script.jamfpro_script_001_data.name
+      priority    = "After"
+      parameter4  = "Macintosh HD"
+      parameter5  = "APFS"
+      parameter6  = ""
+      parameter7  = ""
+      parameter8  = "100"
+      parameter9  = ""
       parameter10 = ""
       parameter11 = ""
     }
   }
 
   self_service {
-    use_for_self_service        = true
-    self_service_display_name   = ""
-    install_button_text         = "Install"
-    reinstall_button_text       = ""
-    self_service_description    = ""
+    use_for_self_service            = true
+    self_service_display_name       = ""
+    install_button_text             = "Install"
+    reinstall_button_text           = ""
+    self_service_description        = ""
     force_users_to_view_description = false
 
     self_service_icon {
-      id        = 0
+      id = 0
     }
 
-    feature_on_main_page        = false
+    feature_on_main_page = false
   }
-  
-  
+
+
 
 }
 
