@@ -2,7 +2,7 @@
 // jamfpro Institutional Recovery Key config tf example 
 
 resource "jamfpro_disk_encryption_configuration" "jamfpro_disk_encryption_configuration_001" {
-  name                     = "jamfpro-tf-example-InstitutionalRecoveryKey-config"
+  name                     = "tf-ghatest-diskencryption-institutional_recovery_key"
   key_type                 = "Institutional"      # Or "Individual and Institutional"
   file_vault_enabled_users = "Management Account" # Or "Current or Next User"
 
@@ -28,7 +28,7 @@ output "jamfpro_disk_encryption_configuration_001_name" {
 # // jamfpro Individual Recovery Key config tf example 
 
 resource "jamfpro_disk_encryption_configuration" "jamfpro_disk_encryption_configuration_002" {
-  name                     = "jamfpro-tf-example-IndividualRecoveryKey-config"
+  name                     = "tf-ghatest-diskencryption-individual_recovery_key"
   key_type                 = "Individual"
   file_vault_enabled_users = "Management Account" # Or "Current or Next User"
 
