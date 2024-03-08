@@ -74,7 +74,7 @@ jobs:
       working-directory: workload/pipeline/set_approvers
 
     - name: Set Security PR Approval Group
-      if: steps.evaluate_plan_approvers.outputs.approval_group == 'Security'
+      if: contains(steps.evaluate_plan_approvers.outputs.approval_group, 'Security')
       run: |
         # Assuming 'security-team' is the GitHub team name for the security group
         curl \

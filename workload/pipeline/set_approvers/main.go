@@ -194,10 +194,27 @@ func main() {
 		}
 	}
 
+	// Write to GITHUB_OUTPUT environment file
 	if securityChangesDetected {
-		fmt.Println("Security-related changes detected in the terraform plan. Setting the 'Security' group for the GitHub PR approval.")
-		// Set the GitHub Actions environment variable for the approval group
-		fmt.Println("::set-output name=approval_group::Security")
+		outputFile := os.Getenv("GITHUB_OUTPUT")
+		if outputFile == "" {
+			fmt.Println("GITHUB_OUTPUT environment variable not set")
+			return
+		}
+
+		file, err := os.OpenFile(outputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			fmt.Printf("Error opening output file: %v\n", err)
+			return
+		}
+		defer file.Close()
+
+		if _, err := file.WriteString("approval_group=Security\n"); err != nil {
+			fmt.Printf("Error writing to output file: %v\n", err)
+			return
+		}
+
+		fmt.Println("Security-related changes detected. 'Security' group set for GitHub PR approval.")
 	} else {
 		fmt.Println("No security-related changes detected.")
 	}
