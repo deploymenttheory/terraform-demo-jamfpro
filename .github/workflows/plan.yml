@@ -74,7 +74,7 @@ jobs:
         ./evaluate_plan_approvers -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
       working-directory: workload/pipeline/set_approvers
       
-    - name: Create a comment with the Terraform plan
+    - name: Create PR comment with the Terraform plan
       uses: actions/github-script@v7.0.1
       if: github.event_name == 'push'
       env:
