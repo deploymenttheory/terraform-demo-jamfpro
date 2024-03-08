@@ -25,7 +25,7 @@ output "jamfpro_disk_encryption_configuration_001_name" {
   value = data.jamfpro_disk_encryption_configuration.jamfpro_disk_encryption_configuration_001_data.name
 }
 
-# // jamfpro Individual Recovery Key config tf example 
+// jamfpro Individual Recovery Key config tf example 
 
 resource "jamfpro_disk_encryption_configuration" "jamfpro_disk_encryption_configuration_002" {
   name                     = "tf-ghatest-diskencryption-individual_recovery_key"
