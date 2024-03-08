@@ -77,6 +77,26 @@ jobs:
         ./evaluate_plan_approvers -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
       working-directory: workload/pipeline/set_approvers
     
+    - name: Upload Terraform Plan as Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: terraform-plan
+        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+
+    - name: Create Pull Request using GitHub CLI
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        gh pr create \
+          --base main \
+          --head "$BRANCH_NAME" \
+          --title "Automated Terraform Plan Update" \
+          --body "This is an auto-generated PR with the updated Terraform plan results." \
+          --label "automatedpr,terraform,jamfpro"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REF: ${{ github.ref }}
+    # Ref: https://cli.github.com/manual/gh_pr_create
+
     - name: Fetch Pull Request Number
       id: fetch_pr_number
       run: |
@@ -122,24 +142,4 @@ jobs:
             repo: context.repo.repo,
             body: output
           });
-    
-    - name: Upload Terraform Plan as Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: terraform-plan
-        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
-
-    - name: Create Pull Request using GitHub CLI
-      run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        gh pr create \
-          --base main \
-          --head "$BRANCH_NAME" \
-          --title "Automated Terraform Plan Update" \
-          --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automatedpr,terraform,jamfpro"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REF: ${{ github.ref }}
-    # Ref: https://cli.github.com/manual/gh_pr_create
 
