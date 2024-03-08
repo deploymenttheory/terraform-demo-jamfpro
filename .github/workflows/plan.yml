@@ -132,7 +132,8 @@ jobs:
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
     
 
-    - name: create pull request
-      run: gh pr create -B base_branch -H branch_to_merge --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+    - name: Create Pull Request using GitHub CLI
+      run: |
+        gh pr create --base main --head ${{ github.head_ref }} --title 'Automated Terraform Plan Update' --body 'This is an auto-generated PR with the updated Terraform plan results.'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
