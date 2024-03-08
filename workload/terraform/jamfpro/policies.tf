@@ -1,77 +1,62 @@
-resource "jamfpro_policy" "jamfpro_policy_001" {
-  general {
-    name                          = "[policy]-test-001"
-    enabled                       = false
-    trigger                       = "EVENT" // "USER_INITIATED" for self self trigger , "EVENT" for an event trigger
-    trigger_checkin               = false
-    trigger_enrollment_complete   = false
-    trigger_login                 = false
-    trigger_logout                = false
-    trigger_network_state_changed = false
-    trigger_startup               = false
-    frequency                     = "Once per computer"
-    retry_event                   = "none"
-    retry_attempts                = -1
-    notify_on_each_failed_retry   = false
-    location_user_only            = false
-    target_drive                  = "/"
-    offline                       = false
+resource "jamfpro_policy" "example_policy" {
+  name                                           = "tf-ghatest-script-policy-config-demo"
+  enabled                                        = false
+  trigger                                        = "EVENT"
+  frequency                                      = "Once per computer"
+  target_drive                                   = "/"
+  category_id                                    = -1
+  category_name                                  = "No category assigned"
+  network_limitations_minimum_network_connection = "No Minimum"
+  network_limitations_any_ip_address             = true
+  site_id                                        = -1
+  site_name                                      = "None"
 
-    network_limitations {
-      minimum_network_connection = "No Minimum"
-      any_ip_address             = false
-    }
-
-    override_default_settings {
-      target_drive       = "/"
-      distribution_point = "default"
-      force_afp_smb      = false
-      sus                = "default"
-    }
-
-    site {
-      id   = -1
-      name = "None"
-    }
-  }
-  scope {
-    all_computers = false
-  }
-  scripts {
-    script {
-      id          = data.jamfpro_script.jamfpro_script_001_data.id
-      name        = data.jamfpro_script.jamfpro_script_001_data.name
-      priority    = "After"
-      parameter4  = "Macintosh HD"
-      parameter5  = "APFS"
-      parameter6  = ""
-      parameter7  = ""
-      parameter8  = "100"
-      parameter9  = ""
-      parameter10 = ""
-      parameter11 = ""
-    }
-  }
+  scripts = [{
+    id         = 4521
+    name       = "tf-ghatest-add-or-remove-group-membership-v4.0"
+    priority   = "After"
+    parameter4 = "thing"
+    parameter5 = "thing"
+    parameter6 = "thing"
+    parameter7 = "thing"
+  }]
 
   self_service {
-    use_for_self_service            = true
-    self_service_display_name       = ""
-    install_button_text             = "Install"
-    reinstall_button_text           = ""
-    self_service_description        = ""
-    force_users_to_view_description = false
-
-    self_service_icon {
-      id = 0
-    }
-
-    feature_on_main_page = false
+    use_for_self_service  = true
+    install_button_text   = "Install"
+    reinstall_button_text = "Reinstall"
   }
 
+  package_configuration {
+    distribution_point = "default"
+  }
 
+  account_maintenance {
+    management_account_action = "doNotChange"
+  }
 
+  maintenance {
+    recon = false
+  }
+
+  files_processes {
+    delete_file = false
+  }
+
+  user_interaction {
+    allow_user_to_defer = false
+  }
+
+  reboot {
+    message                        = "This computer will restart in 5 minutes. Please save anything you are working on and log out by choosing Log Out from the bottom of the Apple menu."
+    startup_disk                   = "Current Startup Disk"
+    no_user_logged_in              = "Do not restart"
+    user_logged_in                 = "Do not restart"
+    minutes_until_reboot           = 5
+    start_reboot_timer_immediately = false
+    file_vault_2_reboot            = false
+  }
 }
-
 
 
 # resource "jamfpro_policies" "example_policy" {
