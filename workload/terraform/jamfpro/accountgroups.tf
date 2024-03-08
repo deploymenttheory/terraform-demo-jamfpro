@@ -89,7 +89,7 @@ output "jamfpro_account_group_001_data_name" {
 
 
 // account group - administrator example
-resource "jamfpro_account_group" "jamf_pro_account_group_002" {
+resource "jamfpro_account_group" "jamfpro_account_group_002" {
   name          = "tf-ghatest-account_group-administrator"
   access_level  = "Full Access" // Full Access / Site Access / Group Access
   privilege_set = "Administrator"
@@ -101,21 +101,21 @@ resource "jamfpro_account_group" "jamf_pro_account_group_002" {
 
 }
 
-data "jamfpro_account_group" "jamf_pro_account_group_002_data" {
-  id = jamfpro_account_group.jamf_pro_account_group_002.id
+data "jamfpro_account_group" "jamfpro_account_group_002_data" {
+  id = jamfpro_account_group.jamfpro_account_group_002.id
 }
 
-output "jamf_pro_account_group_002_data_id" {
-  value = data.jamfpro_account_group.jamf_pro_account_group_002_data.id
+output "jamfpro_account_group_002_data_id" {
+  value = data.jamfpro_account_group.jamfpro_account_group_002_data.id
 }
 
-output "jamf_pro_account_group_002_data_name" {
-  value = data.jamfpro_account_group.jamf_pro_account_group_002_data.name
+output "jamfpro_account_group_002_data_name" {
+  value = data.jamfpro_account_group.jamfpro_account_group_002_data.name
 }
 
 
 # // account group - auditor example
-resource "jamfpro_account_group" "jamf_pro_account_group_003" {
+resource "jamfpro_account_group" "jamfpro_account_group_003" {
   name          = "tf-ghatest-account_group-auditor"
   access_level  = "Full Access" // Full Access / Site Access / Group Access
   privilege_set = "Auditor"
@@ -127,16 +127,16 @@ resource "jamfpro_account_group" "jamf_pro_account_group_003" {
 
 }
 
-data "jamfpro_account_group" "jamf_pro_account_group_003_data" {
-  id = jamfpro_account_group.jamf_pro_account_group_003.id
+data "jamfpro_account_group" "jamfpro_account_group_003_data" {
+  id = jamfpro_account_group.jamfpro_account_group_003.id
 }
 
-output "jamf_pro_account_group_003_data_id" {
-  value = data.jamfpro_account_group.jamf_pro_account_group_003_data.id
+output "jamfpro_account_group_003_data_id" {
+  value = data.jamfpro_account_group.jamfpro_account_group_003_data.id
 }
 
-output "jamf_pro_account_group_003_data_name" {
-  value = data.jamfpro_account_group.jamf_pro_account_group_003_data.name
+output "jamfpro_account_group_003_data_name" {
+  value = data.jamfpro_account_group.jamfpro_account_group_003_data.name
 }
 
 
