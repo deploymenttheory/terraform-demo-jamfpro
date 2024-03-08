@@ -1,5 +1,5 @@
 resource "jamfpro_account" "jamfpro_account_001" {
-  name                  = "tf-ghatest-account-custom"
+  name                  = "tf-ghatest-account-johnny-appleseed"
   directory_user        = false
   full_name             = "Jonny Appleseed"
   password              = "mySecretThing10"
