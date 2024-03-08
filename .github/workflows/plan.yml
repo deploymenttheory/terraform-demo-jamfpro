@@ -119,54 +119,11 @@ jobs:
             body: output
           });
     
-      
-    # - name: Create PR comment with the Terraform plan
-    #   uses: actions/github-script@v7.0.1
-    #   if: github.event_name == 'push'
-    #   env:
-    #     PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-    #   with:
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #     script: |
-    #       const fs = require('fs');
-    #       const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
-    #       const planOutput = fs.readFileSync(planPath, 'utf8');
-    #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-    #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-    #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-    #       <details><summary>Validation Output</summary>
-          
-    #       \`\`\`\n
-    #       ${{ steps.validate.outputs.stdout }}
-    #       \`\`\`
-          
-    #       </details>
-          
-    #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
-    #       <details><summary>Show Plan</summary>
-          
-    #       \`\`\`\n
-    #       ${planOutput}
-    #       \`\`\`
-          
-    #       </details>
-          
-    #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
-    #       github.rest.issues.createComment({
-    #         issue_number: context.issue.number,
-    #         owner: context.repo.owner,
-    #         repo: context.repo.repo,
-    #         body: output
-    #       });
-
     - name: Upload Terraform Plan as Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
         name: terraform-plan
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
-    
 
     - name: Create Pull Request using GitHub CLI
       run: |
@@ -181,23 +138,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REF: ${{ github.ref }}
     # Ref: https://cli.github.com/manual/gh_pr_create
-  
-    # - name: Create Pull Request using GitHub CLI
-    #   run: |
-    #     BRANCH_NAME=${GITHUB_REF#refs/heads/}
-    #     REVIEWERS=""
-    #     if [[ "${{ steps.evaluate_plan_approvers.outputs.approval_group }}" == "Security" ]]; then
-    #       REVIEWERS="--reviewer security-team-demo"
-    #     fi
-    #     gh pr create \
-    #       --base main \
-    #       --head "$BRANCH_NAME" \
-    #       --title "Automated Terraform Plan Update" \
-    #       --body "This is an auto-generated PR with the updated Terraform plan results." \
-    #       --label "automated pr,terraform,jamfpro" \
-    #       $REVIEWERS
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     GITHUB_REF: ${{ github.ref }}
-        
-      
+
