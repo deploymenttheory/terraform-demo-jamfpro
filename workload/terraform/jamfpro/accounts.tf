@@ -11,6 +11,18 @@ resource "jamfpro_account" "jamfpro_account_001" {
 
   // Use Terraform reference for group name
   groups {
-    name = jamfpro_account_group.jamf_pro_account_group_001.name
+    name = jamfpro_account_group.jamfpro_account_group_001.name
   }
+}
+
+data "jamfpro_account" "jamfpro_account_001_data" {
+  id = jamfpro_account.jamfpro_account_001.id
+}
+
+output "jamfpro_account_001_data_id" {
+  value = data.jamfpro_account.jamfpro_account_001_data.id
+}
+
+output "jamfpro_account_001_data_name" {
+  value = data.jamfpro_account.jamfpro_account_001_data.name
 }
