@@ -55,7 +55,7 @@ type Resource struct {
 	Values        map[string]interface{} `json:"values"`
 }
 
-// Define a struct for the Values part
+// Resource Name Value from tf plan
 // Duplicate resource names are checked based on the name field
 type ResourceValues struct {
 	Name string `json:"name"`
