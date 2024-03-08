@@ -76,8 +76,15 @@ type Change struct {
 	Before          map[string]interface{} `json:"before"`
 	After           map[string]interface{} `json:"after"`
 	AfterUnknown    map[string]interface{} `json:"after_unknown"`
-	BeforeSensitive bool                   `json:"before_sensitive"`
-	AfterSensitive  map[string]interface{} `json:"after_sensitive"`
+	BeforeSensitive SensitiveType          `json:"before_sensitive,omitempty"`
+	AfterSensitive  SensitiveType          `json:"after_sensitive"`
+}
+
+type SensitiveType struct {
+	BoolValue   bool
+	MapValue    map[string]interface{}
+	IsBool      bool
+	IsPopulated bool
 }
 
 // Configuration
@@ -213,4 +220,23 @@ func main() {
 	if !foundDuplicates {
 		fmt.Println("Check completed: No duplicate Jamf Pro resource names found within the specified Terraform plan.")
 	}
+}
+
+func (s *SensitiveType) UnmarshalJSON(data []byte) error {
+	s.IsPopulated = true // Mark as populated for further logic if needed
+
+	// First, try to unmarshal as a bool
+	if err := json.Unmarshal(data, &s.BoolValue); err == nil {
+		s.IsBool = true
+		return nil
+	}
+
+	// If unmarshalling as a bool fails, try as a map
+	if err := json.Unmarshal(data, &s.MapValue); err != nil {
+		return err // Return error if it fails to unmarshal as both bool and map
+	}
+
+	// Successfully unmarshalled as a map
+	s.IsBool = false
+	return nil
 }
