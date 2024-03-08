@@ -105,7 +105,6 @@ jobs:
         echo "Fetched PR_NUMBER: $PR_NUMBER"
     
     - name: Create PR comment with the Terraform plan
-      if: steps.fetch_pr_number.outputs.PR_NUMBER != ''
       uses: actions/github-script@v7.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
