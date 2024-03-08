@@ -104,7 +104,7 @@ jobs:
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
         echo "Fetched PR_NUMBER: $PR_NUMBER"
     
-    - name: Create PR comment with the Terraform plan
+    - name: Add Terraform plan comment to PR
       uses: actions/github-script@v7.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
