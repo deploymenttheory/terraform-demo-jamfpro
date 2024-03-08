@@ -34,6 +34,9 @@ resource "jamfpro_policy" "jamfpro_policy_001" {
       name = "None"
     }
   }
+    scope {
+    all_computers    = false
+  }
     scripts {
     script {
       id        = data.jamfpro_script.jamfpro_script_001_data.id
