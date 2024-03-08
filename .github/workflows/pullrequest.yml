@@ -1,6 +1,10 @@
 name: Create pull request
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["Create terraform plan"]
+    types:
+      - completed
 
 permissions:
   contents: read
