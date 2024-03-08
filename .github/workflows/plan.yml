@@ -13,6 +13,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
+      SECURITY_TEAM_REVIEWERS: "security-team-demo"
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.1
@@ -82,7 +83,7 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github+json" \
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-          -d '{"reviewers": [], "team_reviewers":["security-team-demo"], "maintainers_can_modify": true}'
+          -d '{"reviewers": [], "team_reviewers":["${{ env.SECURITY_TEAM_REVIEWERS }}"], "maintainers_can_modify": true}'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
