@@ -80,13 +80,6 @@ jobs:
         PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
     
-    - name: Fetch Pull Request Number 2 test
-      id: fetch_pr_number_2
-      run: |
-          PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
-          echo "::set-output name=pr_number::$PR_NUMBER"
-      
-    
     - name: Create PR comment with the Terraform plan
       if: ${{ env.PR_NUMBER }}
       uses: actions/github-script@v7.0.1

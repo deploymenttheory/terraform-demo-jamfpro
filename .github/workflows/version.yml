@@ -1,0 +1,46 @@
+name: Tag and Hash Version on Apply Success
+
+on:
+  workflow_run:
+    workflows: ["Apply Terraform Plan"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  tag-and-hash-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate hash from Terraform configurations
+        run: |
+          CONFIG_HASH=$(find . -type f -name '*.tf' -exec sha256sum {} + | sha256sum | cut -c1-8)
+          echo "CONFIG_HASH=$CONFIG_HASH" >> $GITHUB_ENV
+
+      - name: Fetch the latest tag and generate next version
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: versioning
+        with:
+          custom_tag: "true"
+          tag_prefix: ""
+
+      - name: Increment version and append hash
+        run: |
+          LATEST_TAG=${{ steps.versioning.outputs.tag }}
+          IFS='-' read -ra TAG_PARTS <<< "$LATEST_TAG"
+          SEMVER=${TAG_PARTS[0]}
+          IFS='.' read -ra VERSION_PARTS <<< "${SEMVER//v/}"
+          PATCH=$((VERSION_PARTS[2]+1))
+          NEW_VERSION="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH-$CONFIG_HASH"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Create and push new tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git tag $NEW_VERSION
+          git push origin $NEW_VERSION
