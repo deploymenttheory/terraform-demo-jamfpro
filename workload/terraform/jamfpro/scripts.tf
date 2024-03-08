@@ -1,5 +1,5 @@
 resource "jamfpro_script" "jamfpro_script_001" {
-  name            = "tf-ghatest-add-or-remove-group-membership-v4.0"
+  name            = "tf-ghatest-add-or-remove-group-membership-v4.1"
   script_contents = file("${path.module}/support_files/scripts/Add or Remove Group Membership.zsh")
   os_requirements = "13"
   priority        = "BEFORE"
