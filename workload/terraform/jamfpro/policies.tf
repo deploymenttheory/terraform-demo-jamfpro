@@ -1,4 +1,4 @@
-resource "jamfpro_policies" "jamfpro_policy_001" {
+resource "jamfpro_policy" "jamfpro_policy_001" {
   general {
     name                        = "[policy]-test-001"
     enabled                     = false
