@@ -132,36 +132,36 @@ jobs:
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
     
 
-    # - name: Create Pull Request using GitHub CLI
-    #   run: |
-    #     BRANCH_NAME=${GITHUB_REF#refs/heads/}
-    #     gh pr create \
-    #       --base main \
-    #       --head "$BRANCH_NAME" \
-    #       --title "Automated Terraform Plan Update" \
-    #       --body "This is an auto-generated PR with the updated Terraform plan results." \
-    #       --label "automated pr,terraform,jamfpro"
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     GITHUB_REF: ${{ github.ref }}
-    # # Ref: https://cli.github.com/manual/gh_pr_create
-  
     - name: Create Pull Request using GitHub CLI
       run: |
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        REVIEWERS=""
-        if [[ "${{ steps.evaluate_plan_approvers.outputs.approval_group }}" == "Security" ]]; then
-          REVIEWERS="--reviewer security-team-demo"
-        fi
         gh pr create \
           --base main \
           --head "$BRANCH_NAME" \
           --title "Automated Terraform Plan Update" \
           --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automated pr,terraform,jamfpro" \
-          $REVIEWERS
+          --label "automated pr,terraform,jamfpro"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REF: ${{ github.ref }}
+    # Ref: https://cli.github.com/manual/gh_pr_create
+  
+    # - name: Create Pull Request using GitHub CLI
+    #   run: |
+    #     BRANCH_NAME=${GITHUB_REF#refs/heads/}
+    #     REVIEWERS=""
+    #     if [[ "${{ steps.evaluate_plan_approvers.outputs.approval_group }}" == "Security" ]]; then
+    #       REVIEWERS="--reviewer security-team-demo"
+    #     fi
+    #     gh pr create \
+    #       --base main \
+    #       --head "$BRANCH_NAME" \
+    #       --title "Automated Terraform Plan Update" \
+    #       --body "This is an auto-generated PR with the updated Terraform plan results." \
+    #       --label "automated pr,terraform,jamfpro" \
+    #       $REVIEWERS
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     GITHUB_REF: ${{ github.ref }}
         
       
