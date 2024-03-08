@@ -4,6 +4,8 @@ on:
   push:
     branches-ignore:
       - main
+    paths:
+      - 'workload/terraform/**'
 
 permissions:
   contents: read
