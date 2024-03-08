@@ -130,3 +130,9 @@ jobs:
       with:
         name: terraform-plan
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+    
+
+    - name: create pull request
+      run: gh pr create -B base_branch -H branch_to_merge --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
