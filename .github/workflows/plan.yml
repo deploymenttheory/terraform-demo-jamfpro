@@ -130,7 +130,7 @@ jobs:
           --head "$BRANCH_NAME" \
           --title "Automated Terraform Plan Update" \
           --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automated-pr,terraform,jamfpro"
+          --label "automatedpr,terraform,jamfpro"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REF: ${{ github.ref }}
