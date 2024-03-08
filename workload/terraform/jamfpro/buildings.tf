@@ -1,6 +1,6 @@
 
 resource "jamfpro_building" "jamfpro_building_001" {
-  name            = "Apple Park 2"
+  name            = "Apple Park"
   street_address1 = "The McIntosh Tree"
   street_address2 = "One Apple Park Way"
   city            = "Cupertino"
@@ -22,7 +22,7 @@ output "jamfpro_building_001_data_name" {
 }
 
 resource "jamfpro_building" "jamfpro_building_002" {
-  name            = "Jamf Headquarters 2"
+  name            = "Jamf Headquarters"
   street_address1 = "100 Washington Ave S"
   street_address2 = "Suite 1100"
   city            = "Minneapolis"
