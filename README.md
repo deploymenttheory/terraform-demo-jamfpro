@@ -16,13 +16,15 @@ Before you begin, ensure you have the following prerequisites in place:
 
 1. **Fork or Clone Repository**: Start by forking or cloning this repository to your GitHub account.
 
-2. **Configure Secrets**: Set up the following secrets in your GitHub repository settings:
-    - `GITHUB_TOKEN`: A GitHub token with permissions to access this repository.
+2. **Configure Github Secrets**: Set up the following secrets in your GitHub repository settings:
     - `TF_API_TOKEN`: Your Terraform Cloud API token for Terraform Cloud backend (if used).
+
+3. **Configure Terraform Cloud Secrets**: Set up the following secrets in your terraform cloud workspace variable settings:
     - `JAMFPRO_CLIENT_ID`: Your Jamf Pro client id.
     - `JAMFPRO_CLIENT_SECRET`: Your Jamf Pro client secret.
+    - `JAMFPRO_INSTANCE_NAME`: Your Jamf Pro instance secret. For example: `https://your-instance.jamfcloud.com`, insert `your-instance` as the value.
 
-3. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `instance_name`, `client_id`, and `client_secret`. For example:
+4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `instance_name`, `client_id`, and `client_secret`. For example:
 
 ```hcl
     provider "jamfpro" {
@@ -35,7 +37,7 @@ Before you begin, ensure you have the following prerequisites in place:
 
 Set the values for these variables in a `terraform.tfvars` file or through GitHub Actions environment variables.
 
-4. **Backend Configuration**:This project uses Terraform Cloud as the backend for state management and execution. Configure the Terraform Cloud backend by specifying your organization and workspace in your Terraform configuration:
+5. **Backend Configuration**:This project uses Terraform Cloud as the backend for state management and execution. Configure the Terraform Cloud backend by specifying your organization and workspace in your Terraform configuration:
 
 ```hcl
 terraform {
@@ -49,7 +51,7 @@ terraform {
 }
 ```
 
-5. **Terraform Provider Configuration**
+6. **Terraform Provider Configuration**
 The project uses the jamfpro Terraform provider to interact with your Jamf Pro environment. Specify the provider source and version in your Terraform configuration:
 
 ```hcl
@@ -69,7 +71,7 @@ Ensure that the provider version is compatible with your Jamf Pro environment.
 
 Replace your-terraform-cloud-organization and your-terraform-cloud-workspace with your actual Terraform Cloud organization and workspace names.
 
-6. **Define Your Resources**: Use Terraform resource definitions to manage your Jamf Pro resources, such as buildings, departments, policies, etc. An example for defining a building:
+7. **Define Your Resources**: Use Terraform resource definitions to manage your Jamf Pro resources, such as buildings, departments, policies, etc. An example for defining a building:
     ```hcl
     resource "jamfpro_building" "jamfpro_building_001" {
       name            = "Apple Park"

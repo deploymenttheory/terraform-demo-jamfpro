@@ -1,4 +1,4 @@
-name: Check terraform file formatting
+name: Terraform Format
 
 on:
   push:
