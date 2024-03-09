@@ -22,6 +22,7 @@ provider "jamfpro" {
   total_retry_duration         = 30 # seconds
   custom_timeout               = 30 # seconds
 }
+
 variable "jamfpro_instance_name" {
   description = "Jamf Pro Instance name."
   default     = ""
