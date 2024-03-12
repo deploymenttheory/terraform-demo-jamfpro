@@ -4,6 +4,7 @@ resource "jamfpro_category" "jamfpro_category_001" {
 }
 
 data "jamfpro_category" "jamfpro_category_001_data" {
+  id = jamfpro_category.jamfpro_category_001.id
 }
 
 output "jamfpro_category_001_data_id" {
