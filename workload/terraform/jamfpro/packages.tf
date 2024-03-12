@@ -1,24 +1,24 @@
 
 # Define a Jamf Pro Package Resource
 resource "jamfpro_package" "jamfpro_package_002" {
-  name                = "tf-ghatest-package-suspiciouspackage"
-  package_file_path   = "support_files/packages/SuspiciousPackage.dmg"
-  category            = ""
-  info                = "tf package deployment for demonstration.."
-  notes               = "This package is used for Terraform provider documentation example."
-  priority            = 10
-  reboot_required     = false
-  fill_user_template  = true
-  fill_existing_users = true
+  name                 = "tf-ghatest-package-suspiciouspackage"
+  package_file_path    = "support_files/packages/SuspiciousPackage.dmg"
+  category             = ""
+  info                 = "tf package deployment for demonstration.."
+  notes                = "This package is used for Terraform provider documentation example."
+  priority             = 10
+  reboot_required      = false
+  fill_user_template   = true
+  fill_existing_users  = true
   boot_volume_required = false
-  allow_uninstalled   = false
-  os_requirements     = "macOS 10.15.7, macOS 11.1"
+  allow_uninstalled    = false
+  os_requirements      = "macOS 10.15.7, macOS 11.1"
   //required_processor  = "Intel"
   //switch_with_package = ""
   install_if_reported_available = false
   //reinstall_option    = "Reinstall if newer version available"
-  triggering_files    = ""
-  send_notification   = true
+  triggering_files  = ""
+  send_notification = true
 }
 
 data "jamfpro_package" "jamfpro_package_002_data" {
