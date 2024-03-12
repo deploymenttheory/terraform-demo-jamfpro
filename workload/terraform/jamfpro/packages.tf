@@ -4,7 +4,7 @@ resource "jamfpro_package" "jamfpro_package_002" {
   name                 = "tf-ghatest-package-suspiciouspackage"
   package_file_path    = "support_files/packages/SuspiciousPackage.dmg"
   category             = ""
-  info                 = "tf package deployment for demonstration.."
+  info                 = "tf package deployment for demonstration"
   notes                = "This package is used for Terraform provider documentation example."
   priority             = 10
   reboot_required      = false
