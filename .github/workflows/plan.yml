@@ -1,4 +1,4 @@
-name: Create terraform plan
+name: Terraform Plan
 
 on:
   push:
@@ -51,13 +51,13 @@ jobs:
       id: plan
       run: |
         terraform plan -no-color -out=plan.tfplan
-        terraform show -no-color plan.tfplan > plan.txt
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
-    - name: Export Plan as JSON
+    - name: Export TF Plan
       id: json
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
+        terraform show -no-color plan.tfplan > plan.txt
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     
     - name: Set up Go
@@ -84,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: terraform-plan
-        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.tfplan
 
     - name: Create Pull Request using GitHub CLI
       run: |
