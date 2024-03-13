@@ -13,11 +13,7 @@ resource "jamfpro_package" "jamfpro_package_002" {
   boot_volume_required = false
   allow_uninstalled    = false
   os_requirements      = "macOS 10.15.7, macOS 11.1"
-  //required_processor  = "Intel"
-  //switch_with_package = ""
   install_if_reported_available = false
-  //reinstall_option    = "Reinstall if newer version available"
-  triggering_files  = ""
   send_notification = true
 }
 
