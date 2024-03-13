@@ -12,7 +12,7 @@ resource "jamfpro_package" "jamfpro_package_002" {
   fill_existing_users           = true
   boot_volume_required          = false
   allow_uninstalled             = false
-  os_requirements               = "macOS 10.15.7, macOS 11.1"
+  os_requirements               = "macOS 10.15.1, macOS 10.15.7"
   install_if_reported_available = false
   send_notification             = true
 }
