@@ -70,9 +70,11 @@ runs:
       working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
-        echo 'plan<<EOF' >> $GITHUB_OUTPUT
-        terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
+        terraform plan -no-color -out=tfplan 
+
+#echo 'plan<<EOF' >> $GITHUB_OUTPUT
+        #terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
+        #echo 'EOF' >> $GITHUB_OUTPUT
       
     - name: Save Artifact
       id: save-artifact
