@@ -52,18 +52,18 @@ runs:
       run: terraform fmt -check
       working-directory: ${{ inputs.terraform_working_directory }}
       
-    - name: Terraform Validate
-      id: validate
-      shell: bash
-      run: terraform validate -no-color
-      working-directory: ${{ inputs.terraform_working_directory }}
-      
     - name: Terraform Init
       id: init
       working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
         terraform init
+        
+    - name: Terraform Validate
+      id: validate
+      shell: bash
+      run: terraform validate -no-color
+      working-directory: ${{ inputs.terraform_working_directory }}
       
     - name: Terraform Plan
       id: plan
