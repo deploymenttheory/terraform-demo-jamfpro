@@ -4,10 +4,10 @@ on:
   pull_request:
 
 env:
-  TF_SA: <GOOGLE_SA_EMAIL>
   TERRAFORM_VERSION: "1.7.5"
   TF_IN_AUTOMATION: "True"
-
+  TF_WORKING_DIR: "workload/terraform/jamfpro"
+  
 jobs:
   terraform_plan:
     runs-on: ubuntu-latest
@@ -27,8 +27,7 @@ jobs:
       - name: Terraform Plan
         uses: ./.github/plan
         with:
-          terraform_client_id: ${{ env.TF_SA }}
-          terraform_working_directory: "workload/terraform/jamfpro"
+          terraform_working_directory: ${{ env.TF_WORKING_DIR }}
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_id: ${{ steps.pr-id.outputs.PR_NUMBER }}
