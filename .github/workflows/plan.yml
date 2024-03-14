@@ -105,41 +105,99 @@ jobs:
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
         echo "Fetched PR_NUMBER: $PR_NUMBER"
     
-    - name: Add Terraform plan comment to PR
-      uses: actions/github-script@v7.0.1
+    # - name: Add Terraform plan comment to PR
+    #   uses: actions/github-script@v7.0.1
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     script: |
+    #       const fs = require('fs');
+    #       const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
+    #       const planOutput = fs.readFileSync(planPath, 'utf8');
+    #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+    #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+    #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+    #       <details><summary>Validation Output</summary>
+          
+    #       \`\`\`\n
+    #       ${{ steps.validate.outputs.stdout }}
+    #       \`\`\`
+          
+    #       </details>
+          
+    #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+    #       <details><summary>Show Plan</summary>
+          
+    #       \`\`\`\n
+    #       ${planOutput}
+    #       \`\`\`
+          
+    #       </details>
+          
+    #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.TF_ACTIONS_WORKING_DIR }}\`, Workflow: \`${{ github.workflow }}\`*`;
+          
+    #       github.rest.issues.createComment({
+    #         issue_number: ${{ env.PR_NUMBER }},
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: output
+    #       });
+
+    - uses: actions/github-script@v7.0.1
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const fs = require('fs');
-          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
-          const planOutput = fs.readFileSync(planPath, 'utf8');
+          // 1. Retrieve existing bot comments for the PR
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          })
+          const botComment = comments.find(comment => {
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+          })
+    
+          // 2. Prepare format of the comment
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
           <details><summary>Validation Output</summary>
-          
+    
           \`\`\`\n
           ${{ steps.validate.outputs.stdout }}
           \`\`\`
-          
+    
           </details>
-          
+    
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
+    
           <details><summary>Show Plan</summary>
-          
+    
           \`\`\`\n
-          ${planOutput}
+          ${process.env.PLAN}
           \`\`\`
-          
+    
           </details>
-          
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.TF_ACTIONS_WORKING_DIR }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
-          github.rest.issues.createComment({
-            issue_number: ${{ env.PR_NUMBER }},
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          });
+    
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+    
+          // 3. If we have a comment, update it, otherwise create a new one
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+          }
 
