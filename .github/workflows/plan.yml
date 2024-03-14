@@ -25,7 +25,7 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan
-        uses: ./.github/plan/action.yml
+        uses: ./.github/plan
         with:
           terraform_working_directory: ${{ env.TF_WORKING_DIR }}
           terraform_version: ${{ env.TERRAFORM_VERSION }}
@@ -34,4 +34,3 @@ jobs:
           jamfpro_client_secret: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
           jamfpro_client_id: ${{ secrets.JAMFPRO_CLIENT_ID }}
           jamfpro_instance_name: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
-          
