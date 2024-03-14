@@ -70,11 +70,12 @@ runs:
       shell: bash
       run: |
         terraform plan -no-color -out=plan.tfplan
+        ls -a
       working-directory: ${{ inputs.terraform_working_directory }}
 
 
     - name: Export TF Plan
-      id: json
+      id: export
       shell: bash
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
