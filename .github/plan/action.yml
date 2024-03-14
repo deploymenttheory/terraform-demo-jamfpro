@@ -109,7 +109,7 @@ runs:
     
           // 2. Prepare format of the comment
           const fs = require('fs');
-          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
+          const planPath = '${{ inputs.terraform_working_directory }}/plan.txt';
           const planOutput = fs.readFileSync(planPath, 'utf8');
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
@@ -150,4 +150,4 @@ runs:
               body: output
             })
           }
-        working-directory: ${{ inputs.terraform_working_directory }}
+        
