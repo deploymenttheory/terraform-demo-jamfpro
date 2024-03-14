@@ -15,25 +15,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.1
 
-      # - name: Get PR ID
-      #   id: pr-id
-      #   shell: bash
-      #   env:
-      #     GITHUB_REF: ${{ inputs.github_ref }}
-      #   run: |
-      #     PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
-      #     echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-      
       - name: Get PR ID
         id: pr-id
         shell: bash
-        run: |
-          PR_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
-          | jq '.id')
-          echo "PR_ID=$PR_ID" >> $GITHUB_OUTPUT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REF: ${{ env.github_ref }}
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+      
+      # - name: Get PR ID
+      #   id: pr-id-2
+      #   shell: bash
+      #   run: |
+      #     PR_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #     "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
+      #     | jq '.id')
+      #     echo "PR_ID=$PR_ID" >> $GITHUB_OUTPUT
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Terraform Plan
         uses: ./.github/plan
