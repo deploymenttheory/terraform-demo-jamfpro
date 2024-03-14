@@ -39,16 +39,12 @@ runs:
         terraform_version: ${{ inputs.terraform_version }}
         terraform_wrapper: false
 
-
     # - id: 'auth'
-    #   name: 'Backend Authentication'
+    #   name: 'Remote Backend Authentication'
     #   uses: 'google-github-actions/auth@v1'
     #   with:
     #     service_account: ${{ inputs.terraform_sa }}
     #     credentials_json: ${{ inputs.google_sa_key }}
-
-    # - name: 'Set up Cloud SDK'
-    #   uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
     - name: Terraform Init
       id: init
@@ -69,7 +65,7 @@ runs:
 
     - name: Save Artifact
       id: save-artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: ${{ inputs.pr_id }}-tf-plan
         path: ${{ inputs.terraform_working_directory }}/tfplan
