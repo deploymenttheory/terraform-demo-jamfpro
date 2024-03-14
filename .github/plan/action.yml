@@ -51,23 +51,20 @@ runs:
       shell: bash
       run: terraform fmt -check
       working-directory: ${{ inputs.terraform_working_directory }}
-      continue-on-error: true
-
+      
     - name: Terraform Validate
       id: validate
       shell: bash
       run: terraform validate -no-color
       working-directory: ${{ inputs.terraform_working_directory }}
-      continue-on-error: true
-
+      
     - name: Terraform Init
       id: init
       working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
         terraform init
-      continue-on-error: true
-
+      
     - name: Terraform Plan
       id: plan
       working-directory: ${{ inputs.terraform_working_directory }}
@@ -76,20 +73,17 @@ runs:
         echo 'plan<<EOF' >> $GITHUB_OUTPUT
         terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
         echo 'EOF' >> $GITHUB_OUTPUT
-      continue-on-error: true
-
+      
     - name: Save Artifact
       id: save-artifact
       uses: actions/upload-artifact@v4.3.1
       with:
         name: ${{ inputs.pr_id }}-tf-plan
         path: ${{ inputs.terraform_working_directory }}/tfplan
-      continue-on-error: true
-
     
     - name: Comment Plan
       uses: actions/github-script@v7.0.1
-      if: github.event_name == 'pull_request'
+      if: always()
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
