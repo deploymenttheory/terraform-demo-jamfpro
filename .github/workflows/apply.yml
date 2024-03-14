@@ -1,17 +1,18 @@
-name: Terraform Plan
+name: Terraform Apply
 
 on:
-  pull_request:
+  pull_request_review:
+    types: [submitted]
 
 env:
   TERRAFORM_VERSION: "1.7.5"
   TF_IN_AUTOMATION: "True"
   TF_WORKING_DIR: "workload/terraform/jamfpro"
-  
+
 jobs:
-  terraform_plan:
+  terraform_apply:
     runs-on: ubuntu-latest
-    if: github.event.review.state != 'approved'
+    if: github.event.review.state == 'approved'
     steps:
       - uses: actions/checkout@v4.1.1
 
@@ -23,9 +24,9 @@ jobs:
         run: |
           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-        
-      - name: Terraform Plan
-        uses: ./.github/plan
+
+      - name: Terraform Apply
+        uses: ./.github/apply
         with:
           terraform_working_directory: ${{ env.TF_WORKING_DIR }}
           terraform_version: ${{ env.TERRAFORM_VERSION }}
