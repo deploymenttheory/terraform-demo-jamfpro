@@ -83,27 +83,29 @@ jobs:
       with:
         name: terraform-plan
         path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.tfplan
+        retention-days: 1
 
-    - name: Create Pull Request using GitHub CLI
-      run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        gh pr create \
-          --base main \
-          --head "$BRANCH_NAME" \
-          --title "Automated Terraform Plan Update" \
-          --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automatedpr,terraform,jamfpro"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REF: ${{ github.ref }}
-    # Ref: https://cli.github.com/manual/gh_pr_create
+    
+    # - name: Create Pull Request using GitHub CLI
+    #   run: |
+    #     BRANCH_NAME=${GITHUB_REF#refs/heads/}
+    #     gh pr create \
+    #       --base main \
+    #       --head "$BRANCH_NAME" \
+    #       --title "Automated Terraform Plan Update" \
+    #       --body "This is an auto-generated PR with the updated Terraform plan results." \
+    #       --label "automatedpr,terraform,jamfpro"
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     GITHUB_REF: ${{ github.ref }}
+    # # Ref: https://cli.github.com/manual/gh_pr_create
 
-    - name: Fetch Pull Request Number
-      id: fetch_pr_number
-      run: |
-        PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
-        echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-        echo "Fetched PR_NUMBER: $PR_NUMBER"
+    # - name: Fetch Pull Request Number
+    #   id: fetch_pr_number
+    #   run: |
+    #     PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
+    #     echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+    #     echo "Fetched PR_NUMBER: $PR_NUMBER"
     
     # - name: Add Terraform plan comment to PR
     #   uses: actions/github-script@v7.0.1
