@@ -87,7 +87,7 @@ runs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: ${{ inputs.pr_id }}-tf-plan
-        path: ${{ inputs.terraform_working_directory }}/tfplan
+        path: ${{ inputs.terraform_working_directory }}/plan.tfplan
     
     - name: Comment Plan
       uses: actions/github-script@v7.0.1
