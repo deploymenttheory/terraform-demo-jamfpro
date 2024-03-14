@@ -35,13 +35,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-      
-
       - name: Terraform Plan
         uses: ./.github/plan
         with:
           terraform_working_directory: ${{ env.TF_WORKING_DIR }}
           terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_cloud_api_token: ${{ secrets.TF_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_id: ${{ steps.pr-id.outputs.PR_NUMBER }}
           jamfpro_client_secret: ${{ secrets.JAMFPRO_CLIENT_SECRET }}

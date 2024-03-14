@@ -10,7 +10,9 @@ inputs:
     description: 'Terraform Version'
     required: true
     default: 1.7.5
-
+  terraform_cloud_api_token: 
+    description: 'Terraform cloud token'
+    required: true
   github_token: 
     description: 'GitHub token for auth'
     required: true
@@ -33,9 +35,10 @@ runs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        terraform_version: ${{ inputs.terraforom_version }}
+        cli_config_credentials_token:  ${{ inputs.terraform_cloud_api_token }}
+        terraform_version: ${{ inputs.terraform_version }}
         terraform_wrapper: false
+
 
     # - id: 'auth'
     #   name: 'Backend Authentication'
