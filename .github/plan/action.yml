@@ -69,10 +69,7 @@ runs:
       id: plan
       shell: bash
       run: |
-        terraform plan -no-color -out=plan.tfplan | tee plan-output.txt
-        echo "stdout<<EOF" >> $GITHUB_OUTPUT
-        cat plan-output.txt
-        echo "EOF" >> $GITHUB_OUTPUT
+        terraform plan -no-color -out=plan.tfplan
       working-directory: ${{ inputs.terraform_working_directory }}
 
 
@@ -81,7 +78,8 @@ runs:
       shell: bash
       run: |
         terraform show -no-color -json plan.tfplan > plan.json
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+        terraform show -no-color plan.tfplan > plan.txt
+      working-directory: ${{ inputs.terraform_working_directory }}
       
     - name: Save Artifact
       id: save-artifact
@@ -109,6 +107,9 @@ runs:
           })
     
           // 2. Prepare format of the comment
+          const fs = require('fs');
+          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
+          const planOutput = fs.readFileSync(planPath, 'utf8');
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
@@ -130,7 +131,7 @@ runs:
     
           </details>
     
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ inputs.terraform_working_directory }}\`, Workflow: \`${{ github.workflow }}\`*`;
     
           // 3. If we have a comment, update it, otherwise create a new one
           if (botComment) {
