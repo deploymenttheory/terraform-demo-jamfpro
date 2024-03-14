@@ -1,147 +1,48 @@
 name: Terraform Plan
 
 on:
-  push:
-    branches-ignore:
-      - main
-    paths:
-      - 'workload/terraform/**'
-  workflow_dispatch:
+  pull_request:
 
-permissions:
-  contents: read
-  pull-requests: write
-
+env:
+  TERRAFORM_VERSION: "1.7.5"
+  TF_IN_AUTOMATION: "True"
+  TF_WORKING_DIR: "workload/terraform/jamfpro"
+  
 jobs:
-  plan:
+  terraform_plan:
     runs-on: ubuntu-latest
-    name: Create a terraform plan for Jamf Pro
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
-      SECURITY_TEAM_REVIEWERS: "security-team-demo"
+    if: github.event.review.state != 'approved'
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
-        
-    - name: terraform plan
-      uses: hashicorp/setup-terraform@v3
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        terraform_version: latest
+      - uses: actions/checkout@v4.1.1
+
+      - name: Get PR ID
+        id: pr-id
+        shell: bash
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
       
-    - name: Terraform fmt
-      id: fmt
-      run: terraform fmt -check
-      continue-on-error: true
-    
-    - name: Terraform Init with Terraform Cloud Remote Backend
-      id: init
-      env:
-        TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-      run: terraform init
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Generate Terraform Plan
-      id: plan
-      run: |
-        terraform plan -no-color -out=plan.tfplan
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Export TF Plan
-      id: json
-      run: |
-        terraform show -no-color -json plan.tfplan > plan.json
-        terraform show -no-color plan.tfplan > plan.txt
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '>=1.20'
-        check-latest: true
-
-    - name: Check for duplicate resource names in the plan
-      id: evaluate_plan_duplicate_resources
-      run: |
-        go build -o evaluate_plan_duplicate_resources main.go
-        ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
-      working-directory: workload/pipeline/duplicate_resources
-    
-    - name: Check for approvals
-      id: evaluate_plan_approvers
-      run: |
-        go build -o evaluate_plan_approvers main.go
-        ./evaluate_plan_approvers -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
-      working-directory: workload/pipeline/set_approvers
-    
-    - name: Upload Terraform Plan as Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: terraform-plan
-        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.tfplan
-
-    - name: Create Pull Request using GitHub CLI
-      run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        gh pr create \
-          --base main \
-          --head "$BRANCH_NAME" \
-          --title "Automated Terraform Plan Update" \
-          --body "This is an auto-generated PR with the updated Terraform plan results." \
-          --label "automatedpr,terraform,jamfpro"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REF: ${{ github.ref }}
-    # Ref: https://cli.github.com/manual/gh_pr_create
-
-    - name: Fetch Pull Request Number
-      id: fetch_pr_number
-      run: |
-        PR_NUMBER=$(gh pr list --head ${{ github.ref_name }} --base main --json number --jq '.[0].number')
-        echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-        echo "Fetched PR_NUMBER: $PR_NUMBER"
-    
-    - name: Add Terraform plan comment to PR
-      uses: actions/github-script@v7.0.1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const fs = require('fs');
-          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
-          const planOutput = fs.readFileSync(planPath, 'utf8');
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-          
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-          
-          </details>
-          
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
-          <details><summary>Show Plan</summary>
-          
-          \`\`\`\n
-          ${planOutput}
-          \`\`\`
-          
-          </details>
-          
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.TF_ACTIONS_WORKING_DIR }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
-          github.rest.issues.createComment({
-            issue_number: ${{ env.PR_NUMBER }},
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          });
-
+      # - name: Get PR ID
+      #   id: pr-id-2
+      #   shell: bash
+      #   run: |
+      #     PR_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #     "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
+      #     | jq '.id')
+      #     echo "PR_ID=$PR_ID" >> $GITHUB_OUTPUT
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Terraform Plan
+        uses: ./.github/plan
+        with:
+          terraform_working_directory: ${{ env.TF_WORKING_DIR }}
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_cloud_api_token: ${{ secrets.TF_API_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_id: ${{ steps.pr-id.outputs.PR_NUMBER }}
+          jamfpro_client_secret: ${{ secrets.JAMFPRO_CLIENT_SECRET }}
+          jamfpro_client_id: ${{ secrets.JAMFPRO_CLIENT_ID }}
+          jamfpro_instance_name: ${{ secrets.JAMFPRO_INSTANCE_NAME }}
