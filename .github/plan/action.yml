@@ -67,14 +67,21 @@ runs:
       
     - name: Terraform Plan
       id: plan
-      working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
-        terraform plan -no-color -out=tfplan 
+        terraform plan -no-color -out=tfplan | tee plan-output.txt
+        echo "stdout<<EOF" >> $GITHUB_OUTPUT
+        cat plan-output.txt
+        echo "EOF" >> $GITHUB_OUTPUT
+      working-directory: ${{ inputs.terraform_working_directory }}
 
-#echo 'plan<<EOF' >> $GITHUB_OUTPUT
-        #terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
-        #echo 'EOF' >> $GITHUB_OUTPUT
+
+    - name: Export TF Plan
+      id: json
+      shell: bash
+      run: |
+        terraform show -no-color -json plan.tfplan > plan.json
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       
     - name: Save Artifact
       id: save-artifact
