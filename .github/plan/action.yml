@@ -69,7 +69,7 @@ runs:
       id: plan
       shell: bash
       run: |
-        terraform plan -no-color -out=tfplan | tee plan-output.txt
+        terraform plan -no-color -out=plan.tfplan | tee plan-output.txt
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
         cat plan-output.txt
         echo "EOF" >> $GITHUB_OUTPUT
