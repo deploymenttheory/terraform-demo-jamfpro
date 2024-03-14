@@ -47,14 +47,14 @@ runs:
 
     - name: Terraform Init
       id: init
-      working-directory: ${{ inputs.terraform_directory }}
+      working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
         terraform init
 
     - name: Terraform Plan
       id: plan
-      working-directory: ${{ inputs.terraform_directory }}
+      working-directory: ${{ inputs.terraform_working_directory }}
       shell: bash
       run: |
         echo 'plan<<EOF' >> $GITHUB_OUTPUT
@@ -66,7 +66,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.pr_id }}-tf-plan
-        path: ${{ inputs.terraform_directory }}/tfplan
+        path: ${{ inputs.terraform_working_directory }}/tfplan
 
     - name: Comment Plan
       id: comment-plan
