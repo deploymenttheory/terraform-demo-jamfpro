@@ -1,4 +1,4 @@
-name: "Terraform Apply With Terraform Cloud"
+name: "Terraform Apply With TFC"
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - main
 
 env:
-  TF_CLOUD_ORGANIZATION: "YOUR-ORGANIZATION-HERE"
+  TF_CLOUD_ORGANIZATION: "deploymenttheory"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "learn-terraform-github-actions"
-  CONFIG_DIRECTORY: "./"
+  TF_WORKSPACE: "terraform-jamfpro-demo"
+  CONFIG_DIRECTORY: "workload/terraform/jamfpro"
 
 jobs:
   terraform:
