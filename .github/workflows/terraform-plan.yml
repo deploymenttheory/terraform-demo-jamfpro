@@ -1,7 +1,7 @@
 name: "Terraform Plan With TFC"
 
 on:
-  push:
+  pull_request:
 
 env:
   TF_CLOUD_ORGANIZATION: "deploymenttheory" # Replace with your Terraform Cloud organization name
