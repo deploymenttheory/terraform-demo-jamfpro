@@ -1,6 +1,6 @@
 # Change
 
-***Feel free to remove this sample text***
+***State your intended change to Jamf Pro***
 >Thank you for your contribution !
 Please include a summary of the change and which issue is fixed.
 Please also include relevant motivation and context.
