@@ -1,6 +1,6 @@
 
 // Define a Jamf Pro Package Resource
-resource "jamfpro_package" "jamfpro_package_002" {
+resource "jamfpro_package" "jamfpro_package_001" {
   name                          = "tf-ghatest-package-suspiciouspackage"
   package_file_path             = "support_files/packages/SuspiciousPackage.dmg"
   category                      = "Unknown"
@@ -17,14 +17,14 @@ resource "jamfpro_package" "jamfpro_package_002" {
   send_notification             = true
 }
 
-data "jamfpro_package" "jamfpro_package_002_data" {
-  id = jamfpro_package.jamfpro_package_002.id
+data "jamfpro_package" "jamfpro_package_001_data" {
+  id = jamfpro_package.jamfpro_package_001.id
 }
 
-output "jamfpro_package_002_data_id" {
-  value = data.jamfpro_package.jamfpro_package_002_data.id
+output "jamfpro_package_001_data_id" {
+  value = data.jamfpro_package.jamfpro_package_001_data.id
 }
 
-output "jamfpro_package_002_data_name" {
-  value = data.jamfpro_package.jamfpro_package_002_data.name
+output "jamfpro_package_001_data_name" {
+  value = data.jamfpro_package.jamfpro_package_001_data.name
 }
