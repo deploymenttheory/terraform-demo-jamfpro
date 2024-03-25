@@ -1,5 +1,7 @@
 
+
 // Define a Jamf Pro Package Resource
+
 # resource "jamfpro_package" "jamfpro_package_001" {
 #   name                          = "tf-ghatest-package-suspiciouspackage"
 #   package_file_path             = "support_files/packages/SuspiciousPackage.dmg"
