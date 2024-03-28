@@ -1,5 +1,5 @@
 resource "jamfpro_user_group" "jamfpro_user_group_multi" {
-  count               = 100
+  count               = 10
   name                = format("tf-localtest-usergroup-static-loadtest-%03d", count.index + 1)
   is_smart            = false
   is_notify_on_change = false
