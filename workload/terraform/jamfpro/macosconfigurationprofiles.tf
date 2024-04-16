@@ -7,14 +7,7 @@ resource "jamfpro_macos_configuration_profile" "jamfpro_macos_configuration_prof
     id = -1
   }
   scope {
-    all_computers      = false
-    computer_ids       = sort([17, 18])
-    computer_group_ids = sort([53])
-    jss_user_ids       = [4]
-    jss_user_group_ids = [4]
+    all_computers = true
 
-    exclusions {
-      department_ids = [37287]
-    }
   }
 }
