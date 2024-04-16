@@ -21,6 +21,7 @@ provider "jamfpro" {
   token_refresh_buffer_period  = 5  # minutes
   total_retry_duration         = 30 # seconds
   custom_timeout               = 30 # seconds
+  //enable_cookie_jar            = true
 }
 
 variable "jamfpro_instance_name" {

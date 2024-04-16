@@ -14,7 +14,7 @@ resource "jamfpro_macos_configuration_profile" "jamfpro_macos_configuration_prof
     jss_user_group_ids = [4]
 
     exclusions {
-      department_ids = [27653]
+      department_ids = [37287]
     }
   }
 }
