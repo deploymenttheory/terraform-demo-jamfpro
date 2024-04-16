@@ -6,4 +6,8 @@ resource "jamfpro_macos_configuration_profile" "jamfpro_macos_configuration_prof
   category {
     id = -1
   }
+  scope {
+    all_computers = true
+
+  }
 }
