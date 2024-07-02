@@ -9,9 +9,9 @@ terraform {
 
 provider "jamfpro" {
   jamf_instance_fqdn = var.jamfpro_instance_fqdn
-  auth_method        = var.auth_method
-  client_id          = var.client_id
-  client_secret      = var.client_secret
+  auth_method        = var.jamfpro_auth_method
+  client_id          = var.jamfpro_client_id
+  client_secret      = var.jamfpro_client_id
   # basic_auth_username           = var.basic_auth_username
   # basic_auth_password           = var.basic_auth_password
   log_level                            = var.jamfpro_log_level
