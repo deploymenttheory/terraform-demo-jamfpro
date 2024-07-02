@@ -1,7 +1,7 @@
 
 resource "jamfpro_package" "jamfpro_package_001" {
   package_name          = "tf-ghatest-package-suspiciouspackage"
-  package_file_path     = "support_files/packages/SuspiciousPackage.dmg"
+  package_file_path     = "support_files/packages/gha-test-SuspiciousPackage.dmg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
   info                  = "tf package deployment for demonstration"
   notes                 = "Uploaded by: terraform-provider-jamfpro plugin."
