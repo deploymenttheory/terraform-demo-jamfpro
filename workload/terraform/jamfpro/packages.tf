@@ -28,25 +28,32 @@ Logic:
 If the jamfpro_package.jamfpro_package_002 resource needs to be replaced 
 (due to any change in its attributes or if it is missing from the server), 
 its ID will change.
-This change will trigger the triggers_replace in the terraform_data.download_package 
-resource, causing it to re-download the package.Since jamfpro_package.jamfpro_package_002
-depends on terraform_data.download_package, it ensures the package is downloaded before 
+This change will trigger the null_resource.download_package 
+resource, causing it to re-download the package. Since jamfpro_package.jamfpro_package_002
+depends on null_resource.download_package, it ensures the package is downloaded before 
 proceeding with its own creation.
 */
-resource "terraform_data" "download_package" {
-  triggers_replace = [
-    # This will trigger replacement based on the jamfpro_package resource
-    jamfpro_package.jamfpro_package_002.id
-  ]
 
+# Define the null_resource to manage the download package process
+resource "null_resource" "download_package" {
   provisioner "local-exec" {
     command = "curl -L -o /tmp/companyportallatest.pkg https://go.microsoft.com/fwlink/?linkid=853070"
   }
+
+  # Using random_id to trigger the download when necessary
+  triggers = {
+    redeploy = "${random_id.download_trigger.hex}"
+  }
+}
+
+# Create a random_id to act as a trigger
+resource "random_id" "download_trigger" {
+  byte_length = 8
 }
 
 # Define the jamfpro_package resource
 resource "jamfpro_package" "jamfpro_package_002" {
-  depends_on            = [terraform_data.download_package]
+  depends_on            = [null_resource.download_package]
   package_name          = "tf-ghatest-package-source:http-companyportal-latest"
   package_file_path     = "/tmp/companyportallatest.pkg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
@@ -69,8 +76,8 @@ resource "jamfpro_package" "jamfpro_package_002" {
   manifest              = ""
   manifest_file_name    = ""
 
-  # Force replacement if the terraform_data triggers replacement
+  # Force replacement if the null_resource triggers replacement
   lifecycle {
-    replace_triggered_by = [terraform_data.download_package.id]
+    replace_triggered_by = [null_resource.download_package.triggers["redeploy"]]
   }
 }
