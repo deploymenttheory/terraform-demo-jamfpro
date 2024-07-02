@@ -1,10 +1,10 @@
 
-# // App Dock Item Example
-# resource "jamfpro_dock_item" "jamfpro_dock_item_001" {
-#   name = "tf-ghatest-dockItem-app-iTunes"
-#   type = "App"
-#   path = "file://localhost/Applications/iTunes.app/"
-# }
+// App Dock Item Example
+resource "jamfpro_dock_item" "jamfpro_dock_item_001" {
+  name = "tf-ghatest-dockItem-app-iTunes"
+  type = "App"
+  path = "file://localhost/Applications/iTunes.app/"
+}
 
 # // File Dock Item Example
 # resource "jamfpro_dock_item" "jamfpro_dock_item_002" {
