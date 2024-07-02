@@ -110,5 +110,5 @@ variable "jamfpro_token_refresh_buffer_period_seconds" {
 
 variable "jamfpro_mandatory_request_delay_milliseconds" {
   description = "A mandatory delay after each request before returning to reduce high volume of requests in a short time."
-  default     = 100
+  default     = 150
 }
