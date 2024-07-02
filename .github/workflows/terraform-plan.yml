@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4.1.1
       
       - name: Print Terraform Variables
-        if: env.pipeline_debug == 'true'
+        if: env.PIPELINE_DEBUG == 'true'
         run: |
           echo "auth_method=${{ env.jamfpro_auth_method }}"
           echo "client_id=${{ env.jamfpro_client_id }}"
