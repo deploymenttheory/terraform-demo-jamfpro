@@ -1,6 +1,6 @@
 
 resource "jamfpro_package" "jamfpro_package_001" {
-  name                  = "tf-ghatest-package-suspiciouspackage"
+  package_name          = "tf-ghatest-package-suspiciouspackage"
   package_file_path     = "support_files/packages/SuspiciousPackage.dmg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
   info                  = "tf package deployment for demonstration"
