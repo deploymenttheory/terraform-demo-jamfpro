@@ -8,21 +8,21 @@ terraform {
 }
 
 provider "jamfpro" {
-  jamf_instance_fqdn = var.jamfpro_instance_fqdn
-  auth_method        = var.jamfpro_auth_method
-  client_id          = var.jamfpro_client_id
-  client_secret      = var.jamfpro_client_secret
-  # basic_auth_username           = var.jamfpro_basic_auth_username
-  # basic_auth_password           = var.jamfpro_basic_auth_password
+  jamfpro_instance_fqdn                = var.jamfpro_instance_fqdn
+  jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
+  auth_method                          = var.jamfpro_auth_method
+  client_id                            = var.jamfpro_client_id
+  client_secret                        = var.jamfpro_client_secret
   log_level                            = var.jamfpro_log_level
   log_output_format                    = var.jamfpro_log_output_format
   log_console_separator                = var.jamfpro_log_console_separator
   log_export_path                      = var.jamfpro_log_export_path
   export_logs                          = var.jamfpro_export_logs
   hide_sensitive_data                  = var.jamfpro_hide_sensitive_data
-  jamf_load_balancer_lock              = var.jamfpro_jamf_load_balancer_lock
   token_refresh_buffer_period_seconds  = var.jamfpro_token_refresh_buffer_period_seconds
   mandatory_request_delay_milliseconds = var.jamfpro_mandatory_request_delay_milliseconds
+  # basic_auth_username           = var.jamfpro_basic_auth_username
+  # basic_auth_password           = var.jamfpro_basic_auth_password
 }
 
 variable "jamfpro_instance_fqdn" {
@@ -33,7 +33,7 @@ variable "jamfpro_instance_fqdn" {
 variable "jamfpro_auth_method" {
   description = "Auth method chosen for Jamf. Options are 'basic' or 'oauth2'."
   sensitive   = true
-  default     = "oauth2"
+  default     = ""
 }
 
 variable "jamfpro_client_id" {
@@ -110,5 +110,5 @@ variable "jamfpro_token_refresh_buffer_period_seconds" {
 
 variable "jamfpro_mandatory_request_delay_milliseconds" {
   description = "A mandatory delay after each request before returning to reduce high volume of requests in a short time."
-  default     = 150
+  default     = 100
 }
