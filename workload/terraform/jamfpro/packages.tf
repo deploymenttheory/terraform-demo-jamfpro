@@ -1,6 +1,6 @@
 
 resource "jamfpro_package" "jamfpro_package_001" {
-  name                  = "tf-ghatest-package-suspiciouspackage"
+  package_name          = "tf-ghatest-package-suspiciouspackage"
   package_file_path     = "support_files/packages/SuspiciousPackage.dmg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
   info                  = "tf package deployment for demonstration"
@@ -9,7 +9,7 @@ resource "jamfpro_package" "jamfpro_package_001" {
   reboot_required       = true
   fill_user_template    = false
   fill_existing_users   = false
-  os_requirements       = "macOS 10.15.7, macOS 11.1"
+  os_requirements       = "macOS 10.15.0"
   swu                   = false
   self_heal_notify      = false
   os_install            = false

@@ -11,7 +11,7 @@ provider "jamfpro" {
   jamf_instance_fqdn = var.jamfpro_instance_fqdn
   auth_method        = var.jamfpro_auth_method
   client_id          = var.jamfpro_client_id
-  client_secret      = var.jamfpro_client_id
+  client_secret      = var.jamfpro_client_secret
   # basic_auth_username           = var.basic_auth_username
   # basic_auth_password           = var.basic_auth_password
   log_level                            = var.jamfpro_log_level
@@ -33,7 +33,7 @@ variable "jamfpro_instance_fqdn" {
 variable "jamfpro_auth_method" {
   description = "Auth method chosen for Jamf. Options are 'basic' or 'oauth2'."
   sensitive   = true
-  default     = ""
+  default     = "oauth2"
 }
 
 variable "jamfpro_client_id" {
