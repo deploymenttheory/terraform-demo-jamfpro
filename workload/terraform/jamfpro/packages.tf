@@ -36,7 +36,7 @@ resource "null_resource" "download_package" {
 }
 
 resource "jamfpro_package" "jamfpro_package_002" {
-  depends_on            = [terraform_data.download_package]
+  depends_on            = [null_resource.download_package]
   package_name          = "tf-ghatest-package-source:http-companyportal-latest"
   package_file_path     = "/tmp/ghatest-companyportal-latest.pkg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
