@@ -24,14 +24,19 @@ resource "jamfpro_package" "jamfpro_package_001" {
 }
 
 // Example of downloading a package from a URL and uploading it to Jamf Pro
-resource "terraform_data" "download_package" {
+resource "null_resource" "download_package" {
   provisioner "local-exec" {
-    command = "curl -L -o /tmp/ghatest-companyportal-latest.pkg https://go.microsoft.com/fwlink/?linkid=853070"
+    command = "curl -L -o /tmp/companyportallatest.pkg https://go.microsoft.com/fwlink/?linkid=853070"
+  }
+
+  triggers = {
+    # This will trigger the null_resource to run again if the value changes
+    download_trigger = "${timestamp()}"
   }
 }
 
 resource "jamfpro_package" "jamfpro_package_002" {
-  depends_on            = [terraform_data.download_package]
+  depends_on            = [null_resource.download_package]
   package_name          = "tf-ghatest-package-source:http-companyportal-latest"
   package_file_path     = "/tmp/ghatest-companyportal-latest.pkg"
   category_id           = "-1" // jamfpro_category.jamfpro_category_001.id
