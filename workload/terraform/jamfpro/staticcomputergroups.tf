@@ -4,6 +4,6 @@ resource "jamfpro_static_computer_group" "static_computer_group_002" {
   // optional
   //site_id = -1
 
-  assignments_ids = [16, 17, 20]
+  assigned_computer_ids = [16, 17, 20]
 
 }
