@@ -27,7 +27,7 @@ provider "jamfpro" {
 
 variable "jamfpro_instance_fqdn" {
   description = "The Jamf Pro FQDN (fully qualified domain name). Example: https://mycompany.jamfcloud.com"
-  default     = ""
+  default     = "https://lbgsandbox.jamfcloud.com"
 }
 
 variable "jamfpro_auth_method" {
