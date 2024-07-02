@@ -9,7 +9,7 @@ inputs:
   terraform_version: 
     description: 'Jamf Pro Terraform Version'
     required: true
-    default: 1.7.5
+    default: 1.9.0
   terraform_cloud_api_token: 
     description: 'Terraform cloud token'
     required: true
@@ -19,15 +19,24 @@ inputs:
   pr_id:
     description: 'Pull request ID'
     required: true
+  jamfpro_instance_name: 
+    description: 'JAMF Pro instance name e.g for https://mycompany.jamfcloud.com , use mycompany'
+    required: true
+  jamfpro_auth_method:
+    description: 'JAMF Pro auth method'
+    required: true
   jamfpro_client_secret:
     description: 'JAMF Pro service client secret used for Terraform actions'
     required: true
   jamfpro_client_id: 
     description: 'JAMF Pro service clientID used for Terraform actions'
     required: true
-  jamfpro_instance_name: 
-    description: 'JAMF Pro instance name e.g for https://mycompany.jamfcloud.com , use mycompany'
-    required: true
+  jamfpro_basic_auth_username:
+    description: 'JAMF Pro basic auth username'
+    required: false
+  jamfpro_basic_auth_password:
+    description: 'JAMF Pro basic auth password'
+    required: false
 
 runs:
   using: "composite"

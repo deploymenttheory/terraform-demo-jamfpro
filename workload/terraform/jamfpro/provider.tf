@@ -2,7 +2,7 @@ terraform {
   required_providers {
     jamfpro = {
       source  = "deploymenttheory/jamfpro"
-      version = "0.1.0"
+      version = "0.1.1"
     }
   }
 }
@@ -12,8 +12,8 @@ provider "jamfpro" {
   auth_method        = var.jamfpro_auth_method
   client_id          = var.jamfpro_client_id
   client_secret      = var.jamfpro_client_secret
-  # basic_auth_username           = var.basic_auth_username
-  # basic_auth_password           = var.basic_auth_password
+  # basic_auth_username           = var.jamfpro_basic_auth_username
+  # basic_auth_password           = var.jamfpro_basic_auth_password
   log_level                            = var.jamfpro_log_level
   log_output_format                    = var.jamfpro_log_output_format
   log_console_separator                = var.jamfpro_log_console_separator
