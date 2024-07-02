@@ -27,6 +27,9 @@ Before you begin, ensure you have the following prerequisites in place:
     - `JAMFPRO_BASIC_AUTH_USERNAME`: Your Jamf Pro username when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
     - `JAMFPRO_BASIC_AUTH_PASSWORD`: Your Jamf Pro user password when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
 
+Note for terraform cloud, when setting variables you do not need to prefix your env vars with `TF_VAR_` as terraform cloud automatically does this for you. Additionally, ensure to select the variable category as `Terraform variable` , with the HCL tickbox unchecked.
+
+
 4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `jamfpro_instance_fqdn"`, `auth_method`, and either; `client_id` + `client_secret` or `jamfpro_basic_auth_username` + `jamfpro_basic_auth_password`. For example:
 
 ```hcl
