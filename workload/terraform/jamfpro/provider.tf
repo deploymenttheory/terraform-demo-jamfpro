@@ -2,7 +2,7 @@ terraform {
   required_providers {
     jamfpro = {
       source  = "deploymenttheory/jamfpro"
-      version = "0.1.1"
+      version = "0.1.2"
     }
   }
 }
@@ -27,6 +27,7 @@ provider "jamfpro" {
 
 variable "jamfpro_instance_fqdn" {
   description = "The Jamf Pro FQDN (fully qualified domain name). Example: https://mycompany.jamfcloud.com"
+  sensitive   = true
   default     = ""
 }
 
@@ -50,6 +51,7 @@ variable "jamfpro_client_secret" {
 
 variable "jamfpro_basic_auth_username" {
   description = "The Jamf Pro username used for authentication."
+  sensitive   = true
   default     = ""
 }
 
