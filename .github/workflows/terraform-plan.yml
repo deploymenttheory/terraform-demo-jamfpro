@@ -9,6 +9,10 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "terraform-jamfpro-demo"
   CONFIG_DIRECTORY: "workload/terraform/jamfpro"
+  TF_VAR_JAMFPRO_AUTH_METHOD: "${{ secrets.TF_VAR_JAMFPRO_AUTH_METHOD }}"
+  TF_VAR_JAMFPRO_CLIENT_ID: "${{ secrets.TF_VAR_JAMFPRO_CLIENT_ID }}"
+  TF_VAR_JAMFPRO_CLIENT_SECRET: "${{ secrets.TF_VAR_JAMFPRO_CLIENT_SECRET }}"
+  TF_VAR_JAMFPRO_INSTANCE_FQDN: "${{ secrets.TF_VAR_JAMFPRO_INSTANCE_FQDN }}"
 
 jobs:
   terraform:
