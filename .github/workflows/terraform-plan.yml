@@ -24,9 +24,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.1
       
-      - name: Print Environment Variables
-        if: env.PIPELINE_DEBUG == 'true'
-        run: printenv
+      - name: Print Terraform Variables
+        if: env.pipeline_debug == 'true'
+        run: |
+          echo "auth_method=${{ env.jamfpro_auth_method }}"
+          echo "client_id=${{ env.jamfpro_client_id }}"
+          echo "client_secret=${{ env.jamfpro_client_secret }}"
+          echo "instance_fqdn=${{ env.jamfpro_instance_fqdn }}"
+          echo "load_balancer_lock=${{ env.jamfpro_jamf_load_balancer_lock }}"
+          echo "log_level=${{ env.jamfpro_log_level }}"
+          echo "log_output_format=${{ env.jamfpro_log_output_format }}"
+          echo "mandatory_request_delay_milliseconds=${{ env.jamfpro_mandatory_request_delay_milliseconds }}"
+          echo "token_refresh_buffer_period_seconds=${{ env.jamfpro_token_refresh_buffer_period_seconds }}"
+
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.0
