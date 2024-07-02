@@ -20,22 +20,39 @@ Before you begin, ensure you have the following prerequisites in place:
     - `TF_API_TOKEN`: Your Terraform Cloud API token for Terraform Cloud backend (if used).
 
 3. **Configure Terraform Cloud Secrets**: Set up the following secrets in your terraform cloud workspace variable settings:
-    - `JAMFPRO_CLIENT_ID`: Your Jamf Pro client id.
-    - `JAMFPRO_CLIENT_SECRET`: Your Jamf Pro client secret.
-    - `JAMFPRO_INSTANCE_NAME`: Your Jamf Pro instance secret. For example: `https://your-instance.jamfcloud.com`, insert `your-instance` as the value.
+    - `JAMFPRO_INSTANCE_FQDN`: Your Jamf Pro instance secret. For example: insert `https://your-instance.jamfcloud.com`, as the value.
+    - `JAMFPRO_AUTH_METHOD`: can be either basic or oauth2. For example: insert `oauth2`, as the value.
+    - `JAMFPRO_CLIENT_ID`: Your Jamf Pro client id when `JAMFPRO_AUTH_METHOD` is set to 'oauth2'.
+    - `JAMFPRO_CLIENT_SECRET`: Your Jamf Pro client secret when `JAMFPRO_AUTH_METHOD` is set to 'oauth2'.
+    - `JAMFPRO_BASIC_AUTH_USERNAME`: Your Jamf Pro username when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
+    - `JAMFPRO_BASIC_AUTH_PASSWORD`: Your Jamf Pro user password when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
 
-4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `instance_name`, `client_id`, and `client_secret`. For example:
+4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `jamfpro_instance_fqdn"`, `auth_method`, and either; `client_id` + `client_secret` or `jamfpro_basic_auth_username` + `jamfpro_basic_auth_password`. For example:
 
 ```hcl
     provider "jamfpro" {
-      instance_name   = var.jamfpro_instance_name
-      client_id       = var.jamfpro_client_id
-      client_secret   = var.jamfpro_client_secret
-      log_level       = "debug"
+    jamfpro_instance_fqdn                = var.jamfpro_instance_fqdn
+    jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
+    auth_method                          = var.jamfpro_auth_method
+    client_id                            = var.jamfpro_client_id
+    client_secret                        = var.jamfpro_client_secret
+    log_level                            = var.jamfpro_log_level
+    log_output_format                    = var.jamfpro_log_output_format
+    log_console_separator                = var.jamfpro_log_console_separator
+    log_export_path                      = var.jamfpro_log_export_path
+    export_logs                          = var.jamfpro_export_logs
+    hide_sensitive_data                  = var.jamfpro_hide_sensitive_data
+    token_refresh_buffer_period_seconds  = var.jamfpro_token_refresh_buffer_period_seconds
+    mandatory_request_delay_milliseconds = var.jamfpro_mandatory_request_delay_milliseconds
     }
 ```
 
-Set the values for these variables in a `terraform.tfvars` file or through GitHub Actions environment variables.
+Set the values for these variables in a `terraform.tfvars` file, through GitHub Actions environment variables or through TFcloud workspace variables.
+
+It's strongly recconmended for beginners to ensure that `jamfpro_load_balancer_lock` is set to true, to avoid any issues with the Jamf Pro load balancer.
+
+Review the supplied provider.tf file for more information on the provider configuration.
+
 
 5. **Backend Configuration**:This project uses Terraform Cloud as the backend for state management and execution. Configure the Terraform Cloud backend by specifying your organization and workspace in your Terraform configuration:
 
@@ -60,7 +77,7 @@ terraform {
   required_providers {
     jamfpro = {
       source  = "deploymenttheory/jamfpro"
-      version = "0.0.33"
+      version = "0.1.2"
     }
   }
 }
