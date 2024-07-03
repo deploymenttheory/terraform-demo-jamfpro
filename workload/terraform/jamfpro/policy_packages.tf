@@ -38,15 +38,15 @@ resource "jamfpro_policy" "jamfpro_package_policy_001" {
   }
 
   payloads {
-    packages {
-      distribution_point = "default" // Set the appropriate distribution point
-      package {
-        //id                          = jamfpro_package.jamfpro_package_001.id
-        action                      = "Install" // The action to perform with the package (e.g., Install, Cache, etc.)
-        fill_user_template          = false     // Whether to fill the user template
-        fill_existing_user_template = false     // Whether to fill existing user templates
-      }
-    }
+    # packages {
+    #   distribution_point = "default" // Set the appropriate distribution point
+    #   package {
+    #     id                          = jamfpro_package.jamfpro_package_001.id
+    #     action                      = "Install" // The action to perform with the package (e.g., Install, Cache, etc.)
+    #     fill_user_template          = false     // Whether to fill the user template
+    #     fill_existing_user_template = false     // Whether to fill existing user templates
+    #   }
+    # }
   }
 }
 
