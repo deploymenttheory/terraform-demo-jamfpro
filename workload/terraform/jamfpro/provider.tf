@@ -2,23 +2,20 @@ terraform {
   required_providers {
     jamfpro = {
       source  = "deploymenttheory/jamfpro"
-      version = "0.1.2"
+      version = "~> 0.1.4"
     }
   }
 }
 
 provider "jamfpro" {
   jamfpro_instance_fqdn                = var.jamfpro_instance_fqdn
-  jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
   auth_method                          = var.jamfpro_auth_method
   client_id                            = var.jamfpro_client_id
   client_secret                        = var.jamfpro_client_secret
-  log_level                            = var.jamfpro_log_level
-  log_output_format                    = var.jamfpro_log_output_format
-  log_console_separator                = var.jamfpro_log_console_separator
-  log_export_path                      = var.jamfpro_log_export_path
-  export_logs                          = var.jamfpro_export_logs
+  enable_client_sdk_logs               = var.enable_client_sdk_logs
+  client_sdk_log_export_path           = var.client_sdk_log_export_path
   hide_sensitive_data                  = var.jamfpro_hide_sensitive_data
+  jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
   token_refresh_buffer_period_seconds  = var.jamfpro_token_refresh_buffer_period_seconds
   mandatory_request_delay_milliseconds = var.jamfpro_mandatory_request_delay_milliseconds
   # basic_auth_username           = var.jamfpro_basic_auth_username
@@ -51,7 +48,6 @@ variable "jamfpro_client_secret" {
 
 variable "jamfpro_basic_auth_username" {
   description = "The Jamf Pro username used for authentication."
-  sensitive   = true
   default     = ""
 }
 
@@ -61,29 +57,14 @@ variable "jamfpro_basic_auth_password" {
   default     = ""
 }
 
-variable "jamfpro_log_level" {
-  description = "The logging level: debug, info, warning, or none."
-  default     = "debug"
+variable "enable_client_sdk_logs" {
+  description = "Enable client SDK logs."
+  default     = false
 }
 
-variable "jamfpro_log_output_format" {
-  description = "The output format of the logs. Use 'JSON' for JSON format, 'console' for human-readable format."
-  default     = "pretty"
-}
-
-variable "jamfpro_log_console_separator" {
-  description = "The separator character used in console log output."
-  default     = " "
-}
-
-variable "jamfpro_log_export_path" {
+variable "client_sdk_log_export_path" {
   description = "Specify the path to export http client logs to."
   default     = ""
-}
-
-variable "jamfpro_export_logs" {
-  description = "Export logs to file."
-  default     = false
 }
 
 variable "jamfpro_hide_sensitive_data" {
