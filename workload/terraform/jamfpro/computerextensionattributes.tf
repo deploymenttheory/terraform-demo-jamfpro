@@ -1,16 +1,16 @@
 
 # # //-------------------------------------------------------------------//
-resource "jamfpro_computer_extension_attribute" "computer_extension_attribute_popup_menu_1" {
-  name        = "tf-ghatest-cexa-popup-menu-example"
-  enabled     = true
-  description = "An attribute collected from a pop-up menu."
+# resource "jamfpro_computer_extension_attribute" "computer_extension_attribute_popup_menu_1" {
+#   name        = "tf-ghatest-cexa-popup-menu-example"
+#   enabled     = true
+#   description = "An attribute collected from a pop-up menu."
 
-  input_type  = "Pop-up Menu"
-  input_popup = ["Option 1", "Option 2", "Option 3"]
+#   input_type  = "Pop-up Menu"
+#   input_popup = ["Option 1", "Option 2", "Option 3"]
 
 
-  inventory_display = "User and Location"
-}
+#   inventory_display = "User and Location"
+# }
 
 # //-------------------------------------------------------------------//
 
