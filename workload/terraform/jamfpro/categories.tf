@@ -1,7 +1,7 @@
-resource "jamfpro_category" "jamfpro_category_001" {
-  name     = "tf-ghatest-category-01"
-  priority = 5
-}
+# resource "jamfpro_category" "jamfpro_category_001" {
+#   name     = "tf-ghatest-category-01"
+#   priority = 5
+# }
 
 # data "jamfpro_category" "jamfpro_category_001_data" {
 #   id = jamfpro_category.jamfpro_category_001.id
