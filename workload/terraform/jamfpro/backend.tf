@@ -1,7 +1,6 @@
-// set terraform cloud organization and workspace
 terraform {
   cloud {
-    organization = "deploymenttheory"
+    organization = "MacDeacon99"
 
     workspaces {
       name = "terraform-jamfpro-demo"
