@@ -22,7 +22,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
       
       - name: Print Terraform Variables
         if: env.PIPELINE_DEBUG == 'true'
@@ -39,7 +39,7 @@ jobs:
 
 
       - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.0
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
         id: plan-upload
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -47,7 +47,7 @@ jobs:
           speculative: true
 
       - name: Create Plan Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
         id: plan-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -55,7 +55,7 @@ jobs:
           plan_only: true
 
       - name: Get Plan Output
-        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.0
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.1
         id: plan-output
         with:
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}

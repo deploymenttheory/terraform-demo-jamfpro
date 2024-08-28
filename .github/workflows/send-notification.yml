@@ -1,0 +1,39 @@
+name: Send Notification
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      result:
+        required: true
+        type: string
+      notification_channel:
+        required: true
+        type: string
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        if: inputs.notification_channel == 'slack'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ inputs.result }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+          text: "Deployment to ${{ inputs.environment }} ${{ inputs.result }}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send MS Teams Notification
+        if: inputs.notification_channel == 'msteams'
+        uses: jdcargile/ms-teams-notification@v1.4
+        with:
+          github-token: ${{ github.token }}
+          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
+          notification-summary: "Deployment to ${{ inputs.environment }} ${{ inputs.result }}"
+          notification-color: ${{ inputs.result == 'success' && '3066993' || 'D3222A' }}
+          timezone: "UTC"
+          verbose-logging: true

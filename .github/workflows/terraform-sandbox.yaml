@@ -1,0 +1,86 @@
+name: "Promote to Sandbox"
+
+on:
+  push:
+    branches:
+      - 'feature-*'
+      - 'bugfix-*'
+      - 'release-*'
+      - 'hotfix-*'
+      - 'chore-*'
+      - 'spike-*'
+      - 'config-*'
+      - 'docs-*'
+      - 'test-*'
+
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Branch to promote to Sandbox (must start with feature-, bugfix-, release-, hotfix-, chore-, spike-, config-, docs-, or test-)'
+        required: true
+        default: 'feature-'
+
+env:
+  TF_CLOUD_ORGANIZATION: "deploymenttheory"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "terraform-jamfpro-sandbox"
+  CONFIG_DIRECTORY: "workload/terraform/jamfpro"
+  PIPELINE_DEBUG: "true"
+  # other env vars are set within tfcloud directly for within the tf workspace
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-apply:
+    if: >
+      github.repository != 'hashicorp-education/learn-terraform-github-actions' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        startsWith(github.ref, 'refs/heads/feature-') ||
+        startsWith(github.ref, 'refs/heads/bugfix-') ||
+        startsWith(github.ref, 'refs/heads/release-') ||
+        startsWith(github.ref, 'refs/heads/hotfix-') ||
+        startsWith(github.ref, 'refs/heads/chore-') ||
+        startsWith(github.ref, 'refs/heads/spike-') ||
+        startsWith(github.ref, 'refs/heads/config-') ||
+        startsWith(github.ref, 'refs/heads/docs-') ||
+        startsWith(github.ref, 'refs/heads/test-')
+      )
+    name: "Terraform Apply to Sandbox"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        
+      - name: Validate Branch Name
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          branch="${{ github.event.inputs.branch_name }}"
+          if [[ ! "$branch" =~ ^(feature|bugfix|release)- ]]; then
+            echo "Error: Branch name must start with 'feature-', 'bugfix-', or 'release-'"
+            exit 1
+          fi
+
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
+        id: apply-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.CONFIG_DIRECTORY }}
+
+      - name: Create Apply Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
+        id: apply-run
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+
+      - name: Apply
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.1
+        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        id: apply
+        with:
+          run: ${{ steps.apply-run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"

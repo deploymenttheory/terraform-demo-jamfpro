@@ -1,131 +1,97 @@
-name: Check for configuration drift
+name: "Drift Detection and Correction"
 
 on:
   schedule:
-    - cron:  "0 8 * * *"
+    - cron: '0 1 * * *'  # Run at 1 AM UTC every day
+  workflow_dispatch:  # Allow manual triggers
+
+env:
+  TF_CLOUD_ORGANIZATION: "deploymenttheory"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  CONFIG_DIRECTORY: "workload/terraform/jamfpro"
+  
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
-  check_drift:
+  detect-and-correct-drift:
+    strategy:
+      matrix:
+        environment: [sandbox, staging, production]
+    name: "Detect and Correct Drift - ${{ matrix.environment }}"
     runs-on: ubuntu-latest
-    name: Check for drift of jamf pro terraform configuration
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_ACTIONS_WORKING_DIR: "workload/terraform/jamfpro"
+      TF_WORKSPACE: "terraform-jamfpro-${{ matrix.environment }}"
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
-        
-    - name: terraform plan
-      uses: hashicorp/setup-terraform@v3
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        terraform_version: latest
-      
-    - name: Terraform fmt
-      id: fmt
-      run: terraform fmt -check
-      continue-on-error: true
-    
-    - name: Terraform Init with Terraform Cloud Remote Backend
-      id: init
-      env:
-        TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-      run: terraform init
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Generate Terraform Plan
-      id: plan
-      run: |
-        terraform plan -no-color -out=plan.tfplan
-        terraform show -no-color plan.tfplan > plan.txt
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Export Plan as JSON
-      id: json
-      run: |
-        terraform show -no-color -json plan.tfplan > plan.json
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '>=1.20'
-        check-latest: true
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
+        id: drift-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.CONFIG_DIRECTORY }}
 
-    - name: Check for duplicate resources
-      id: evaluate_plan_duplicate_resources
-      run: |
-        go build -o evaluate_plan_duplicate_resources main.go
-        ./evaluate_plan_duplicate_resources -tfplan /home/runner/work/jamf-cloud-terraform/jamf-cloud-terraform/workload/terraform/jamfpro/plan.json
-      working-directory: workload/pipeline/duplicate_resources
-    
-    # - name: Run Terraform Plan Script
-    #   run: go run . -tfplan your-terraform-plan.json
-    #   # Assumes your Go script writes to approval_group.txt
+      - name: Create Plan Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
+        id: drift-plan
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.drift-upload.outputs.configuration_version_id }}
+          plan_only: true
 
-    # - name: Set PR Approval Group
-    #   run: |
-    #     APPROVAL_GROUP=$(cat approval_group.txt)
-    #     echo "Approval group required: $APPROVAL_GROUP"
-    #     if [ "$APPROVAL_GROUP" == "Security" ]; then
-    #       # Assuming 'security-team' is the GitHub team name for the security group
-    #       curl \
-    #         -X POST \
-    #         -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-    #         -H "Accept: application/vnd.github+json" \
-    #         https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-    #         -d '{"reviewers": [], "team_reviewers":["security-team-demo"], "maintainers_can_modify": true}'
-    #     fi
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-    - uses: actions/github-script@v7.0.1
-      if: github.event_name == 'pull_request'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const fs = require('fs');
-          const planPath = '${{ env.TF_ACTIONS_WORKING_DIR }}/plan.txt';
-          const planOutput = fs.readFileSync(planPath, 'utf8');
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-          
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-          
-          </details>
-          
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
-          <details><summary>Show Plan</summary>
-          
-          \`\`\`\n
-          ${planOutput}
-          \`\`\`
-          
-          </details>
-          
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          });
+      - name: Get Plan Output
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.1
+        id: plan-output
+        with:
+          plan: ${{ fromJSON(steps.drift-plan.outputs.payload).data.relationships.plan.data.id }}
 
-    - name: Upload Terraform Plan as Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: terraform-plan
-        path: ${{ env.TF_ACTIONS_WORKING_DIR }}/plan.json
+      - name: Check for Drift
+        id: check-drift
+        run: |
+          if [ "${{ steps.plan-output.outputs.add }}" != "0" ] || [ "${{ steps.plan-output.outputs.change }}" != "0" ] || [ "${{ steps.plan-output.outputs.destroy }}" != "0" ]; then
+            echo "Drift detected in ${{ matrix.environment }} environment"
+            echo "drift_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "No drift detected in ${{ matrix.environment }} environment"
+            echo "drift_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Apply Changes to Correct Drift
+        if: steps.check-drift.outputs.drift_detected == 'true'
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.1
+        id: apply-drift
+        with:
+          run: ${{ fromJSON(steps.drift-plan.outputs.payload).data.id }}
+          comment: "Automated drift correction for ${{ matrix.environment }} environment"
+
+      - name: Determine Result Message
+        id: result-message
+        run: |
+          if [ "${{ steps.check-drift.outputs.drift_detected }}" == "true" ]; then
+            if [ "${{ steps.apply-drift.outcome }}" == "success" ]; then
+              echo "message=Drift detected and corrected" >> $GITHUB_OUTPUT
+            else
+              echo "message=Drift detected but not corrected" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "message=No drift detected" >> $GITHUB_OUTPUT
+          fi
+
+    outputs:
+      result_message: ${{ steps.result-message.outputs.message }}
+
+  send-notification:
+    needs: detect-and-correct-drift
+    if: always()
+    strategy:
+      matrix:
+        environment: [sandbox, staging, production]
+    uses: ./.github/workflows/send-notification.yml
+    with:
+      environment: "${{ matrix.environment }}"
+      result: "${{ needs.detect-and-correct-drift.outputs.result_message }}"
+      notification_channel: msteams  # or 'slack'
+    secrets: inherit

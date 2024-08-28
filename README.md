@@ -1,6 +1,22 @@
 # Terraform Jamf Pro Configuration Repository
 
-This repository contains Terraform configurations for managing resources in Jamf Pro using the Jamf Pro Terraform provider. The workflows defined here automate the planning and application of Terraform configurations to your Jamf Pro environment, ensuring that your Jamf Pro settings are version-controlled and consistently applied.
+This repository contains Terraform configurations for managing resources in Jamf Pro across multiple environments using the Jamf Pro Terraform provider. The workflows defined here automate the planning and application of Terraform configurations to your Jamf Pro environments, ensuring that your Jamf Pro settings are version-controlled and consistently applied.
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Repository Structure](#repository-structure)
+- [Environment Setup](#environment-setup)
+- [Workflow Overview](#workflow-overview)
+- [Branching Strategy](#branching-strategy)
+- [Getting Started](#getting-started)
+- [GitHub Actions Workflows](#github-actions-workflows)
+- [Drift Detection and Correction](#drift-detection-and-correction)
+- [Example Terraform Resource](#example-terraform-resource)
+- [Security and Best Practices](#security-and-best-practices)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Prerequisites
 
@@ -11,106 +27,178 @@ Before you begin, ensure you have the following prerequisites in place:
 - **Terraform Cloud**: An account on Terraform Cloud for managing Terraform state and running Terraform in a consistent environment. [Sign up for Terraform Cloud](https://app.terraform.io/signup/account).
 - **GitHub Account**: A GitHub account for storing this repository and using GitHub Actions for automation. [Sign up for GitHub](https://github.com/join).
 
+## Repository Structure
+
+```
+.
+├── .github
+│   └── workflows
+│       ├── promote-to-sandbox.yml
+│       ├── promote-to-staging.yml
+│       ├── promote-to-production.yml
+│       └── drift-detection-correction.yml
+├── workload
+│   └── terraform
+│       └── jamfpro
+│           ├── main.tf
+│           ├── variables.tf
+│           └── outputs.tf
+├── README.md
+└── .gitignore
+```
+
+## Environment Setup
+
+This project supports three environments:
+
+1. Sandbox
+2. Staging
+3. Production
+
+Each environment has its own Terraform Cloud workspace:
+
+- `terraform-jamfpro-sandbox`
+- `terraform-jamfpro-staging`
+- `terraform-jamfpro-production`
+
+## Workflow Overview
+
+1. Developers create feature branches prefixed with `feature-`, `bugfix-`, or `release-`.
+2. Changes are first promoted to the Sandbox environment.
+3. After testing in Sandbox, changes can be promoted to Staging via a pull request.
+4. Finally, changes are promoted to Production via another pull request.
+
+## Branching Strategy
+
+- `feature-*`: For new features
+- `bugfix-*`: For bug fixes
+- `release-*`: For release preparation
 
 ## Getting Started
 
 1. **Fork or Clone Repository**: Start by forking or cloning this repository to your GitHub account.
 
 2. **Configure Github Secrets**: Set up the following secrets in your GitHub repository settings:
-    - `TF_API_TOKEN`: Your Terraform Cloud API token for Terraform Cloud backend (if used).
+    - `TF_API_TOKEN`: Your Terraform Cloud API token for Terraform Cloud backend.
 
-3. **Configure Terraform Cloud Secrets**: Set up the following secrets in your terraform cloud workspace variable settings:
-    - `JAMFPRO_INSTANCE_FQDN`: Your Jamf Pro instance secret. For example: insert `https://your-instance.jamfcloud.com`, as the value.
-    - `JAMFPRO_AUTH_METHOD`: can be either basic or oauth2. For example: insert `oauth2`, as the value.
+3. **Configure Terraform Cloud Secrets**: Set up the following secrets in your Terraform Cloud workspace variable settings for each environment (Sandbox, Staging, Production):
+    - `JAMFPRO_INSTANCE_FQDN`: Your Jamf Pro instance URL. For example: `https://your-instance.jamfcloud.com`.
+    - `JAMFPRO_AUTH_METHOD`: Can be either `basic` or `oauth2`.
     - `JAMFPRO_CLIENT_ID`: Your Jamf Pro client id when `JAMFPRO_AUTH_METHOD` is set to 'oauth2'.
     - `JAMFPRO_CLIENT_SECRET`: Your Jamf Pro client secret when `JAMFPRO_AUTH_METHOD` is set to 'oauth2'.
     - `JAMFPRO_BASIC_AUTH_USERNAME`: Your Jamf Pro username when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
     - `JAMFPRO_BASIC_AUTH_PASSWORD`: Your Jamf Pro user password when `JAMFPRO_AUTH_METHOD` is set to 'basic'.
 
-Note for terraform cloud, when setting variables you do not need to prefix your env vars with `TF_VAR_` as terraform cloud automatically does this for you. Additionally, ensure to select the variable category as `Terraform variable` , with the HCL tickbox unchecked.
+   Note: For Terraform Cloud, when setting variables you do not need to prefix your env vars with `TF_VAR_` as Terraform Cloud automatically does this for you. Additionally, ensure to select the variable category as `Terraform variable`, with the HCL tickbox unchecked.
 
+4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details. For example:
 
-4. **Update Terraform Variables**: Modify the `terraform` block in your `.tf` files to match your Jamf Pro instance details, including `jamfpro_instance_fqdn"`, `auth_method`, and either; `client_id` + `client_secret` or `jamfpro_basic_auth_username` + `jamfpro_basic_auth_password`. For example:
+   ```hcl
+   provider "jamfpro" {
+     jamfpro_instance_fqdn                = var.jamfpro_instance_fqdn
+     jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
+     auth_method                          = var.jamfpro_auth_method
+     client_id                            = var.jamfpro_client_id
+     client_secret                        = var.jamfpro_client_secret
+     log_level                            = var.jamfpro_log_level
+     log_output_format                    = var.jamfpro_log_output_format
+     log_console_separator                = var.jamfpro_log_console_separator
+     log_export_path                      = var.jamfpro_log_export_path
+     export_logs                          = var.jamfpro_export_logs
+     hide_sensitive_data                  = var.jamfpro_hide_sensitive_data
+     token_refresh_buffer_period_seconds  = var.jamfpro_token_refresh_buffer_period_seconds
+     mandatory_request_delay_milliseconds = var.jamfpro_mandatory_request_delay_milliseconds
+   }
+   ```
 
-```hcl
-    provider "jamfpro" {
-    jamfpro_instance_fqdn                = var.jamfpro_instance_fqdn
-    jamfpro_load_balancer_lock           = var.jamfpro_jamf_load_balancer_lock
-    auth_method                          = var.jamfpro_auth_method
-    client_id                            = var.jamfpro_client_id
-    client_secret                        = var.jamfpro_client_secret
-    log_level                            = var.jamfpro_log_level
-    log_output_format                    = var.jamfpro_log_output_format
-    log_console_separator                = var.jamfpro_log_console_separator
-    log_export_path                      = var.jamfpro_log_export_path
-    export_logs                          = var.jamfpro_export_logs
-    hide_sensitive_data                  = var.jamfpro_hide_sensitive_data
-    token_refresh_buffer_period_seconds  = var.jamfpro_token_refresh_buffer_period_seconds
-    mandatory_request_delay_milliseconds = var.jamfpro_mandatory_request_delay_milliseconds
-    }
-```
+   It's strongly recommended for beginners to ensure that `jamfpro_load_balancer_lock` is set to true, to avoid any issues with the Jamf Pro load balancer.
 
-Set the values for these variables in a `terraform.tfvars` file, through GitHub Actions environment variables or through TFcloud workspace variables.
+5. **Backend Configuration**: For our multi-environment setup, we'll be using Terraform workspaces. This approach allows us to use a single set of configuration files while maintaining separate states for each environment. Here's how to structure it:
 
-It's strongly recconmended for beginners to ensure that `jamfpro_load_balancer_lock` is set to true, to avoid any issues with the Jamf Pro load balancer.
+   In your main Terraform configuration file (e.g., `main.tf`):
 
-Review the supplied provider.tf file for more information on the provider configuration.
+   ```hcl
+   terraform {
+     cloud {
+       organization = "deploymenttheory"
+       workspaces {
+         tags = ["jamfpro"]
+       }
+     }
+   }
+   ```
 
+   This configuration tells Terraform to use Terraform Cloud with the "deploymenttheory" organization and to work with any workspace tagged with "jamfpro".
 
-5. **Backend Configuration**:This project uses Terraform Cloud as the backend for state management and execution. Configure the Terraform Cloud backend by specifying your organization and workspace in your Terraform configuration:
+   In Terraform Cloud:
+   1. Create three workspaces:
+      - `terraform-jamfpro-sandbox`
+      - `terraform-jamfpro-staging`
+      - `terraform-jamfpro-production`
+   2. Tag each of these workspaces with the "jamfpro" tag.
+   3. Set workspace-specific variables in Terraform Cloud for each environment. For example, you might have a variable `environment` set to "sandbox", "staging", or "production" in the respective workspaces.
 
-```hcl
-terraform {
-  cloud {
-    organization = "your-terraform-cloud-organization"
+   In your Terraform configuration, you can then use these workspace-specific variables to customize resources for each environment. For example:
 
-    workspaces {
-      name = "your-terraform-cloud-workspace"
-    }
-  }
-}
-```
+   ```hcl
+   resource "jamfpro_building" "example" {
+     name = "Building-${var.environment}"
+     // other attributes...
+   }
+   ```
 
-6. **Terraform Provider Configuration**
-The project uses the jamfpro Terraform provider to interact with your Jamf Pro environment. Specify the provider source and version in your Terraform configuration:
+   This approach ensures that each environment has its own isolated state in Terraform Cloud while allowing you to use a single set of configuration files. It provides flexibility in managing environment-specific configurations through Terraform Cloud workspace variables.
 
-```hcl
-Copy code
-terraform {
-  required_providers {
-    jamfpro = {
-      source  = "deploymenttheory/jamfpro"
-      version = "0.1.2"
-    }
-  }
-}
-```
-Ensure that the provider version is compatible with your Jamf Pro environment.
+   Remember to set up appropriate access controls and variable values for each workspace in Terraform Cloud to maintain proper separation between environments.
 
+6. **Terraform Provider Configuration**: Specify the provider source and version:
 
+   ```hcl
+   terraform {
+     required_providers {
+       jamfpro = {
+         source  = "deploymenttheory/jamfpro"
+         version = "0.1.11"
+       }
+     }
+   }
+   ```
 
-Replace your-terraform-cloud-organization and your-terraform-cloud-workspace with your actual Terraform Cloud organization and workspace names.
+7. **Define Your Resources**: Use Terraform resource definitions to manage your Jamf Pro resources.
 
-7. **Define Your Resources**: Use Terraform resource definitions to manage your Jamf Pro resources, such as buildings, departments, policies, etc. An example for defining a building:
-    ```hcl
-    resource "jamfpro_building" "jamfpro_building_001" {
-      name            = "Apple Park"
-      street_address1 = "The McIntosh Tree"
-      street_address2 = "One Apple Park Way"
-      city            = "Cupertino"
-      state_province  = "California"
-      zip_postal_code = "95014"
-      country         = "The United States of America"
-    }
-    ```
+8. **Create a New Branch**: Create a new branch with the appropriate prefix (`feature-`, `bugfix-`, or `release-`).
 
-5. **Work with GitHub Actions**: This repository includes GitHub Actions workflows for automatically planning and applying Terraform configurations:
-    - **Terraform Plan Workflow**: Triggered on push to non-main branches, this workflow generates and reviews a Terraform plan.
-    - **Terraform Apply Workflow**: Triggered on push to the main branch, this workflow applies the Terraform plan, making the changes live in your Jamf Pro environment.
+9. **Make Changes and Push**: Make your changes and push to GitHub.
 
-6. **Review and Merge Pull Requests**: Use pull requests to review and merge changes from feature branches into the main branch, triggering the Terraform Apply workflow.
+10. **Promote to Sandbox**: The "Promote to Sandbox" workflow will automatically run.
 
-7. **Versioning**: Upon successful application of Terraform configurations, a new tag is created and pushed, including a hash of the Terraform configurations for version tracking.
+11. **Promote to Staging**: After testing in Sandbox, create a pull request to merge into the `staging` branch.
+
+12. **Promote to Production**: Once approved and merged to staging, create another pull request to merge `staging` into `production`.
+
+## GitHub Actions Workflows
+
+1. **Promote to Sandbox** (`promote-to-sandbox.yml`)
+   - Triggered on push to branches prefixed with `feature-`, `bugfix-`, or `release-`
+   - Applies changes to the Sandbox environment
+
+2. **Promote to Staging** (`promote-to-staging.yml`)
+   - Triggered on pull request to the `staging` branch
+   - Plans changes for the Staging environment
+   - Applies changes when the PR is merged
+
+3. **Promote to Production** (`promote-to-production.yml`)
+   - Triggered on pull request to the `production` branch
+   - Plans changes for the Production environment
+   - Applies changes when the PR is merged
+
+## Drift Detection and Correction
+
+The `drift-detection-correction.yml` workflow runs nightly to detect and correct any drift in your environments:
+
+- Checks for drift in Sandbox, Staging, and Production environments
+- Automatically corrects drift if detected
+- Sends notifications (configure as needed)
 
 ## Example Terraform Resource
 
@@ -130,10 +218,27 @@ resource "jamfpro_building" "example_building" {
 
 ## Security and Best Practices
 
-Sensitive Data: Ensure sensitive data like client_secret is marked as sensitive in Terraform and securely stored in GitHub Secrets.
-Review Changes: Always review Terraform plans before merging into the main branch to prevent unintended changes.
-Access Control: Limit access to the GitHub repository and associated secrets to authorized personnel only.
+- Use Terraform Cloud for secure state management
+- Implement branch protection rules for `staging` and `production` branches
+- Review all plans before applying changes
+- Use least-privilege principle for API credentials
+- Ensure sensitive data like `client_secret` is marked as sensitive in Terraform and securely stored in GitHub Secrets
+- Always review Terraform plans before merging into the main branch to prevent unintended changes
+- Limit access to the GitHub repository and associated secrets to authorized personnel only
 
+## Troubleshooting
+
+- Check GitHub Actions logs for detailed error messages
+- Verify Terraform Cloud workspace configurations
+- Ensure Jamf Pro API credentials are correct and have necessary permissions
+
+## Contributing
+
+1. Fork the repository
+2. Create a new branch with the appropriate prefix
+3. Make your changes
+4. Submit a pull request
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.

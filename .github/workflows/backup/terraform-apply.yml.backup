@@ -1,9 +1,9 @@
-name: "Terraform Apply With TFC"
+name: "Terraform Apply With TFC - Sandbox"
 
 on:
   push:
     branches:
-      - main
+      - sandbox
 
 env:
   TF_CLOUD_ORGANIZATION: "deploymenttheory" # Replace with your Terraform Cloud organization name
@@ -21,7 +21,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.0
@@ -31,14 +31,14 @@ jobs:
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Apply Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
         id: apply-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
 
       - name: Apply
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.0
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.1
         if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
         id: apply
         with:

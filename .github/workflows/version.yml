@@ -6,7 +6,7 @@ on:
     types:
       - completed
     branches:
-      - main
+      - production
 
 jobs:
   tag-and-hash-version:
@@ -14,7 +14,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.6
 
       - name: Generate hash from Terraform configurations
         run: |
@@ -22,7 +22,7 @@ jobs:
           echo "CONFIG_HASH=$CONFIG_HASH" >> $GITHUB_ENV
 
       - name: Fetch the latest tag and generate next version
-        uses: anothrNick/github-tag-action@1.67.0
+        uses: anothrNick/github-tag-action@1.70.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: versioning
@@ -41,7 +41,7 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and push new tag
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/production'
         run: |
           git tag $NEW_VERSION
           git push origin $NEW_VERSION

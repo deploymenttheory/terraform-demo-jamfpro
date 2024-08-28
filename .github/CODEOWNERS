@@ -5,8 +5,8 @@
 # @global-owner1 and @global-owner2 will be requested for
 # review when someone opens a pull request.
 
-* @segraef
+* @ShocOne
 
-.azuredevops/** @segraef
-.github/** @segraef
-.pipelines/** @segraef
+.azuredevops/** @ShocOne
+.github/** @ShocOne
+.pipelines/** @ShocOne
