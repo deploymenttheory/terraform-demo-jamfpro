@@ -5,7 +5,7 @@ terraform {
 
     workspaces {
       tags = ["Jamf Pro"]
-      name = "terraform-jamfpro-demo"
+      name = "terraform-jamfpro-sandbox"
     }
   }
 }
