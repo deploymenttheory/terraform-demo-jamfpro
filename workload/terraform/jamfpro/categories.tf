@@ -3,10 +3,10 @@ resource "jamfpro_category" "jamfpro_category_001" {
   priority = 10
 }
 
-# resource "jamfpro_category" "jamfpro_category_002" {
-#   name     = "tf-ghatest-self-service"
-#   priority = 10
-# }
+resource "jamfpro_category" "jamfpro_category_002" {
+  name     = "tf-gd-ghatest-self-service"
+  priority = 10
+}
 
 # resource "jamfpro_category" "jamfpro_category_003" {
 #   name     = "tf-ghatest-security"
