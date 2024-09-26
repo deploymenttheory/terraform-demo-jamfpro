@@ -9,7 +9,7 @@ resource "jamfpro_script" "jamfpro_script_001" {
 }
 
 resource "jamfpro_script" "jamfpro_script_002" {
-  name            = "tf-demo-encrypt-apfs-volume-v5.0.1"
+  name            = "tf-demo-encrypt-apfs-volume-v5.0.2"
   script_contents = file("${path.module}/support_files/scripts/Encrypt_APFS_Volume.zsh")
   os_requirements = "13"
   priority        = "BEFORE"
