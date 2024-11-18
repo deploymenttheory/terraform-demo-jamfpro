@@ -72,7 +72,7 @@ jobs:
           fetch-depth: 0
           
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.10.1
+        uses: step-security/harden-runner@v2.10.2
         with:
           egress-policy: audit
       
