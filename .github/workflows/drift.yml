@@ -33,14 +33,14 @@ jobs:
           egress-policy: audit
 
       - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.2
         id: drift-upload
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Plan Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.2
         id: drift-plan
         with:
           workspace: ${{ env.TF_WORKSPACE }}
@@ -48,7 +48,7 @@ jobs:
           plan_only: true
 
       - name: Get Plan Output
-        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.1
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.2
         id: plan-output
         with:
           plan: ${{ fromJSON(steps.drift-plan.outputs.payload).data.relationships.plan.data.id }}
@@ -66,7 +66,7 @@ jobs:
 
       - name: Apply Changes to Correct Drift
         if: steps.check-drift.outputs.drift_detected == 'true'
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.1
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.2
         id: apply-drift
         with:
           run: ${{ fromJSON(steps.drift-plan.outputs.payload).data.id }}
