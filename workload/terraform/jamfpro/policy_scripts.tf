@@ -56,7 +56,7 @@ resource "jamfpro_policy" "jamfpro_policy_script_001" {
 
     user_interaction {
       message_start            = "Policy is about to run."
-      allow_user_to_defer     = true
+      allow_user_to_defer      = true
       allow_deferral_until_utc = "2024-12-31T23:59:59Z"
       allow_deferral_minutes   = 1440
       message_finish           = "Policy has completed."
