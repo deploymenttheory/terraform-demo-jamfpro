@@ -32,7 +32,7 @@ jobs:
       config_hash: ${{ steps.generate_hash.outputs.config_hash }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
           ref: ${{ inputs.source_environment }}
@@ -43,7 +43,7 @@ jobs:
           egress-policy: audit
 
       - name: Set up Python
-        uses: actions/setup-python@v5.2.0
+        uses: actions/setup-python@v5.3.0
         with:
           python-version: '3.x'
 
@@ -78,7 +78,7 @@ jobs:
           git push origin ${{ env.NEW_VERSION }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.1.0
         with:
           tag_name: ${{ env.NEW_VERSION }}
           name: ${{ env.NEW_VERSION }}

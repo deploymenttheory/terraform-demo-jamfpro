@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         
       - name: Harden Runner
         uses: step-security/harden-runner@v2.10.1
@@ -41,7 +41,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Update GitHub Release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.1.0
         with:
           tag_name: ${{ steps.extract_version.outputs.VERSION }}
           name: ${{ steps.extract_version.outputs.VERSION }} - Deployed to ${{ inputs.target_environment }}

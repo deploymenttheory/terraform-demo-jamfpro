@@ -3,6 +3,7 @@ terraform {
     jamfpro = {
       source  = "deploymenttheory/jamfpro"
       version = "0.5.1" // "~> 0.6.1"
+
     }
   }
 }

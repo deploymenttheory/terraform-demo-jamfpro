@@ -34,7 +34,7 @@ jobs:
       release_version: ${{ steps.get_release.outputs.release_version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
           ref: staging

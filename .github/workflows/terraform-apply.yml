@@ -85,7 +85,7 @@ jobs:
       trigger_reason: ${{ fromJSON(steps.apply-run.outputs.payload).data.attributes.trigger-reason }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         
       - name: Harden Runner
         uses: step-security/harden-runner@v2.10.1
