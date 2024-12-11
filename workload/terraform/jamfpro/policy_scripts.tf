@@ -37,7 +37,7 @@ resource "jamfpro_policy" "jamfpro_policy_script_001" {
     feature_on_main_page = false
   }
 
-  
+
 
   payloads {
     scripts {
