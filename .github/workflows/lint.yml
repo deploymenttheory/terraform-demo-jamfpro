@@ -22,7 +22,7 @@ jobs:
           egress-policy: audit
 
       - name: terraform validate
-        uses: dflook/terraform-validate@v1.44.0
+        uses: dflook/terraform-validate@v1.45.0
         with:
           path: workload/terraform/jamfpro
 
