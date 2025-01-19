@@ -24,13 +24,13 @@ provider "jamfpro" {
 }
 
 variable "jamfpro_instance_fqdn" {
-  description = "The Jamf Pro FQDN (fully qualified domain name). Example: https://mycompany.jamfcloud.com"
+  description = "https://commonwealdharmffjkr.jamfcloud.com"
   sensitive   = true
   default     = ""
 }
 
 variable "jamfpro_auth_method" {
-  description = "Auth method chosen for Jamf. Options are 'basic' or 'oauth2'."
+  description = "basic"
   sensitive   = true
   default     = ""
 }
