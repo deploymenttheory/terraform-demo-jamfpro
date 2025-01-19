@@ -19,7 +19,7 @@ on:
       - '**/*.tf'
 
 env:
-  TF_CLOUD_ORGANIZATION: "deploymenttheory"
+  TF_CLOUD_ORGANIZATION: "commonwealdharmffjkr"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "terraform-jamfpro-main"
   CONFIG_DIRECTORY: "workload/terraform/jamfpro"
