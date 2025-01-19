@@ -26,7 +26,7 @@ provider "jamfpro" {
 variable "jamfpro_instance_fqdn" {
   description = "https://commonwealdharmffjkr.jamfcloud.com"
   sensitive   = true
-  default     = ""
+  default     = "https://commonwealdharmffjkr.jamfcloud.com"
 }
 
 variable "jamfpro_auth_method" {
