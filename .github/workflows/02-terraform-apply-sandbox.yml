@@ -10,7 +10,7 @@ on:
 env:
   TF_CLOUD_ORGANIZATION: "commonwealdharmffjkr"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "terraform-jamfpro-main"
+  TF_WORKSPACE: "terraform-jamfpro-sandbox"
   CONFIG_DIRECTORY: "workload/terraform/jamfpro"
   PIPELINE_DEBUG: true
 
@@ -25,7 +25,7 @@ jobs:
     uses: ./.github/workflows/terraform-apply.yml
     with:
       tf_cloud_organization: "commonwealdharmffjkr"
-      tf_workspace: "terraform-jamfpro-main"
+      tf_workspace: "terraform-jamfpro-sandbox"
       config_directory: "workload/terraform/jamfpro"
       debug: true
     secrets:
