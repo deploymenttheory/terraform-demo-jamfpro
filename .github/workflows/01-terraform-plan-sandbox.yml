@@ -21,7 +21,7 @@ on:
 env:
   TF_CLOUD_ORGANIZATION: "commonwealdharmffjkr"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "terraform-jamfpro-main"
+  TF_WORKSPACE: "terraform-jamfpro-sandbox"
   CONFIG_DIRECTORY: "workload/terraform/jamfpro"
 
 permissions:
@@ -59,7 +59,7 @@ jobs:
     uses: ./.github/workflows/terraform-plan.yml
     with:
       tf_cloud_organization: "commonwealdharmffjkr"
-      tf_workspace: "terraform-jamfpro-main" 
+      tf_workspace: "terraform-jamfpro-sandbox" 
       target_environment: "sandbox"
       debug: true
       config_directory: "workload/terraform/jamfpro"
