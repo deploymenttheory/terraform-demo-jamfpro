@@ -56,7 +56,7 @@ jobs:
       issues: write
     steps:
       - name: Manual Approval for Hotfix
-        uses: trstringer/manual-approval@v1.10.0
+        uses: trstringer/manual-approval@v1.11.0
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: user1,user2,org-team1
@@ -96,7 +96,7 @@ jobs:
       issues: write
     steps:
       - name: Manual Approval for Staging Backport
-        uses: trstringer/manual-approval@v1.10.0
+        uses: trstringer/manual-approval@v1.11.0
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: user1,user2,org-team1
