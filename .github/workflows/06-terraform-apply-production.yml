@@ -18,7 +18,7 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
     - name: Check if merging from a release branch
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       with:
         script: |
           const sourceBranch = context.payload.pull_request.head.ref;

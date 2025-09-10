@@ -44,7 +44,7 @@ jobs:
           egress-policy: audit
           
       - name: Create PR with Terraform Plan
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: create-pr
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
