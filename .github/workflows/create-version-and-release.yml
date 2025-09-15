@@ -38,7 +38,7 @@ jobs:
           ref: ${{ inputs.source_environment }}
           
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.12.0
+        uses: step-security/harden-runner@v2.13.1
         with:
           egress-policy: audit
 
