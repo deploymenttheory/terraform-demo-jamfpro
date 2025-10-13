@@ -41,7 +41,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Update GitHub Release
-        uses: softprops/action-gh-release@v2.2.2
+        uses: softprops/action-gh-release@v2.4.1
         with:
           tag_name: ${{ steps.extract_version.outputs.VERSION }}
           name: ${{ steps.extract_version.outputs.VERSION }} - Deployed to ${{ inputs.target_environment }}
