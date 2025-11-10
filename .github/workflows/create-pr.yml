@@ -39,7 +39,7 @@ jobs:
       pull-request-url: ${{ steps.create-pr.outputs.pull-request-url }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.12.0
+        uses: step-security/harden-runner@v2.13.2
         with:
           egress-policy: audit
           
