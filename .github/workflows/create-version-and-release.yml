@@ -32,7 +32,7 @@ jobs:
       config_hash: ${{ steps.generate_hash.outputs.config_hash }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
           ref: ${{ inputs.source_environment }}
